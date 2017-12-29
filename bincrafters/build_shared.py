@@ -84,7 +84,7 @@ def get_conan_vars():
 
 def get_conan_upload(username):
     return os.getenv("CONAN_UPLOAD",
-        "https://api.bintray.com/conan/{0}/public-conan".format(username))
+        "https://api.bintray.com/conan/{0}/public-conan".format(username.lower()))
 
 
 def get_upload_when_stable():
