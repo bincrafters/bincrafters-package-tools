@@ -1,0 +1,16 @@
+# Config file for automatic testing at travis-ci.org
+
+sudo: false
+language: python
+matrix:
+  fast_finish: true
+  include:
+    - python: "2.7"
+    - python: "3.5"
+
+install:
+    - pip install -e .[test]
+
+script:
+    - cd bincrafters/test
+    - pytest -v --cov=bincrafters

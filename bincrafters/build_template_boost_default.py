@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
 from bincrafters import build_template_default
+
 
 def get_builder(args=None):
 
