@@ -12,7 +12,7 @@ install:
   - pip install codecov
 
 script:
-  - cd bincrafters/test
+  - cd tests
   - pytest -v --cov=bincrafters
 
 after_success:

@@ -7,10 +7,16 @@ https://github.com/pypa/sampleproject
 # Always prefer setuptools over distutils
 import re
 import os
-
 from setuptools import setup, find_packages
 # To use a consistent encoding
 from codecs import open
+
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+# Get the long description from the README file
+with open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 
 def get_requires(filename):
@@ -41,10 +47,20 @@ setup(
     # https://packaging.python.org/en/latest/single_source_version.html
     version=load_version(),
 
+    # This is an optional longer description of your project that represents
+    # the body of text which users will see when they visit PyPI.
+    #
+    # Often, this is the same as your README, so you can just read it in from
+    # that file directly (as we have already done above)
+    #
+    # This field corresponds to the "Description" metadata field:
+    # https://packaging.python.org/specifications/core-metadata/#description-optional
+    long_description=long_description, # Optional
+
     description='Bincrafters Packaging tools for build Conan projects',
 
     # The project's main homepage.
-    url='https://github.com/bincrafters/conan-templates',
+    url='https://github.com/bincrafters/bincrafters-package-tools',
 
     # Author details
     author='Bincrafters',
@@ -70,7 +86,7 @@ setup(
 
     # You can just specify the packages manually here if your project is
     # simple. Or you can use find_packages().
-    packages=find_packages(),
+    packages=find_packages(exclude=['tests']),
 
     # Alternatively, if you want to distribute just a my_module.py, uncomment
     # this:

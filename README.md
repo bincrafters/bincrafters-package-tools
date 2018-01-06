@@ -28,8 +28,24 @@ Or if you want to download our pip package
 #### TESTING
 To run all unit test + code coverage, just execute:
 
-    cd bincrafters/test
+    pip install -r bincrafters/requirements_test.txt
+    cd tests
     pytest -v --cov=bincrafters
+
+
+#### REQUIREMENTS and DEVELOPMENT
+To develop or run Bincrafters package tools, Conan package tools will be required
+However, you could solve by pip
+
+    pip install -r bincrafters/requirements.txt
+
+
+#### UPLOAD
+To upload this package on pypi (legacy mode):
+
+    pip install twine
+    python setup.py sdist
+    twine upload dist/*
 
 
 #### LICENSE
