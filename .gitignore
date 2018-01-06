@@ -38,3 +38,13 @@ tmp/
 
 # IDE
 .idea/*
+
+
+.cache/
+.coverage
+.coveragerc
+.pypirc
+bincrafters_package_tools.egg-info/
+coverage.xml
+dist/
+env/
