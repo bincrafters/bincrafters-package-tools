@@ -1,18 +1,24 @@
 sudo: false
 language: python
+
 matrix:
   fast_finish: true
   include:
-  - python: '2.7'
-  - python: '3.5'
+    - python: '2.7'
+    - python: '3.5'
+
 install:
-- pip install -e .[test]
-- pip install codecov
+  - pip install -e .[test]
+  - pip install codecov
+
 script:
-- cd bincrafters/test
-- pytest -v --cov=bincrafters
+  - cd bincrafters/test
+  - pytest -v --cov=bincrafters
+  - cd -
+
 after_success:
-- codecov
+  - codecov
+
 deploy:
   provider: pypi
   user: uilianries
