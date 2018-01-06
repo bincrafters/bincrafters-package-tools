@@ -1,26 +1,20 @@
-# Config file for automatic testing at travis-ci.org
-
 sudo: false
 language: python
 matrix:
   fast_finish: true
   include:
-    - python: "2.7"
-    - python: "3.5"
-
+  - python: '2.7'
+  - python: '3.5'
 install:
-    - pip install -e .[test]
-    - pip install codecov
-
+- pip install -e .[test]
+- pip install codecov
 script:
-    - cd bincrafters/test
-    - pytest -v --cov=bincrafters
-
+- cd bincrafters/test
+- pytest -v --cov=bincrafters
 after_success:
-    - codecov
-
+- codecov
 deploy:
   provider: pypi
-  user: "uilianries"
+  user: uilianries
   password:
-    secure:  "CYNbUPCuSaXNzMkxXLzHpzE77eGkooU+0eb3OG4ydyh0IRKBmHBqc0bHc6J1UwhzzeFoQ2eOSuRSHiVLwRZEZEiTIh+NORjfvNpPnbH6YN9nGKwFH7JndbVAd8+NWyb2QjtYocepHOGAhR1ILeAWtivCpIb9iBqQbKy9PwlsuUkdqxR7VV41pYIOOFAGmrqw9/+Q/ujhXtq2QKHqLvLgkE93GujJy+EKdH2leon9AUXWJ3GGQaCF35J+eD4udpWfk6RteYqN8moZWkASoAsZNdsblHQqLYgREn4366D+t6DMOiYpz9nszmRn7Ct2yUgmFQ82BomaaCLAaczXJaOTOYO9ixgHDz2EG6Hr7P1mr+VnPxnudGQac6iQjakel2qNpvTDOfKbECuOtwA9PNdxy0j9LsH4SHi0fbAWKx7yc+uNh1ckzP5Q4gBJ7kdgdZFfopCpBpMNt1gdae1wO9TPf6UW28lUS0Ei0NIQBJ7Bv+sIDhTRojfILaELu0B2cFSwv3fhxny6AydTTfHppHrErPJ7oaYPBlx3g2SESSuhHarH66QA0bFIIO/mVln4JHnnposeRU0Ps9ajPNJKjjoNSoOc+itIQ3xFgIYE8C4fysLrd64DfdS8C0oISPBby/zEQZJzgtgM65bfE4kZJz/8j0AovKnYAgjI166SP/+sa1o="
+    secure: MpvcbCCDqW8LRmnKeIIwa+VbM7Fiy2M/wzJgXAVyd3xn4l6Zk8dFjhR1S/jpsriGp/hsnE4+dvCeWYSp+naILKVAGCD0/yzA5lIfyKN3a8myCY52VwQLkCFICZ9Y2SaKKl57QMDLMWPInnd9dDFVToZcVkH8kXlnVKIRXyeMVNViMTkEUHuBUDQD3ICNJidIU3Wgf95bIb+yI0bzna/YQlC2InV0l4rdCr29x7JenjxX0h7sMkbXkYf8NA7MUAswbTrvRcv4AZeynmKVlYEVttMnY/bp00TM/RwVEIXG20+a6MDbbJH1lc3wvYbbIuZ8HFnm7XS0DLT7feXhw9+Vk1GN+t+BoL7yhxoAQBMYCneXrWWpf9z8+g1inTKNkOhK76OGJ9L1CX4wnDRuSh+PJcx8emnSw46XuNLt9uRobdG7Zz95LktfSMPdDonYoalsM4eIZXQsacGGi4u5DWYuwLMIeCk2tIyTV1XK1chF9Es9fEAEZn0aV9kEAOLE0EHLaYfBIbDuHqmD99TE/KkW6xUpT5qk+WbwzNw+1GM6oOi2WPHXiVpukCiRNAGtii2XYwurRTsVJXXwXdHBSpZ4s9mHY4yNo6+VYPERJ2BZuGb2dAv9v9zaB8fb1B0IqPkfkZdZsnTwLXHo2D+HEvWg/fDSNJ+ty35gLclM3l0hZ2k=
