@@ -32,6 +32,12 @@ def test_build_template_default():
         assert "foobar:shared" in options
     assert 8 == len(builder.items)
 
+def test_build_template_default_non_pure_c():
+    builder = build_template_default.get_builder(pure_c=False)
+    for settings, options, env_vars, build_requires, reference in builder.items:
+        assert "foobar:shared" in options
+    assert 16 == len(builder.items)
+
 def test_build_shared():
     builder = build_shared.get_builder()
     assert 0 == len(builder.items)

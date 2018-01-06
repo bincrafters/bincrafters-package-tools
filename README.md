@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/bincrafters/bincrafters-package-tools.svg?branch=master)](https://travis-ci.org/bincrafters/bincrafters-package-tools)
+[![codecov](https://codecov.io/gh/bincrafters/bincrafters-package-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/bincrafters/bincrafters-package-tools)
+
 # Bincrafters Package Tools
 
 ## A modular toolset for Conan package tools
