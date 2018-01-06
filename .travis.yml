@@ -10,7 +10,11 @@ matrix:
 
 install:
     - pip install -e .[test]
+    - pip install codecov
 
 script:
     - cd bincrafters/test
     - pytest -v --cov=bincrafters
+
+after_success:
+    - codecov
