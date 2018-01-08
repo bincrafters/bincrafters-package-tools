@@ -24,6 +24,11 @@ Or if you want to download our pip package
 
     pip install bincrafters-package-tools
 
+##### Testing and Development
+To install extra packages required to test
+
+    pip install .[test]
+
 
 #### TESTING
 To run all unit test + code coverage, just execute:

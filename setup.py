@@ -38,7 +38,7 @@ def load_version():
         return version
 
 
-project_requirements = get_requires("bincrafters/requirements.txt")
+project_requirements = get_requires("requirements.txt")
 
 setup(
     name='bincrafters_package_tools',
@@ -103,7 +103,7 @@ setup(
     # for example:
     # $ pip install -e .[dev,test]
     extras_require={
-        'test': get_requires(os.path.join('bincrafters', 'requirements_test.txt'))
+        'test': get_requires(os.path.join('tests', 'requirements_test.txt'))
     },
 
     # If there are data files included in your packages that need to be

@@ -8,8 +8,8 @@ matrix:
     - python: '3.5'
 
 install:
+  - pip install conan codecov
   - pip install -e .[test]
-  - pip install codecov
 
 script:
   - python setup.py sdist
