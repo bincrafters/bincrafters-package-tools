@@ -37,9 +37,6 @@ def load_version():
         version = re.search("__version__ = '([0-9a-z.-]+)'", conan_init).group(1)
         return version
 
-
-project_requirements = get_requires("requirements.txt")
-
 setup(
     name='bincrafters_package_tools',
     # Versions should comply with PEP440.  For a discussion on single-sourcing
@@ -96,7 +93,7 @@ setup(
     # your project is installed. For an analysis of "install_requires" vs pip's
     # requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=project_requirements,
+    install_requires=get_requires("requirements.txt"),
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). You can install these using the following syntax,
