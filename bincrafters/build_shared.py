@@ -82,9 +82,24 @@ def get_conan_vars():
     return username, channel, version
 
 
+def get_user_repository(username):
+    return "https://api.bintray.com/conan/{0}/public-conan".format(username.lower())
+
+
 def get_conan_upload(username):
-    return os.getenv("CONAN_UPLOAD",
-        "https://api.bintray.com/conan/{0}/public-conan".format(username.lower()))
+    return os.getenv("CONAN_UPLOAD", get_user_repository(username))
+
+
+def get_conan_remotes(username):
+    # While redundant, this moves upload remote to position 0.
+    remotes = [get_conan_upload(username)]
+
+    # Add bincrafters repository for other users, e.g. if the package would
+    # require other packages from the bincrafters repo.
+    bincrafters_user = "bincrafters"
+    if username != bincrafters_user:
+        remotes.append(get_user_repository(bincrafters_user))
+    return remotes
 
 
 def get_upload_when_stable():
@@ -101,7 +116,7 @@ def get_builder(args=None):
     username, channel, version = get_conan_vars()
     reference = "{0}/{1}".format(name, version)
     upload = get_conan_upload(username)
-    remotes = os.getenv("CONAN_REMOTES", upload)
+    remotes = os.getenv("CONAN_REMOTES", get_conan_remotes(username))
     upload_when_stable = get_upload_when_stable()
     stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "stable/*")
     builder = ConanMultiPackager(
