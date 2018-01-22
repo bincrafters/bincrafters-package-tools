@@ -7,8 +7,8 @@ import re
 import platform
 
 
-def get_value_from_recipe(search_string):
-    with open("conanfile.py", "r") as conanfile:
+def get_value_from_recipe(search_string, recipe="conanfile.py"):
+    with open(recipe, "r") as conanfile:
         contents = conanfile.read()
         result = re.search(search_string, contents)
     return result
@@ -23,11 +23,14 @@ def get_version_from_recipe():
 
 
 def is_shared():
-    return "shared" in get_value_from_recipe(r'''options\s*=\s*(.*)''').groups()[0]
+    match = get_value_from_recipe(r'''options.*=([\s\S]*?)(?=}|$)''')
+    if match is None:
+        return False
+    return "shared" in match.groups()[0]
 
 
 def is_ci_running():
-    return os.getenv("APPVEYOR_REPO_NAME", "") or os.getenv("TRAVIS_REPO_SLUG", "")
+    return (os.getenv("APPVEYOR_REPO_NAME", None) or os.getenv("TRAVIS_REPO_SLUG", None)) is not None
 
 
 def get_repo_name_from_ci():

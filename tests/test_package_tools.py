@@ -8,6 +8,7 @@ from bincrafters import build_template_default
 from bincrafters import build_template_header_only
 from bincrafters import build_template_installer
 import os
+import platform
 
 
 os.environ["CONAN_GCC_VERSIONS"] = "7"
@@ -67,3 +68,11 @@ def test_build_boost_header_only():
         assert 0 == len(options)
     assert 1 == len(builder.items)
     assert "" == _get_upload_when_stable()
+
+def test_get_os():
+    expected_os = platform.system()
+    assert expected_os == build_shared.get_os()
+
+def test_ci_is_running():
+    expected = True if os.getenv("CI", None) is not None else False
+    assert expected == build_shared.is_ci_running()
