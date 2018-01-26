@@ -23,7 +23,7 @@ def test_build_template_boost_default():
     _set_upload_when_stable()
     builder = build_template_boost_default.get_builder()
     for settings, options, env_vars, build_requires, reference in builder.items:
-        assert "foobar:shared" in options
+        assert "boost_*:shared" in options
     assert 8 == len(builder.items)
     assert "" == _get_upload_when_stable()
 
@@ -31,7 +31,7 @@ def test_build_template_boost_default_non_pure_c():
     _set_upload_when_stable()
     builder = build_template_boost_default.get_builder(pure_c=False)
     for settings, options, env_vars, build_requires, reference in builder.items:
-        assert "foobar:shared" in options
+        assert "boost_*:shared" in options
     assert 16 == len(builder.items)
     assert "" == _get_upload_when_stable()
 
