@@ -4,7 +4,7 @@
 
 # Bincrafters Package Tools
 
-## A modular toolset for Conan package tools
+## A modular toolset for [Conan package tools](https://github.com/conan-io/conan-package-tools)
 
 This project contains files used by Conan Package Tools for all kinds of bincrafters builds.
 
@@ -23,6 +23,26 @@ If you want to install by local copy
 Or if you want to download our pip package
 
     pip install bincrafters-package-tools
+
+#### HOW TO USE
+We listed two common [examples](examples):
+* How to [build shared library](examples/build_shared_library.py)
+* Hot to [build header only](examples/build_header_only.py)
+
+
+#### ENVIRONMENT
+All variables supported by Conan package tools, are treated by Bincrafters package tools as well.
+To solve the upload, some variables are customized by default:
+
+**CONAN_UPLOAD**: https://api.bintray.com/conan/bincrafters/public-conan  
+**CONAN_REFERENCE**: Fields **name** and **version** from conanfile.py  
+**CONAN_USERNAME**: Get from CI env vars. Otherwise, use **bincrafters**  
+**CONAN_VERSION**: Get from CI env vars.  
+**CONAN_VERSION**: Field **version** from conanfile.py  
+**CONAN_UPLOAD_ONLY_WHEN_STABLE**: True for default template. False for Boost builds.  
+**CONAN_STABLE_BRANCH_PATTERN**: stable/*
+
+**BINTRAY_REPOSITORY**: Bintray repository name. This variable replaces "public-conan" for **CONAN_UPLOAD**.
 
 ##### Testing and Development
 To install extra packages required to test

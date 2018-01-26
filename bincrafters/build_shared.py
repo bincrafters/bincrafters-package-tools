@@ -105,7 +105,7 @@ def get_conan_remotes(username):
     # require other packages from the bincrafters repo.
     bincrafters_user = "bincrafters"
     if username != bincrafters_user:
-        remotes.append(get_user_repository(bincrafters_user, "public-conan"))
+        remotes.append(get_conan_upload(bincrafters_user))
     return remotes
 
 
