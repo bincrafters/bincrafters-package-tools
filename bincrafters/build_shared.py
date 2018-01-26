@@ -89,7 +89,8 @@ def get_conan_vars():
 
 
 def get_user_repository(username):
-    return "https://api.bintray.com/conan/{0}/public-conan".format(username.lower())
+    bintray_repository = os.getenv("BINTRAY_REPOSITORY", "public-conan")
+    return "https://api.bintray.com/conan/{0}/{1}".format(username.lower(), bintray_repository)
 
 
 def get_conan_upload(username):
