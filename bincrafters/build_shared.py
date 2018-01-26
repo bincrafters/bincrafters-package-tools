@@ -88,13 +88,13 @@ def get_conan_vars():
     return username, channel, version
 
 
-def get_user_repository(username):
-    bintray_repository = os.getenv("BINTRAY_REPOSITORY", "public-conan")
-    return "https://api.bintray.com/conan/{0}/{1}".format(username.lower(), bintray_repository)
+def get_user_repository(username, repository_name):
+    return "https://api.bintray.com/conan/{0}/{1}".format(username.lower(), repository_name)
 
 
 def get_conan_upload(username):
-    return os.getenv("CONAN_UPLOAD", get_user_repository(username))
+    repository_name = os.getenv("BINTRAY_REPOSITORY", "public-conan")
+    return os.getenv("CONAN_UPLOAD", get_user_repository(username, repository_name))
 
 
 def get_conan_remotes(username):
@@ -105,7 +105,7 @@ def get_conan_remotes(username):
     # require other packages from the bincrafters repo.
     bincrafters_user = "bincrafters"
     if username != bincrafters_user:
-        remotes.append(get_user_repository(bincrafters_user))
+        remotes.append(get_user_repository(bincrafters_user, "public-conan"))
     return remotes
 
 
