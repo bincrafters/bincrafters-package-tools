@@ -24,7 +24,7 @@ def test_build_template_boost_default():
     builder = build_template_boost_default.get_builder()
     for settings, options, env_vars, build_requires, reference in builder.items:
         assert "boost_*:shared" in options
-    assert 8 == len(builder.items)
+    assert 16 == len(builder.items)
     assert "" == _get_upload_when_stable()
 
 def test_build_template_boost_default_non_pure_c():
