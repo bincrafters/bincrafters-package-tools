@@ -66,6 +66,15 @@ However, you could solve by pip
 
 
 #### UPLOAD
+There are two ways to upload this project.
+
+##### Travis CI
+After to create a new tag, the package will be uploaded automatically to Pypi.  
+Both username and password (encrypted) are in travis file.  
+Only one job (python 2.7) will upload, the second one will be skipped.
+
+
+##### Command line
 To upload this package on pypi (legacy mode):
 
     pip install twine
