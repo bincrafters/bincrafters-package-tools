@@ -37,30 +37,14 @@ def test_build_template_boost_default():
         assert "boost_*:shared" in options
     
     if platform.system() == "Linux":
-        assert 2 == len(builder.items) 
+        assert 4 == len(builder.items) 
     elif platform.system() == "Windows":
         assert 3 == len(builder.items) 
     elif platform.system() == "Darwin":
-        assert 2 == len(builder.items) 
+        assert 4 == len(builder.items) 
         
     assert "" == _get_upload_when_stable()
 
-def test_build_template_boost_default_non_pure_c():
-    _set_matrix_variables()
-    _set_upload_when_stable()
-    builder = build_template_boost_default.get_builder(pure_c=False)
-    for settings, options, env_vars, build_requires, reference in builder.items:
-        assert "foobar:shared" in options
-        assert "boost_*:shared" in options
-        
-    if platform.system() == "Linux":
-        assert 4 == len(builder.items) 
-    elif platform.system() == "Windows":
-        assert 3 == len(builder.items) 
-    elif platform.system() == "Darwin":
-        assert 4 == len(builder.items) 
-        
-    assert "" == _get_upload_when_stable()
 
 def test_build_template_default():
     _set_matrix_variables()
