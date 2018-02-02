@@ -52,7 +52,7 @@ def test_build_template_boost_default(set_upload_when_stable):
     elif platform.system() == "Windows":
         assert 12 == len(builder.items)
     elif platform.system() == "Darwin":
-        assert 8 == len(builder.items)
+        assert 4 == len(builder.items)
 
     assert "" == get_upload_when_stable()
 
@@ -98,7 +98,7 @@ def test_build_template_default_non_pure_c():
     elif platform.system() == "Windows":
         assert 12 == len(builder.items)
     elif platform.system() == "Darwin":
-        assert 8 == len(builder.items)
+        assert 4 == len(builder.items)
 
 
 def test_build_shared():
