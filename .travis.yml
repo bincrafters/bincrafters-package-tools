@@ -1,24 +1,26 @@
-sudo: false
-language: python
-
 matrix:
   fast_finish: true
   include:
-    - python: '2.7'
-    - python: '3.5'
+    - os: linux
+      sudo: false
+      language: python
+      python: '2.7'
+    - os: linux
+      sudo: false
+      language: python
+      python: '3.6'
+    - os: osx
+      language: generic
+      osx_image: xcode9
 
 install:
-  - pip install codecov
-  - pip install -e .[test]
+  - .travis/install.sh
 
 script:
-  - python setup.py sdist
-  - cd tests
-  - pytest -v --cov=bincrafters
+  - .travis/run.sh
 
 after_success:
   - codecov
-  - cd -
 
 deploy:
   provider: pypi

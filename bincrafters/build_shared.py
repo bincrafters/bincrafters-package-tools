@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conan.packager import ConanMultiPackager
+from conan.packager import ConanMultiPackager, split_colon_env
 import os
 import re
 import platform
@@ -30,20 +30,23 @@ def is_shared():
 
 
 def is_ci_running():
-    result = os.getenv("APPVEYOR_REPO_NAME", False) or os.getenv("TRAVIS_REPO_SLUG", False) or os.getenv("CIRCLECI", False)
+    result = os.getenv("APPVEYOR_REPO_NAME", False) or \
+             os.getenv("TRAVIS_REPO_SLUG", False) or \
+             os.getenv("CIRCLECI", False)
     return result != False
 
 
 def get_repo_name_from_ci():
-    reponame_a = os.getenv("APPVEYOR_REPO_NAME","")
-    reponame_t = os.getenv("TRAVIS_REPO_SLUG","")
-    reponame_c = "%s/%s" % (os.getenv("CIRCLE_PROJECT_USERNAME", "") , os.getenv("CIRCLE_PROJECT_REPONAME", ""))
+    reponame_a = os.getenv("APPVEYOR_REPO_NAME", "")
+    reponame_t = os.getenv("TRAVIS_REPO_SLUG", "")
+    reponame_c = "%s/%s" % (os.getenv("CIRCLE_PROJECT_USERNAME", ""),
+                            os.getenv("CIRCLE_PROJECT_REPONAME", ""))
     return reponame_a or reponame_t or reponame_c
 
 
 def get_repo_branch_from_ci():
-    repobranch_a = os.getenv("APPVEYOR_REPO_BRANCH","")
-    repobranch_t = os.getenv("TRAVIS_BRANCH","")
+    repobranch_a = os.getenv("APPVEYOR_REPO_BRANCH", "")
+    repobranch_t = os.getenv("TRAVIS_BRANCH", "")
     repobranch_c = os.getenv("CIRCLE_BRANCH", "")
     return repobranch_a or repobranch_t or repobranch_c
 
@@ -55,8 +58,8 @@ def get_ci_vars():
     repobranch = get_repo_branch_from_ci()
     repobranch_split = repobranch.split("/")
 
-    username, _ = reponame_split if len(reponame_split) > 1 else ["",""]
-    channel, version = repobranch_split if len(repobranch_split) > 1 else ["",""]
+    username, _ = reponame_split if len(reponame_split) > 1 else ["", ""]
+    channel, version = repobranch_split if len(repobranch_split) > 1 else ["", ""]
     return username, channel, version
 
 
@@ -111,11 +114,18 @@ def get_conan_remotes(username):
 
 def get_upload_when_stable():
     env_value = os.getenv("CONAN_UPLOAD_ONLY_WHEN_STABLE")
-    return  True if env_value == None else env_value
+    return True if env_value is None else env_value
 
 
 def get_os():
     return platform.system().replace("Darwin", "Macos")
+
+
+def get_archs():
+    archs = os.getenv("CONAN_ARCHS", None)
+    if get_os() == "Macos" and archs is None:
+        return ["x86_64"]
+    return split_colon_env("CONAN_ARCHS") if archs else None
 
 
 def get_builder(args=None):
@@ -126,6 +136,7 @@ def get_builder(args=None):
     remotes = os.getenv("CONAN_REMOTES", get_conan_remotes(username))
     upload_when_stable = get_upload_when_stable()
     stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "stable/*")
+    archs = get_archs()
     builder = ConanMultiPackager(
         args=args,
         username=username,
@@ -133,6 +144,7 @@ def get_builder(args=None):
         reference=reference,
         upload=upload,
         remotes=remotes,
+        archs=archs,
         upload_only_when_stable=upload_when_stable,
         stable_branch_pattern=stable_branch_pattern)
 
