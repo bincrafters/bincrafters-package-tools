@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.org/bincrafters/bincrafters-package-tools.svg?branch=master)](https://travis-ci.org/bincrafters/bincrafters-package-tools)
+[![Build Status: Linux and Macos](https://travis-ci.org/bincrafters/bincrafters-package-tools.svg?branch=master)](https://travis-ci.org/bincrafters/bincrafters-package-tools)
+[![Build status: Windows](https://ci.appveyor.com/api/projects/status/github/bincrafters/bincrafters-package-tools?svg=true)](https://ci.appveyor.com/project/BinCrafters/bincrafters-package-tools)
 [![codecov](https://codecov.io/gh/bincrafters/bincrafters-package-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/bincrafters/bincrafters-package-tools)
 [![Pypi Download](https://img.shields.io/badge/download-pypi-blue.svg)](https://pypi.python.org/pypi/bincrafters-package-tools)
 
@@ -40,7 +41,8 @@ To solve the upload, some variables are customized by default:
 **CONAN_VERSION**: Get from CI env vars.  
 **CONAN_VERSION**: Field **version** from conanfile.py  
 **CONAN_UPLOAD_ONLY_WHEN_STABLE**: True for default template. False for Boost builds.  
-**CONAN_STABLE_BRANCH_PATTERN**: stable/*
+**CONAN_STABLE_BRANCH_PATTERN**: stable/\*  
+**CONAN_ARCHS**: Only x86_64 for Macos. Otherwise, [x86_64, x86]
 
 **BINTRAY_REPOSITORY**: Bintray repository name. This variable replaces "public-conan" for **CONAN_UPLOAD**.
 
