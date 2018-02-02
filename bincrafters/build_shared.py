@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conan.packager import ConanMultiPackager
+from conan.packager import ConanMultiPackager, split_colon_env
 import os
 import re
 import platform
@@ -30,8 +30,9 @@ def is_shared():
 
 
 def is_ci_running():
-    result = os.getenv("APPVEYOR_REPO_NAME", False) or os.getenv(
-        "TRAVIS_REPO_SLUG", False) or os.getenv("CIRCLECI", False)
+    result = os.getenv("APPVEYOR_REPO_NAME", False) or \
+             os.getenv("TRAVIS_REPO_SLUG", False) or \
+             os.getenv("CIRCLECI", False)
     return result != False
 
 
@@ -123,8 +124,8 @@ def get_os():
 def get_archs():
     archs = os.getenv("CONAN_ARCHS", None)
     if get_os() == "Macos" and archs is None:
-        return "x86_64"
-    return archs
+        return ["x86_64"]
+    return split_colon_env("CONAN_ARCHS") if archs else None
 
 
 def get_builder(args=None):
