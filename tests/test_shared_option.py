@@ -130,6 +130,7 @@ class FoobarConan(ConanFile):
         self.cpp_info.libs = tools.collect_libs(self)
 """
 
+
 @contextlib.contextmanager
 def chdir(path):
     prev_cwd = os.getcwd()
@@ -139,6 +140,7 @@ def chdir(path):
     finally:
         os.chdir(prev_cwd)
 
+
 def create_and_validate(recipe_buffer, expected_value):
     tempdir = tempfile.mkdtemp()
     with chdir(tempdir):
@@ -147,9 +149,11 @@ def create_and_validate(recipe_buffer, expected_value):
             fd.flush()
             assert expected_value == build_shared.is_shared()
 
+
 def test_recipe_with_shared_option():
     create_and_validate(recipe_with_shared_1, True)
     create_and_validate(recipe_with_shared_2, True)
+
 
 def test_recipe_with_no_shared_option():
     create_and_validate(recipe_with_no_shared_1, False)

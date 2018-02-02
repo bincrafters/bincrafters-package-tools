@@ -14,17 +14,13 @@ matrix:
       osx_image: xcode9
 
 install:
-  - pip install codecov
-  - pip install -e .[test]
+  - .travis/install.sh
 
 script:
-  - python setup.py sdist
-  - cd tests
-  - pytest -v --cov=bincrafters
+  - .travis/run.sh
 
 after_success:
   - codecov
-  - cd -
 
 deploy:
   provider: pypi
