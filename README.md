@@ -23,7 +23,7 @@ If you want to install by local copy
 ##### Remote
 Or if you want to download our pip package
 
-    pip install bincrafters-package-tools
+    pip install bincrafters_package_tools
 
 #### HOW TO USE
 We listed two common [examples](examples):
