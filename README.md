@@ -28,7 +28,7 @@ Or if you want to download our pip package
 #### HOW TO USE
 We listed two common [examples](examples):
 * How to [build shared library](examples/build_shared_library.py)
-* Hot to [build header only](examples/build_header_only.py)
+* How to [build header only](examples/build_header_only.py)
 
 
 #### ENVIRONMENT
@@ -42,7 +42,7 @@ To solve the upload, some variables are customized by default:
 **CONAN_VERSION**: Field **version** from conanfile.py  
 **CONAN_UPLOAD_ONLY_WHEN_STABLE**: True for default template. False for Boost builds.  
 **CONAN_STABLE_BRANCH_PATTERN**: stable/\*  
-**CONAN_ARCHS**: Only x86_64 for Macos. Otherwise, [x86_64, x86]
+**CONAN_ARCHS**: Only x86_64 for MacOS. Otherwise, [x86_64, x86]
 
 **BINTRAY_REPOSITORY**: Bintray repository name. This variable replaces "public-conan" for **CONAN_UPLOAD**.
 
