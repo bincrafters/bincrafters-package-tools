@@ -88,7 +88,8 @@ def get_conan_vars():
     username = os.getenv("CONAN_USERNAME", get_username_from_ci() or "bincrafters")
     channel = os.getenv("CONAN_CHANNEL", get_channel_from_ci())
     version = os.getenv("CONAN_VERSION", get_version())
-    return username, channel, version
+    login_username = os.getenv("CONAN_LOGIN_USERNAME", "bincrafters-user")
+    return username, channel, version, login_username
 
 
 def get_user_repository(username, repository_name):
@@ -130,7 +131,7 @@ def get_archs():
 
 def get_builder(args=None):
     name = get_name_from_recipe()
-    username, channel, version = get_conan_vars()
+    username, channel, version, login_username = get_conan_vars()
     reference = "{0}/{1}".format(name, version)
     upload = get_conan_upload(username)
     remotes = os.getenv("CONAN_REMOTES", get_conan_remotes(username))
@@ -140,6 +141,7 @@ def get_builder(args=None):
     builder = ConanMultiPackager(
         args=args,
         username=username,
+        login_username=login_username,
         channel=channel,
         reference=reference,
         upload=upload,
