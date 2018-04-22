@@ -88,7 +88,7 @@ def get_conan_vars():
     username = os.getenv("CONAN_USERNAME", get_username_from_ci() or "bincrafters")
     channel = os.getenv("CONAN_CHANNEL", get_channel_from_ci())
     version = os.getenv("CONAN_VERSION", get_version())
-    login_username = os.getenv("CONAN_LOGIN_USERNAME", "bincrafters-user")
+    login_username = os.getenv("CONAN_LOGIN_USERNAME", username)
     return username, channel, version, login_username
 
 
