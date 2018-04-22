@@ -38,7 +38,6 @@ To solve the upload, some variables are customized by default:
 **CONAN_UPLOAD**: https://api.bintray.com/conan/bincrafters/public-conan  
 **CONAN_REFERENCE**: Fields **name** and **version** from conanfile.py  
 **CONAN_USERNAME**: Get from CI env vars. Otherwise, use **bincrafters**  
-**CONAN_LOGIN_USERNAME**: Get from CI env vars. Otherwise, use **bincrafters-user**  
 **CONAN_VERSION**: Get from CI env vars.  
 **CONAN_VERSION**: Field **version** from conanfile.py  
 **CONAN_UPLOAD_ONLY_WHEN_STABLE**: True for default template. False for Boost builds.  
