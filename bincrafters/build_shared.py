@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conan.packager import ConanMultiPackager, split_colon_env
+from cpt.packager import ConanMultiPackager
+from cpt.tools import split_colon_env
 import os
 import re
 import platform
