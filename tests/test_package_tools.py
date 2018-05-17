@@ -134,3 +134,15 @@ def test_get_os():
 def test_ci_is_running():
     expected = True if os.getenv("CI", None) is not None else False
     assert expected == build_shared.is_ci_running()
+
+def test_build_policy_not_set():
+    builder = build_template_default.get_builder()
+    assert None == builder.build_policy
+
+def test_build_policy_set_in_args():
+    builder = build_template_default.get_builder(build_policy='missing')
+    assert 'missing' == builder.build_policy
+
+def test_build_policy_set_header_only():
+    builder = build_template_header_only.get_builder(build_policy='missing')
+    assert 'missing' == builder.build_policy
