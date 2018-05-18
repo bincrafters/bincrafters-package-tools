@@ -24,17 +24,17 @@ after_success:
 
 deploy:
   - provider: pypi
-    user: uilianries
+    user: "uilianries"
     password:
-      secure: ZFeGvYAvusoylxjYlkKLfAjfGCLVH/f7br8xTo2VzVF2ixEErsez58fzUL8BCr7DsapvWu+vCrgeJbacVmnN75MroCIQVKcSjYVnFU9c2N4jphv0xv97v4ai8htSk1TCa76weKO9k+QE4r0GmZwzsO8mxAue2Hk6WHmFLM8aeg9n2JZpGfRX/u3dt6a5zEy8o+52KsihtX/ac8fYa7i4cQDwpZIXWTh1lfbeKw8kE+W7SSJrYCXM3bD3I+yObUlESYitB3RyNjzucC+DpWV0T12MUWmQlgVcYscj0rvGiPBxH+rnMUtwvDq/ndJqsAVbUnkynWxnIoM1OYNU4QuBj28JJdzlNSHIDB75l0PDuL+GFdZryfHickNUql+GQHypykGTG4r/oIWr+eR+1EEyw1yl6Ab7dRQ8dCYWXOOFD7sHCzw2MKlbQkREs9kWEXTZ0tKEHxB+J7WlFszPwXSOIlaEtHnQk79uifrpwsYhqSm/a9+NWgQqWkw/83RAGxbtaSGKNiDzWg9ZL/pRPIb8MOfcPYA++TPwz6Dvag1xY0MymdKwnGS+Sv662BXdcmgb5vCtJxKJQ/EyziArYBH9ITbEwrbBIFN3N6dZ+TjsBeB974Mzuc781sjFQxpOxY5m4wfspkBV3E0+Px6M/2xPdC+iVkiuptpOuGJbvPnD0S0=
+      secure: "ZFeGvYAvusoylxjYlkKLfAjfGCLVH/f7br8xTo2VzVF2ixEErsez58fzUL8BCr7DsapvWu+vCrgeJbacVmnN75MroCIQVKcSjYVnFU9c2N4jphv0xv97v4ai8htSk1TCa76weKO9k+QE4r0GmZwzsO8mxAue2Hk6WHmFLM8aeg9n2JZpGfRX/u3dt6a5zEy8o+52KsihtX/ac8fYa7i4cQDwpZIXWTh1lfbeKw8kE+W7SSJrYCXM3bD3I+yObUlESYitB3RyNjzucC+DpWV0T12MUWmQlgVcYscj0rvGiPBxH+rnMUtwvDq/ndJqsAVbUnkynWxnIoM1OYNU4QuBj28JJdzlNSHIDB75l0PDuL+GFdZryfHickNUql+GQHypykGTG4r/oIWr+eR+1EEyw1yl6Ab7dRQ8dCYWXOOFD7sHCzw2MKlbQkREs9kWEXTZ0tKEHxB+J7WlFszPwXSOIlaEtHnQk79uifrpwsYhqSm/a9+NWgQqWkw/83RAGxbtaSGKNiDzWg9ZL/pRPIb8MOfcPYA++TPwz6Dvag1xY0MymdKwnGS+Sv662BXdcmgb5vCtJxKJQ/EyziArYBH9ITbEwrbBIFN3N6dZ+TjsBeB974Mzuc781sjFQxpOxY5m4wfspkBV3E0+Px6M/2xPdC+iVkiuptpOuGJbvPnD0S0="
     on:
       tags: true
       condition: "$TRAVIS_PYTHON_VERSION = '2.7'"
   - provider: pypi
-    user: uilianries
+    user: "uilianries"
     server: https://test.pypi.org/legacy/
     password:
-      secure: Sbkepzl1ImipKbQWfzDN88pJ2J99/ysTIq0i8GVQhgIJbfa3zLbmO0ARRbq5LNa9G+XpZe9ckhcBRE5Rrco5q4kvcuE/EmhPMH6XKNJ9A3f8cTyl+7L7W8MlnqD3iQXbVJNCiJFvDXmsN9QP6aGJ5XyG3wR3o0hLorCN2T772cHOOv9SM05MDv3jx8ec6h4eZ7mBnQpseVAtadls+FhtRHLJDhxqGWayuMhvCPE/wz65aZIux1vrelsg+NmlRbV3P6E/TdK2xiVcDRU1nS5O3lSnUR4xjhkaXrSK7kCm0KRSDhVM2PTAGeqknAos2wSq3+69pScTh33rFEsWUM03javIs6UeD590su0YyJe+6BPXCH21nb+SBPZpAfUArjGdJku4oPgeVgmBrIE8KE7S9nbBKR0uPdky+xdRshs8JQl/9+vjTeuxcNmwQb3WmQ9RDBNcyxaa8uZj73qAnuXDiHQkKdM2F1ylOachmRsfuzPmk0lYghOurYg4/g1C8pNQHyngu0v/TEdLSFi+XuqW/ouWZd+X9Qc/15o/9dhtMW20QGqgfzMg99m1gROkiAec5LDKcd+jPzL6lakew+YunSY546m5bvFeP8TyHBYF5Xqth57IT0lGrE+F4Bc02zQVzkqUSMpMl95ONdD/KWNdw+ZFRM7HkLTACe476OxzPB0=
+      secure: "Sbkepzl1ImipKbQWfzDN88pJ2J99/ysTIq0i8GVQhgIJbfa3zLbmO0ARRbq5LNa9G+XpZe9ckhcBRE5Rrco5q4kvcuE/EmhPMH6XKNJ9A3f8cTyl+7L7W8MlnqD3iQXbVJNCiJFvDXmsN9QP6aGJ5XyG3wR3o0hLorCN2T772cHOOv9SM05MDv3jx8ec6h4eZ7mBnQpseVAtadls+FhtRHLJDhxqGWayuMhvCPE/wz65aZIux1vrelsg+NmlRbV3P6E/TdK2xiVcDRU1nS5O3lSnUR4xjhkaXrSK7kCm0KRSDhVM2PTAGeqknAos2wSq3+69pScTh33rFEsWUM03javIs6UeD590su0YyJe+6BPXCH21nb+SBPZpAfUArjGdJku4oPgeVgmBrIE8KE7S9nbBKR0uPdky+xdRshs8JQl/9+vjTeuxcNmwQb3WmQ9RDBNcyxaa8uZj73qAnuXDiHQkKdM2F1ylOachmRsfuzPmk0lYghOurYg4/g1C8pNQHyngu0v/TEdLSFi+XuqW/ouWZd+X9Qc/15o/9dhtMW20QGqgfzMg99m1gROkiAec5LDKcd+jPzL6lakew+YunSY546m5bvFeP8TyHBYF5Xqth57IT0lGrE+F4Bc02zQVzkqUSMpMl95ONdD/KWNdw+ZFRM7HkLTACe476OxzPB0="
     on:
       branch: master
       condition: "$TRAVIS_PYTHON_VERSION = '2.7'"
