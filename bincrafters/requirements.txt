@@ -1,1 +1,1 @@
-conan_package_tools>=0.9.0
+conan_package_tools>=0.17.0

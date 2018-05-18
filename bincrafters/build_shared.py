@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from conan.packager import ConanMultiPackager, split_colon_env
+from cpt.packager import ConanMultiPackager
+from cpt.tools import split_colon_env
 import os
 import re
 import platform
@@ -128,8 +129,7 @@ def get_archs():
         return ["x86_64"]
     return split_colon_env("CONAN_ARCHS") if archs else None
 
-
-def get_builder(args=None):
+def get_builder(args=None, build_policy=None):
     name = get_name_from_recipe()
     username, channel, version, login_username = get_conan_vars()
     reference = "{0}/{1}".format(name, version)
@@ -138,6 +138,7 @@ def get_builder(args=None):
     upload_when_stable = get_upload_when_stable()
     stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "stable/*")
     archs = get_archs()
+    build_policy = os.getenv('CONAN_BUILD_POLICY', build_policy)
     builder = ConanMultiPackager(
         args=args,
         username=username,
@@ -147,6 +148,7 @@ def get_builder(args=None):
         upload=upload,
         remotes=remotes,
         archs=archs,
+        build_policy=build_policy,
         upload_only_when_stable=upload_when_stable,
         stable_branch_pattern=stable_branch_pattern)
 
