@@ -23,7 +23,6 @@ after_success:
 - codecov
 
 deploy:
-  matrix:
   - provider: pypi
     user: uilianries
     password:
