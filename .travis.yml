@@ -23,10 +23,18 @@ after_success:
   - codecov
 
 deploy:
-  provider: pypi
-  user: uilianries
-  password:
-    secure: gKwArc/gRldDrsLLPp6KWfPTcsO+Ti6EzSzWQovM6+6nOu5boWxUg1LPwElkvXGSaoYsMcoCbC6L/KaFqs7Br4e18bX0KYW4RPhpiQNutHNZDF3AoiTygn2bjxeYkrgBHrm5obYkwm9C9NQxJXUdSocvYxaxFuqjUrDSTSFJ3P6m5TwCbUDRRF+pLG0OwNYQ6eR334x6VMb7BMhxfRVOSYTI5kwepacSU8FphC9sZJ2pX3R+h8RO7dCZiRnHah0vd7nAjXy1bn0/awHoZ+Kz69TeyWsKaCPaGgXxywosT3ccDdx/M0jsc5ZgsPSlrDrwDjXRbn/3wCffUwO51JH1m9PDdfIEEyX8wTvUhtUuSgWykZAyl1UyLoVLH7VAJBfA/AFDDwaS5Sn7nP08vf1TwZYtLjZCNItXjTrxw7Tssg7JAy8p58M39osDV1EDx9RHU3HHMyc1gYzS2/WgbiWdzBiptr2Ww+uJzIRvKZ1J+KxDmaKulEQOfvGe1XwEEL3HO8RUWcDReLyv6WnysZI7oknrFNOHkEVwVhmjKZ2S+sO9TtIm/qm1fGVHjRlAHCtkTg72b54hp11QO5mf/jBjLVY7YTqUop7eHFurwdRZHQP9SMIeoSkdfrXVIbbNrN6iZkiAZCUH2F5lZW7kE8gElPPxe33Ej4meV9MI7BT8Z+E=
-  on:
-    tags: true
-    condition: $TRAVIS_PYTHON_VERSION = '2.7'
+  - provider: pypi
+    user: uilianries
+    password:
+      secure: IPM212THyvjBlpEizeHXY5c6fSYmWtABdIY75QNF2wu37iJHQJDqfbSD7md6ncDJ6zoELXTbFj4X52TyLiGb8F6rPIRlQfqtKXJ2tD96wOAQTxV5Ft0y21HuVma70jKACm+YbkmzGee2YwDqXaZDzJ0JtPcfm19n1niuOmZwcmkOrDdGY50x62ofc0PLYbljf140AazJA7uCwLVm0j8JDWb891g9GKzbJ+xzKp7RQe8PjFh7kRfKgXz3WiiJTv56ylPoIKzM9bTTOYa6YTNEAAJkY1gWSfgm97fEOWTZXQ7M10Qi0Q3poo+d+9x374Ea+ejDiWJvGvTpmomfaRExgKd7de8ySzFfp9no8RzVTWr/ugf00qIiGH9CTg+H7egsBCBlvcDffBEqcUQu/Z4taeLp4qFUhxaOy7K3c5zlb7oa+o2MMUdzKs0mJsoTcImAmtHQw3xq8BFN46lfnNxtMkauwNlsrm7v1JEePDk96BudhXXDEpNgmh4/z+qk9YpE4y9GZmbqAhVH4no5svn7McjBsxJB8EUmLDc5XqlCvY09gm8+NnKE7HqG0lMKaZKKGPUbzPCrA6yieUo3Bl8ZNpHQJKTSesz8h9IBYDMit+l3sSIYqmIR2y92Ma+3lhTwP69t33u7/7F+ntK2+Ksl9MJm8pWMPn72pwWmh0Psgrg=
+    on:
+      tags: true
+      condition: $TRAVIS_PYTHON_VERSION = '2.7'
+  - provider: pypi
+    user: uilianries
+    server: https://test.pypi.org/legacy/
+    password:
+      secure: IPM212THyvjBlpEizeHXY5c6fSYmWtABdIY75QNF2wu37iJHQJDqfbSD7md6ncDJ6zoELXTbFj4X52TyLiGb8F6rPIRlQfqtKXJ2tD96wOAQTxV5Ft0y21HuVma70jKACm+YbkmzGee2YwDqXaZDzJ0JtPcfm19n1niuOmZwcmkOrDdGY50x62ofc0PLYbljf140AazJA7uCwLVm0j8JDWb891g9GKzbJ+xzKp7RQe8PjFh7kRfKgXz3WiiJTv56ylPoIKzM9bTTOYa6YTNEAAJkY1gWSfgm97fEOWTZXQ7M10Qi0Q3poo+d+9x374Ea+ejDiWJvGvTpmomfaRExgKd7de8ySzFfp9no8RzVTWr/ugf00qIiGH9CTg+H7egsBCBlvcDffBEqcUQu/Z4taeLp4qFUhxaOy7K3c5zlb7oa+o2MMUdzKs0mJsoTcImAmtHQw3xq8BFN46lfnNxtMkauwNlsrm7v1JEePDk96BudhXXDEpNgmh4/z+qk9YpE4y9GZmbqAhVH4no5svn7McjBsxJB8EUmLDc5XqlCvY09gm8+NnKE7HqG0lMKaZKKGPUbzPCrA6yieUo3Bl8ZNpHQJKTSesz8h9IBYDMit+l3sSIYqmIR2y92Ma+3lhTwP69t33u7/7F+ntK2+Ksl9MJm8pWMPn72pwWmh0Psgrg=
+    on:
+      branch: master
+      condition: "$TRAVIS_PYTHON_VERSION = '2.7'"
