@@ -1,40 +1,41 @@
 matrix:
   fast_finish: true
   include:
-    - os: linux
-      sudo: false
-      language: python
-      python: '2.7'
-    - os: linux
-      sudo: false
-      language: python
-      python: '3.6'
-    - os: osx
-      language: generic
-      osx_image: xcode9
+  - os: linux
+    sudo: false
+    language: python
+    python: '2.7'
+  - os: linux
+    sudo: false
+    language: python
+    python: '3.6'
+  - os: osx
+    language: generic
+    osx_image: xcode9
 
 install:
-  - .travis/install.sh
+  - ".travis/install.sh"
 
 script:
-  - .travis/run.sh
+  - ".travis/run.sh"
 
 after_success:
-  - codecov
+- codecov
 
 deploy:
+  matrix:
   - provider: pypi
     user: uilianries
     password:
-      secure: IPM212THyvjBlpEizeHXY5c6fSYmWtABdIY75QNF2wu37iJHQJDqfbSD7md6ncDJ6zoELXTbFj4X52TyLiGb8F6rPIRlQfqtKXJ2tD96wOAQTxV5Ft0y21HuVma70jKACm+YbkmzGee2YwDqXaZDzJ0JtPcfm19n1niuOmZwcmkOrDdGY50x62ofc0PLYbljf140AazJA7uCwLVm0j8JDWb891g9GKzbJ+xzKp7RQe8PjFh7kRfKgXz3WiiJTv56ylPoIKzM9bTTOYa6YTNEAAJkY1gWSfgm97fEOWTZXQ7M10Qi0Q3poo+d+9x374Ea+ejDiWJvGvTpmomfaRExgKd7de8ySzFfp9no8RzVTWr/ugf00qIiGH9CTg+H7egsBCBlvcDffBEqcUQu/Z4taeLp4qFUhxaOy7K3c5zlb7oa+o2MMUdzKs0mJsoTcImAmtHQw3xq8BFN46lfnNxtMkauwNlsrm7v1JEePDk96BudhXXDEpNgmh4/z+qk9YpE4y9GZmbqAhVH4no5svn7McjBsxJB8EUmLDc5XqlCvY09gm8+NnKE7HqG0lMKaZKKGPUbzPCrA6yieUo3Bl8ZNpHQJKTSesz8h9IBYDMit+l3sSIYqmIR2y92Ma+3lhTwP69t33u7/7F+ntK2+Ksl9MJm8pWMPn72pwWmh0Psgrg=
+      secure: velhyGQUxZ1quh5sTJUDaK5uGtuqS4vAZ09+QVNb6Y9A/TD8WiDIYuoJzL7ThVN0lyyoWnn1rbeVmGLpHyyHHdfadpKRNyvDDEKNPrgtQaD/LB6vK+mocbbqqRMETXNwkmvX5aQ4P6Ul7A2YQ7f7eSAmMAOb/iwZWfIbw2LO1mbHffMXAYslWVe7gErY9PruRUTBykcflowT/q2fN4Kwzoltaqkbwgsf5yhr0ibPQQay/d5TcklQy/2G8SmheZL/NqK0Bk33H5V0iyL35S2O3XAqWypD4mBW5KPWZVL2ZdClhUU/wHYe/P9NegWwsgJ4S1iu3DEzKdb2sbqa06Lb7X8kfClfGVteiEUwi0HO/9ssxryznWqj4R+zqs8zWgYYc3Nx6/5h0sPdLLhNrZgZFF4r5xeHDCO5zU+nV/YzKoYkXj7NRK0Eir1nyow8KT+jULURe346kqM3OrBOz4Y65HYvA7V9YYXdq52VC+ZSWPv7VHPqQLPMouhmBTBGYdbrxcVPMeL2AndQhUQkI7vBrPjWKPNVbbmdaJyS6LTT0LCS0MKcqk8OeXW178KRRzIRqm5q5xmgWPhx+LjcAqJiVyyGCofbb5odcobAqBHCeM+IY9BeBKdPLFnv5bEcSYeaMz9KQTFAj9BDdNOjf0H7oq/SSqQundK0nxyukv8u5Jc=
     on:
       tags: true
-      condition: $TRAVIS_PYTHON_VERSION = '2.7'
+      condition: "$TRAVIS_PYTHON_VERSION = '2.7'"
   - provider: pypi
     user: uilianries
     server: https://test.pypi.org/legacy/
     password:
-      secure: IPM212THyvjBlpEizeHXY5c6fSYmWtABdIY75QNF2wu37iJHQJDqfbSD7md6ncDJ6zoELXTbFj4X52TyLiGb8F6rPIRlQfqtKXJ2tD96wOAQTxV5Ft0y21HuVma70jKACm+YbkmzGee2YwDqXaZDzJ0JtPcfm19n1niuOmZwcmkOrDdGY50x62ofc0PLYbljf140AazJA7uCwLVm0j8JDWb891g9GKzbJ+xzKp7RQe8PjFh7kRfKgXz3WiiJTv56ylPoIKzM9bTTOYa6YTNEAAJkY1gWSfgm97fEOWTZXQ7M10Qi0Q3poo+d+9x374Ea+ejDiWJvGvTpmomfaRExgKd7de8ySzFfp9no8RzVTWr/ugf00qIiGH9CTg+H7egsBCBlvcDffBEqcUQu/Z4taeLp4qFUhxaOy7K3c5zlb7oa+o2MMUdzKs0mJsoTcImAmtHQw3xq8BFN46lfnNxtMkauwNlsrm7v1JEePDk96BudhXXDEpNgmh4/z+qk9YpE4y9GZmbqAhVH4no5svn7McjBsxJB8EUmLDc5XqlCvY09gm8+NnKE7HqG0lMKaZKKGPUbzPCrA6yieUo3Bl8ZNpHQJKTSesz8h9IBYDMit+l3sSIYqmIR2y92Ma+3lhTwP69t33u7/7F+ntK2+Ksl9MJm8pWMPn72pwWmh0Psgrg=
+      secure: velhyGQUxZ1quh5sTJUDaK5uGtuqS4vAZ09+QVNb6Y9A/TD8WiDIYuoJzL7ThVN0lyyoWnn1rbeVmGLpHyyHHdfadpKRNyvDDEKNPrgtQaD/LB6vK+mocbbqqRMETXNwkmvX5aQ4P6Ul7A2YQ7f7eSAmMAOb/iwZWfIbw2LO1mbHffMXAYslWVe7gErY9PruRUTBykcflowT/q2fN4Kwzoltaqkbwgsf5yhr0ibPQQay/d5TcklQy/2G8SmheZL/NqK0Bk33H5V0iyL35S2O3XAqWypD4mBW5KPWZVL2ZdClhUU/wHYe/P9NegWwsgJ4S1iu3DEzKdb2sbqa06Lb7X8kfClfGVteiEUwi0HO/9ssxryznWqj4R+zqs8zWgYYc3Nx6/5h0sPdLLhNrZgZFF4r5xeHDCO5zU+nV/YzKoYkXj7NRK0Eir1nyow8KT+jULURe346kqM3OrBOz4Y65HYvA7V9YYXdq52VC+ZSWPv7VHPqQLPMouhmBTBGYdbrxcVPMeL2AndQhUQkI7vBrPjWKPNVbbmdaJyS6LTT0LCS0MKcqk8OeXW178KRRzIRqm5q5xmgWPhx+LjcAqJiVyyGCofbb5odcobAqBHCeM+IY9BeBKdPLFnv5bEcSYeaMz9KQTFAj9BDdNOjf0H7oq/SSqQundK0nxyukv8u5Jc=
     on:
       branch: master
       condition: "$TRAVIS_PYTHON_VERSION = '2.7'"
