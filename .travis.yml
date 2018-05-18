@@ -12,14 +12,17 @@ matrix:
   - os: osx
     language: generic
     osx_image: xcode9
+
 install:
-- ".travis/install.sh"
+  - ".travis/install.sh"
+
 script:
-- ".travis/run.sh"
+  - ".travis/run.sh"
+
 after_success:
-- codecov
+  - codecov
+
 deploy:
-  matrix:
   - provider: pypi
     user: uilianries
     password:
