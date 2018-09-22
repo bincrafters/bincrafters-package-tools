@@ -81,8 +81,7 @@ def get_version_from_ci():
 
 def get_version():
     ci_ver = get_version_from_ci()
-    recipe_ver = get_version_from_recipe()
-    return ci_ver if ci_ver else recipe_ver
+    return ci_ver if ci_ver else get_version_from_recipe()
 
 
 def get_conan_vars():
