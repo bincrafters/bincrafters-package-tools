@@ -17,7 +17,7 @@ def add_boost_shared(build):
 
 
 def get_builder(args=None,
-                shared_option_name=None,
+                shared_option_name=False,
                 pure_c=False,
                 dll_with_static_runtime=False,
                 build_policy=None):
