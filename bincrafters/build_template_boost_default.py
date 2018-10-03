@@ -26,6 +26,8 @@ def get_builder(args=None,
     # Empty string allows boost packages upload for testing branch
     os.environ["CONAN_UPLOAD_ONLY_WHEN_STABLE"] = ""
 
+    shared_option_name = False if shared_option_name is None and not build_shared.is_shared() else shared_option_name
+
     builder = build_template_default.get_builder(
         args=args,
         shared_option_name=shared_option_name,
