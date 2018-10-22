@@ -8,6 +8,11 @@ import re
 import platform
 
 
+def get_bool_from_env(var_name):    
+    val = os.getenv(var_name, None)
+    return val not in (None, "0", "None", "False")
+
+
 def get_value_from_recipe(search_string, recipe="conanfile.py"):
     with open(recipe, "r") as conanfile:
         contents = conanfile.read()
@@ -114,7 +119,7 @@ def get_conan_remotes(username):
 
 
 def get_upload_when_stable():
-    env_value = os.getenv("CONAN_UPLOAD_ONLY_WHEN_STABLE")
+    env_value = get_bool_from_env("CONAN_UPLOAD_ONLY_WHEN_STABLE")
     return True if env_value is None else env_value
 
 
