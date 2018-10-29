@@ -4,13 +4,12 @@
 from bincrafters import build_shared
 
 
-def get_builder(args=None,
-                shared_option_name=None,
+def get_builder(shared_option_name=None,
                 pure_c=True,
                 dll_with_static_runtime=False,
                 build_policy=None):
 
-    builder = build_shared.get_builder(args, build_policy)
+    builder = build_shared.get_builder(build_policy)
     if shared_option_name is None and build_shared.is_shared():
         shared_option_name = "%s:shared" % build_shared.get_name_from_recipe()
 

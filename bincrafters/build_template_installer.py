@@ -4,5 +4,5 @@
 from bincrafters import build_shared
 
 
-def get_builder(args=None, **kwargs):
-    return build_shared.get_builder(args, **kwargs)
+def get_builder(**kwargs):
+    return build_shared.get_builder(**kwargs)

@@ -16,8 +16,7 @@ def add_boost_shared(build):
     return build
 
 
-def get_builder(args=None,
-                shared_option_name=None,
+def get_builder(shared_option_name=None,
                 pure_c=False,
                 dll_with_static_runtime=False,
                 build_policy=None):
@@ -29,7 +28,6 @@ def get_builder(args=None,
     shared_option_name = False if shared_option_name is None and not build_shared.is_shared() else shared_option_name
 
     builder = build_template_default.get_builder(
-        args=args,
         shared_option_name=shared_option_name,
         pure_c=pure_c,
         dll_with_static_runtime=dll_with_static_runtime,

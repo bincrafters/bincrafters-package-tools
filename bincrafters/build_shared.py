@@ -133,7 +133,7 @@ def get_archs():
         return ["x86_64"]
     return split_colon_env("CONAN_ARCHS") if archs else None
 
-def get_builder(args=None, build_policy=None):
+def get_builder(build_policy=None):
     name = get_name_from_recipe()
     username, channel, version, login_username = get_conan_vars()
     reference = "{0}/{1}".format(name, version)
@@ -144,7 +144,6 @@ def get_builder(args=None, build_policy=None):
     archs = get_archs()
     build_policy = os.getenv('CONAN_BUILD_POLICY', build_policy)
     builder = ConanMultiPackager(
-        args=args,
         username=username,
         login_username=login_username,
         channel=channel,
