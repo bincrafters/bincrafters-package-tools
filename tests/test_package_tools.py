@@ -21,6 +21,7 @@ def set_matrix_variables():
     elif platform.system() == "Darwin":
         os.environ["CONAN_APPLE_CLANG_VERSIONS"] = "9.0"
 
+
 @pytest.fixture()
 def set_minimal_build_environment():
     os.environ["CONAN_ARCHS"] = "x86"
@@ -29,16 +30,8 @@ def set_minimal_build_environment():
     del os.environ["CONAN_ARCHS"]
     del os.environ["CONAN_BUILD_TYPES"]
 
-@pytest.fixture()
-def set_upload_when_stable():
-    os.environ["CONAN_UPLOAD_ONLY_WHEN_STABLE"] = "FOOBAR"
 
-
-def get_upload_when_stable():
-    return os.environ["CONAN_UPLOAD_ONLY_WHEN_STABLE"]
-
-
-def test_build_template_boost_default(set_upload_when_stable):
+def test_build_template_boost_default():
     builder = build_template_boost_default.get_builder()
 
     for settings, options, env_vars, build_requires, reference in builder.items:
@@ -54,7 +47,7 @@ def test_build_template_boost_default(set_upload_when_stable):
     elif platform.system() == "Darwin":
         assert 4 == len(builder.items)
 
-    assert "" == get_upload_when_stable()
+    assert builder.upload_only_when_stable == ""
 
 
 def test_build_template_default():
@@ -120,12 +113,12 @@ def test_build_header_only():
     assert 1 == len(builder.items)
 
 
-def test_build_boost_header_only(set_upload_when_stable):
+def test_build_boost_header_only():
     builder = build_template_boost_header_only.get_builder()
     for settings, options, env_vars, build_requires, reference in builder.items:
         assert 0 == len(options)
     assert 1 == len(builder.items)
-    assert "" == get_upload_when_stable()
+    assert builder.upload_only_when_stable == ""
 
 
 def test_get_os():
@@ -137,13 +130,16 @@ def test_ci_is_running():
     expected = True if os.getenv("CI", None) is not None else False
     assert expected == build_shared.is_ci_running()
 
+
 def test_build_policy_not_set():
     builder = build_template_default.get_builder()
     assert None == builder.build_policy
 
+
 def test_build_policy_set_in_args():
     builder = build_template_default.get_builder(build_policy='missing')
     assert 'missing' == builder.build_policy
+
 
 def test_build_policy_set_header_only():
     builder = build_template_header_only.get_builder(build_policy='missing')

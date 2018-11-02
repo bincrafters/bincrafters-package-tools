@@ -4,6 +4,7 @@
 import os
 from bincrafters import build_shared
 from bincrafters import build_template_default
+from conans import tools
 
 
 def add_boost_shared(build):
@@ -23,15 +24,14 @@ def get_builder(shared_option_name=None,
 
     # Bincrafters default is to upload only when stable, but boost is an exception
     # Empty string allows boost packages upload for testing branch
-    os.environ["CONAN_UPLOAD_ONLY_WHEN_STABLE"] = ""
+    with tools.environment_append({"CONAN_UPLOAD_ONLY_WHEN_STABLE": ""}):
+        shared_option_name = False if shared_option_name is None and not build_shared.is_shared() else shared_option_name
 
-    shared_option_name = False if shared_option_name is None and not build_shared.is_shared() else shared_option_name
+        builder = build_template_default.get_builder(
+            shared_option_name=shared_option_name,
+            pure_c=pure_c,
+            dll_with_static_runtime=dll_with_static_runtime,
+            build_policy=build_policy)
+        builder.builds = map(add_boost_shared, builder.items)
 
-    builder = build_template_default.get_builder(
-        shared_option_name=shared_option_name,
-        pure_c=pure_c,
-        dll_with_static_runtime=dll_with_static_runtime,
-        build_policy=build_policy)
-    builder.builds = map(add_boost_shared, builder.items)
-
-    return builder
+        return builder
