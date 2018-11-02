@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from cpt.packager import ConanMultiPackager
-from cpt.tools import split_colon_env
 import os
 import re
 import platform
+from cpt.packager import ConanMultiPackager
+from cpt.tools import split_colon_env
 
 
-def get_bool_from_env(var_name):    
-    val = os.getenv(var_name, None)
-    return val not in (None, "0", "None", "False")
+def get_bool_from_env(var_name, default="0"):
+    val = os.getenv(var_name) or default
+    return str(val).lower() in ["1", "true", "yes", "y"]
 
 
 def get_value_from_recipe(search_string, recipe="conanfile.py"):
@@ -119,8 +119,7 @@ def get_conan_remotes(username):
 
 
 def get_upload_when_stable():
-    env_value = get_bool_from_env("CONAN_UPLOAD_ONLY_WHEN_STABLE")
-    return True if env_value is None else env_value
+    return get_bool_from_env("CONAN_UPLOAD_ONLY_WHEN_STABLE", default="1")
 
 
 def get_os():
