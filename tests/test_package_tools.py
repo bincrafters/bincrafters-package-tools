@@ -71,6 +71,8 @@ def test_build_template_default():
     elif platform.system() == "Darwin":
         assert 4 == len(builder.items)
 
+    assert builder.upload_only_when_stable
+
 
 def test_build_template_default_minimal(set_minimal_build_environment):
     builder = build_template_default.get_builder()
