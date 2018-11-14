@@ -8,6 +8,10 @@ from cpt.packager import ConanMultiPackager
 from cpt.tools import split_colon_env
 
 
+def get_bool_from_env(var_name, default="1"):
+    val = os.getenv(var_name, default)
+    return str(val).lower() in ("1", "true", "yes", "y")
+
 def get_value_from_recipe(search_string, recipe="conanfile.py"):
     with open(recipe, "r") as conanfile:
         contents = conanfile.read()
@@ -114,7 +118,7 @@ def get_conan_remotes(username):
 
 
 def get_upload_when_stable():
-    return os.getenv("CONAN_UPLOAD_ONLY_WHEN_STABLE", True)
+    return get_bool_from_env("CONAN_UPLOAD_ONLY_WHEN_STABLE")
 
 
 def get_os():

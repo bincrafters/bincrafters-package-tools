@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+import platform
+import pytest
 from bincrafters import build_shared
 from bincrafters import build_template_boost_default
 from bincrafters import build_template_boost_header_only
 from bincrafters import build_template_default
 from bincrafters import build_template_header_only
 from bincrafters import build_template_installer
-import os
-import platform
-import pytest
 
 
 @pytest.fixture(autouse=True)
@@ -31,6 +31,13 @@ def set_minimal_build_environment():
     del os.environ["CONAN_BUILD_TYPES"]
 
 
+@pytest.fixture()
+def set_upload_when_stable_false():
+    os.environ["CONAN_UPLOAD_ONLY_WHEN_STABLE"] = "0"
+    yield
+    del os.environ["CONAN_UPLOAD_ONLY_WHEN_STABLE"]
+
+
 def test_build_template_boost_default():
     builder = build_template_boost_default.get_builder()
 
@@ -47,7 +54,7 @@ def test_build_template_boost_default():
     elif platform.system() == "Darwin":
         assert 4 == len(builder.items)
 
-    assert builder.upload_only_when_stable == ""
+    assert False == builder.upload_only_when_stable
 
 
 def test_build_template_default():
@@ -64,7 +71,7 @@ def test_build_template_default():
     elif platform.system() == "Darwin":
         assert 4 == len(builder.items)
 
-    assert builder.upload_only_when_stable
+    assert True == builder.upload_only_when_stable
 
 
 def test_build_template_default_minimal(set_minimal_build_environment):
@@ -118,7 +125,7 @@ def test_build_boost_header_only():
     for settings, options, env_vars, build_requires, reference in builder.items:
         assert 0 == len(options)
     assert 1 == len(builder.items)
-    assert builder.upload_only_when_stable == ""
+    assert builder.upload_only_when_stable == False
 
 
 def test_get_os():
@@ -144,3 +151,13 @@ def test_build_policy_set_in_args():
 def test_build_policy_set_header_only():
     builder = build_template_header_only.get_builder(build_policy='missing')
     assert 'missing' == builder.build_policy
+
+
+def test_upload_only_when_stable_builder(set_upload_when_stable_false):
+    builder = build_template_default.get_builder()
+    assert False == builder.upload_only_when_stable
+
+
+def test_upload_only_when_stable_header_only(set_upload_when_stable_false):
+    builder = build_template_header_only.get_builder()
+    assert False == builder.upload_only_when_stable
