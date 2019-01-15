@@ -4,6 +4,7 @@
 import os
 import re
 import platform
+from six import string_types
 from cpt.packager import ConanMultiPackager
 from cpt.tools import split_colon_env
 
@@ -102,18 +103,22 @@ def get_user_repository(username, repository_name):
 
 def get_conan_upload(username):
     repository_name = os.getenv("BINTRAY_REPOSITORY", "public-conan")
-    return os.getenv("CONAN_UPLOAD", get_user_repository(username, repository_name))
+    return os.getenv("CONAN_UPLOAD", get_user_repository(username, repository_name)).split('@')
 
 
 def get_conan_remotes(username):
-    # While redundant, this moves upload remote to position 0.
-    remotes = [get_conan_upload(username)]
+    remotes = os.getenv("CONAN_REMOTES")
+    if not remotes:
+        # While redundant, this moves upload remote to position 0.
+        remotes = [get_conan_upload(username)]
 
-    # Add bincrafters repository for other users, e.g. if the package would
-    # require other packages from the bincrafters repo.
-    bincrafters_user = "bincrafters"
-    if username != bincrafters_user:
-        remotes.append(get_conan_upload(bincrafters_user))
+        # Add bincrafters repository for other users, e.g. if the package would
+        # require other packages from the bincrafters repo.
+        bincrafters_user = "bincrafters"
+        if username != bincrafters_user:
+            remotes.append(get_conan_upload(bincrafters_user))
+    if isinstance(remotes, string_types):
+        remotes.split('@')
     return remotes
 
 
@@ -136,7 +141,7 @@ def get_builder(build_policy=None):
     username, channel, version, login_username = get_conan_vars()
     reference = "{0}/{1}".format(name, version)
     upload = get_conan_upload(username)
-    remotes = os.getenv("CONAN_REMOTES", get_conan_remotes(username))
+    remotes = get_conan_remotes(username)
     upload_when_stable = get_upload_when_stable()
     stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "stable/*")
     archs = get_archs()
