@@ -118,7 +118,7 @@ def get_conan_remotes(username):
         if username != bincrafters_user:
             remotes.append(get_conan_upload(bincrafters_user))
     if isinstance(remotes, string_types):
-        remotes.split('@')
+        remotes = remotes.split('@')
     return remotes
 
 
