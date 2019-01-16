@@ -4,7 +4,6 @@
 import os
 import re
 import platform
-from six import string_types
 from cpt.packager import ConanMultiPackager
 from cpt.tools import split_colon_env
 
