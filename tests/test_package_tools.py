@@ -38,6 +38,13 @@ def set_upload_when_stable_false():
     del os.environ["CONAN_UPLOAD_ONLY_WHEN_STABLE"]
 
 
+@pytest.fixture()
+def set_upload_address():
+    os.environ["CONAN_UPLOAD"] = "https://api.bintray.com/conan/foo/bar@False@remotefoo"
+    yield
+    del os.environ["CONAN_UPLOAD"]
+
+
 def test_build_template_boost_default():
     builder = build_template_boost_default.get_builder()
 
@@ -161,3 +168,11 @@ def test_upload_only_when_stable_builder(set_upload_when_stable_false):
 def test_upload_only_when_stable_header_only(set_upload_when_stable_false):
     builder = build_template_header_only.get_builder()
     assert False == builder.upload_only_when_stable
+
+
+def test_format_upload(set_upload_address):
+    builder = build_template_default.get_builder()
+    assert "remotefoo" == builder.remotes_manager.upload_remote_name
+    assert "remotefoo" == builder.remotes_manager._upload.name
+    assert "https://api.bintray.com/conan/foo/bar" == builder.remotes_manager._upload.url
+    assert 'False' == builder.remotes_manager._upload.use_ssl

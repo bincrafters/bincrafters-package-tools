@@ -102,23 +102,26 @@ def get_user_repository(username, repository_name):
 
 
 def get_conan_upload(username):
+    upload = os.getenv("CONAN_UPLOAD")
+    if upload:
+        return upload.split('@') if '@' in upload else upload
+
     repository_name = os.getenv("BINTRAY_REPOSITORY", "public-conan")
-    return os.getenv("CONAN_UPLOAD", get_user_repository(username, repository_name)).split('@')
+    return get_user_repository(username, repository_name)
 
 
 def get_conan_remotes(username):
     remotes = os.getenv("CONAN_REMOTES")
-    if not remotes:
-        # While redundant, this moves upload remote to position 0.
-        remotes = [get_conan_upload(username)]
+    if remotes:
+        return remotes.split('@') if '@' in remotes else remotes
 
-        # Add bincrafters repository for other users, e.g. if the package would
-        # require other packages from the bincrafters repo.
-        bincrafters_user = "bincrafters"
-        if username != bincrafters_user:
-            remotes.append(get_conan_upload(bincrafters_user))
-    if isinstance(remotes, string_types):
-        remotes = remotes.split('@')
+    # While redundant, this moves upload remote to position 0.
+    remotes = [get_conan_upload(username)]
+    # Add bincrafters repository for other users, e.g. if the package would
+    # require other packages from the bincrafters repo.
+    bincrafters_user = "bincrafters"
+    if username != bincrafters_user:
+        remotes.append(get_conan_upload(bincrafters_user))
     return remotes
 
 
