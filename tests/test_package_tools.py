@@ -45,6 +45,13 @@ def set_upload_address():
     del os.environ["CONAN_UPLOAD"]
 
 
+@pytest.fixture()
+def set_remote_address():
+    os.environ["CONAN_REMOTES"] = "https://api.bintray.com/conan/foo/bar@False@remotefoo"
+    yield
+    del os.environ["CONAN_REMOTES"]
+
+
 def test_build_template_boost_default():
     builder = build_template_boost_default.get_builder()
 
@@ -176,3 +183,11 @@ def test_format_upload(set_upload_address):
     assert "remotefoo" == builder.remotes_manager._upload.name
     assert "https://api.bintray.com/conan/foo/bar" == builder.remotes_manager._upload.url
     assert 'False' == builder.remotes_manager._upload.use_ssl
+
+
+def test_format_remote(set_remote_address):
+    builder = build_template_default.get_builder()
+    remote = builder.remotes_manager._remotes[0]
+    assert "remotefoo" == remote.name
+    assert "https://api.bintray.com/conan/foo/bar" == remote.url
+    assert 'False' == remote.use_ssl

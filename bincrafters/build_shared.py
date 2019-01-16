@@ -112,7 +112,7 @@ def get_conan_upload(username):
 def get_conan_remotes(username):
     remotes = os.getenv("CONAN_REMOTES")
     if remotes:
-        return remotes.split('@') if '@' in remotes else remotes
+        return [remotes.split('@')] if '@' in remotes else [remotes]
 
     # While redundant, this moves upload remote to position 0.
     remotes = [get_conan_upload(username)]
