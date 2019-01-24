@@ -52,6 +52,20 @@ def set_remote_address():
     del os.environ["CONAN_REMOTES"]
 
 
+@pytest.fixture()
+def set_multi_remote_address():
+    os.environ["CONAN_REMOTES"] = "https://api.bintray.com/conan/foo/bar,https://api.bintray.com/conan/qux/baz"
+    yield
+    del os.environ["CONAN_REMOTES"]
+
+
+@pytest.fixture()
+def set_mixed_remote_address():
+    os.environ["CONAN_REMOTES"] = "https://api.bintray.com/conan/foo/bar@False@remotefoo,https://api.bintray.com/conan/qux/baz"
+    yield
+    del os.environ["CONAN_REMOTES"]
+
+
 def test_build_template_boost_default():
     builder = build_template_boost_default.get_builder()
 
@@ -188,6 +202,33 @@ def test_format_upload(set_upload_address):
 def test_format_remote(set_remote_address):
     builder = build_template_default.get_builder()
     remote = builder.remotes_manager._remotes[0]
+    assert 1 == len(builder.remotes_manager._remotes)
     assert "remotefoo" == remote.name
     assert "https://api.bintray.com/conan/foo/bar" == remote.url
-    assert 'False' == remote.use_ssl
+    assert False == remote.use_ssl
+
+
+def test_format_multi_remotes(set_multi_remote_address):
+    builder = build_template_default.get_builder()
+    assert 2 == len(builder.remotes_manager._remotes)
+    remote = builder.remotes_manager._remotes[0]
+    assert "remote0" == remote.name
+    assert "https://api.bintray.com/conan/foo/bar" == remote.url
+    assert remote.use_ssl
+    remote = builder.remotes_manager._remotes[1]
+    assert "remote1" == remote.name
+    assert "https://api.bintray.com/conan/qux/baz" == remote.url
+    assert True == remote.use_ssl
+
+
+def test_format_mixed_remotes(set_mixed_remote_address):
+    builder = build_template_default.get_builder()
+    assert 2 == len(builder.remotes_manager._remotes)
+    remote = builder.remotes_manager._remotes[0]
+    assert "remotefoo" == remote.name
+    assert "https://api.bintray.com/conan/foo/bar" == remote.url
+    assert False == remote.use_ssl
+    remote = builder.remotes_manager._remotes[1]
+    assert "remote1" == remote.name
+    assert "https://api.bintray.com/conan/qux/baz" == remote.url
+    assert True == remote.use_ssl
