@@ -6,6 +6,7 @@ import re
 import platform
 from cpt.packager import ConanMultiPackager
 from cpt.tools import split_colon_env
+from cpt.remotes import RemotesManager
 
 
 def get_bool_from_env(var_name, default="1"):
@@ -112,7 +113,11 @@ def get_conan_upload(username):
 def get_conan_remotes(username):
     remotes = os.getenv("CONAN_REMOTES")
     if remotes:
-        return [remotes.split('@')] if '@' in remotes else [remotes]
+        remotes = remotes.split(',')
+        for remote in reversed(remotes):
+            if '@' in remote:
+                remote = RemotesManager._get_remote_from_str(remote, var_name=remote)
+        return remotes
 
     # While redundant, this moves upload remote to position 0.
     remotes = [get_conan_upload(username)]
