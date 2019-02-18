@@ -7,6 +7,7 @@ import platform
 from cpt.packager import ConanMultiPackager
 from cpt.tools import split_colon_env
 from cpt.remotes import RemotesManager
+from bincrafters.build_paths import BINCRAFTERS_REPO_URL
 
 
 def get_bool_from_env(var_name, default="1"):
@@ -126,6 +127,11 @@ def get_conan_remotes(username):
     bincrafters_user = "bincrafters"
     if username != bincrafters_user:
         remotes.append(get_conan_upload(bincrafters_user))
+
+    # Force Bincrafters repo on remotes
+    if BINCRAFTERS_REPO_URL not in remotes:
+        remotes.append(BINCRAFTERS_REPO_URL)
+
     return remotes
 
 
@@ -142,6 +148,7 @@ def get_archs():
     if get_os() == "Macos" and archs is None:
         return ["x86_64"]
     return split_colon_env("CONAN_ARCHS") if archs else None
+
 
 def get_builder(build_policy=None):
     name = get_name_from_recipe()
