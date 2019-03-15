@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from conans import ConanFile
 from conans import tools
 

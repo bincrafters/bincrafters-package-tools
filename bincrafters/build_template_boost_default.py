@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import os
@@ -20,7 +19,8 @@ def add_boost_shared(build):
 def get_builder(shared_option_name=None,
                 pure_c=False,
                 dll_with_static_runtime=False,
-                build_policy=None):
+                build_policy=None,
+                **kwargs):
 
     # Bincrafters default is to upload only when stable, but boost is an exception
     # Empty string allows boost packages upload for testing branch
@@ -31,7 +31,8 @@ def get_builder(shared_option_name=None,
             shared_option_name=shared_option_name,
             pure_c=pure_c,
             dll_with_static_runtime=dll_with_static_runtime,
-            build_policy=build_policy)
+            build_policy=build_policy,
+            **kwargs)
         builder.builds = map(add_boost_shared, builder.items)
 
         return builder
