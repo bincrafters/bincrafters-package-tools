@@ -6,9 +6,9 @@ from bincrafters import build_template_default
 from conans import tools
 
 
-def add_boost_shared(build):
+def add_boost_shared(build, recipe=None):
     if build_shared.is_shared():
-        shared_option_name = "%s:shared" % build_shared.get_name_from_recipe()
+        shared_option_name = "%s:shared" % build_shared.get_name_from_recipe(recipe=recipe)
         build.options.update({
             'boost_*:shared':
             build.options[shared_option_name]
@@ -20,7 +20,10 @@ def get_builder(shared_option_name=None,
                 pure_c=False,
                 dll_with_static_runtime=False,
                 build_policy=None,
+                cwd=None,
                 **kwargs):
+
+    recipe = build_shared.get_recipe_path(cwd)
 
     # Bincrafters default is to upload only when stable, but boost is an exception
     # Empty string allows boost packages upload for testing branch
@@ -32,7 +35,8 @@ def get_builder(shared_option_name=None,
             pure_c=pure_c,
             dll_with_static_runtime=dll_with_static_runtime,
             build_policy=build_policy,
+            cwd=cwd,
             **kwargs)
-        builder.builds = map(add_boost_shared, builder.items)
+        builder.builds = map(lambda item : add_boost_shared(item, recipe=recipe), builder.items)
 
         return builder
