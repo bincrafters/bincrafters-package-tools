@@ -149,7 +149,7 @@ def get_archs():
     return split_colon_env("CONAN_ARCHS") if archs else None
 
 
-def get_builder(build_policy=None):
+def get_builder(build_policy=None, **kwargs):
     name = get_name_from_recipe()
     username, channel, version, login_username = get_conan_vars()
     reference = "{0}/{1}".format(name, version)
@@ -169,6 +169,7 @@ def get_builder(build_policy=None):
         archs=archs,
         build_policy=build_policy,
         upload_only_when_stable=upload_when_stable,
-        stable_branch_pattern=stable_branch_pattern)
+        stable_branch_pattern=stable_branch_pattern,
+        **kwargs)
 
     return builder
