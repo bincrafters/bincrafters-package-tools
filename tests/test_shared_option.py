@@ -3,6 +3,7 @@
 import tempfile
 import contextlib
 import os
+import shutil
 from bincrafters import build_shared
 
 
@@ -140,20 +141,43 @@ def chdir(path):
         os.chdir(prev_cwd)
 
 
-def create_and_validate(recipe_buffer, expected_value):
-    tempdir = tempfile.mkdtemp()
-    with chdir(tempdir):
-        with open("conanfile.py", "w") as fd:
-            fd.write(recipe_buffer)
-            fd.flush()
-            assert expected_value == build_shared.is_shared()
+@contextlib.contextmanager
+def chdir_subdir(subdir=None):
+    subdirpath = subdir
+    if subdir is None:
+        subdirpath = tempfile.mkdtemp()
+    try:
+        with chdir(subdirpath):
+            yield
+    finally:
+        if subdir is None:
+            shutil.rmtree(subdirpath)
+
+
+def create_and_validate(recipe_buffer, expected_value, optional_subdir=False):
+    with chdir_subdir(subdir=None):
+        if optional_subdir:
+            subdir = "subdir"
+            os.mkdir(subdir)
+        else:
+            subdir = "."
+        with chdir_subdir(subdir=subdir):
+            with open("conanfile.py", "w") as fd:
+                fd.write(recipe_buffer)
+                fd.flush()
+        recipe = build_shared.get_recipe_path(cwd=subdir)
+        assert expected_value == build_shared.is_shared(recipe=recipe)
 
 
 def test_recipe_with_shared_option():
     create_and_validate(recipe_with_shared_1, True)
     create_and_validate(recipe_with_shared_2, True)
+    create_and_validate(recipe_with_shared_1, True, True)
+    create_and_validate(recipe_with_shared_2, True, True)
 
 
 def test_recipe_with_no_shared_option():
     create_and_validate(recipe_with_no_shared_1, False)
     create_and_validate(recipe_with_no_shared_2, False)
+    create_and_validate(recipe_with_no_shared_1, False, True)
+    create_and_validate(recipe_with_no_shared_2, False, True)

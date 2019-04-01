@@ -9,27 +9,37 @@ from cpt.remotes import RemotesManager
 from bincrafters.build_paths import BINCRAFTERS_REPO_URL
 
 
+def get_recipe_path(cwd=None):
+    if cwd is None:
+        return "conanfile.py"
+    else:
+        return os.path.join(cwd, "conanfile.py")
+
+
 def get_bool_from_env(var_name, default="1"):
     val = os.getenv(var_name, default)
     return str(val).lower() in ("1", "true", "yes", "y")
 
-def get_value_from_recipe(search_string, recipe="conanfile.py"):
+
+def get_value_from_recipe(search_string, recipe=None):
+    if recipe is None:
+        recipe = get_recipe_path()
     with open(recipe, "r") as conanfile:
         contents = conanfile.read()
         result = re.search(search_string, contents)
     return result
 
 
-def get_name_from_recipe():
-    return get_value_from_recipe(r'''name\s*=\s*["'](\S*)["']''').groups()[0]
+def get_name_from_recipe(recipe=None):
+    return get_value_from_recipe(r'''name\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
-def get_version_from_recipe():
-    return get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''').groups()[0]
+def get_version_from_recipe(recipe=None):
+    return get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
-def is_shared():
-    match = get_value_from_recipe(r'''options.*=([\s\S]*?)(?=}|$)''')
+def is_shared(recipe=None):
+    match = get_value_from_recipe(r'''options.*=([\s\S]*?)(?=}|$)''', recipe=recipe)
     if match is None:
         return False
     return "shared" in match.groups()[0]
@@ -84,15 +94,15 @@ def get_version_from_ci():
     return version
 
 
-def get_version():
+def get_version(recipe=None):
     ci_ver = get_version_from_ci()
-    return ci_ver if ci_ver else get_version_from_recipe()
+    return ci_ver if ci_ver else get_version_from_recipe(recipe=recipe)
 
 
-def get_conan_vars():
+def get_conan_vars(recipe=None):
     username = os.getenv("CONAN_USERNAME", get_username_from_ci() or "bincrafters")
     channel = os.getenv("CONAN_CHANNEL", get_channel_from_ci())
-    version = os.getenv("CONAN_VERSION", get_version())
+    version = os.getenv("CONAN_VERSION", get_version(recipe=recipe))
     login_username = os.getenv("CONAN_LOGIN_USERNAME", username)
     return username, channel, version, login_username
 
@@ -149,9 +159,10 @@ def get_archs():
     return split_colon_env("CONAN_ARCHS") if archs else None
 
 
-def get_builder(build_policy=None, **kwargs):
-    name = get_name_from_recipe()
-    username, channel, version, login_username = get_conan_vars()
+def get_builder(build_policy=None, cwd=None, **kwargs):
+    recipe = get_recipe_path(cwd)
+    name = get_name_from_recipe(recipe=recipe)
+    username, channel, version, login_username = get_conan_vars(recipe=recipe)
     reference = "{0}/{1}".format(name, version)
     upload = get_conan_upload(username)
     remotes = get_conan_remotes(username)
@@ -170,6 +181,7 @@ def get_builder(build_policy=None, **kwargs):
         build_policy=build_policy,
         upload_only_when_stable=upload_when_stable,
         stable_branch_pattern=stable_branch_pattern,
+        cwd=cwd,
         **kwargs)
 
     return builder

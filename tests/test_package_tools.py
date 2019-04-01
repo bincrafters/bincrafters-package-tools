@@ -232,6 +232,7 @@ def test_format_mixed_remotes(set_mixed_remote_address):
     assert "https://api.bintray.com/conan/qux/baz" == remote.url
     assert True == remote.use_ssl
 
+
 def test_default_remote_address(set_upload_address):
     builder = build_template_default.get_builder()
     assert 2 == len(builder.remotes_manager._remotes)
