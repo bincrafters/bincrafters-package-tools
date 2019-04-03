@@ -10,13 +10,11 @@ from bincrafters.build_paths import BINCRAFTERS_REPO_URL
 
 
 def get_recipe_path(cwd=None):
-    conanfile = os.getenv("CONAN_CONANFILE", None)
-    if conanfile:
+    conanfile = os.getenv("CONAN_CONANFILE", "conanfile.py")
+    if cwd is None:
         return conanfile
-    elif cwd is None:
-        return "conanfile.py"
     else:
-        return os.path.join(cwd, "conanfile.py")
+        return os.path.join(cwd, conanfile)
 
 
 def get_bool_from_env(var_name, default="1"):
