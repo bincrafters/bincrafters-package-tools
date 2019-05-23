@@ -3,11 +3,11 @@
 import os
 import re
 import platform
+from conans.client import conan_api
 from cpt.packager import ConanMultiPackager
 from cpt.tools import split_colon_env
 from cpt.remotes import RemotesManager
 from bincrafters.build_paths import BINCRAFTERS_REPO_URL
-
 
 def get_recipe_path(cwd=None):
     conanfile = os.getenv("CONAN_CONANFILE", "conanfile.py")
@@ -31,15 +31,31 @@ def get_value_from_recipe(search_string, recipe=None):
     return result
 
 
+def inspect_value_from_recipe(attribute, recipe_path):
+    try:
+        conan_instance, _, _ = conan_api.Conan.factory()
+        inspect_result = conan_instance.inspect(path=recipe_path, attributes=[attribute])
+        return inspect_result.get(attribute)
+    except:
+        pass
+    return None
+
+
 def get_name_from_recipe(recipe=None):
-    return get_value_from_recipe(r'''name\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
+    name = inspect_value_from_recipe(attribute="name", recipe_path=get_recipe_path())
+    return name or get_value_from_recipe(r'''name\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def get_version_from_recipe(recipe=None):
-    return get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
+    version = inspect_value_from_recipe(attribute="version", recipe_path=get_recipe_path())
+    return version or get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def is_shared(recipe=None):
+    options = inspect_value_from_recipe(attribute="options", recipe_path=get_recipe_path())
+    if options:
+        return "shared" in options
+
     match = get_value_from_recipe(r'''options.*=([\s\S]*?)(?=}|$)''', recipe=recipe)
     if match is None:
         return False
