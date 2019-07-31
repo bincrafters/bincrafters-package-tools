@@ -161,8 +161,11 @@ def get_conan_remotes(username):
     return remotes
 
 
-def get_upload_when_stable():
-    return get_bool_from_env("CONAN_UPLOAD_ONLY_WHEN_STABLE")
+def get_upload_when_stable(kwargs):
+    upload_when_stable = kwargs.get('upload_only_when_stable')
+    if upload_when_stable is None:
+        kwargs['upload_only_when_stable'] = get_bool_from_env("CONAN_UPLOAD_ONLY_WHEN_STABLE")
+    return kwargs
 
 
 def get_os():
@@ -183,7 +186,7 @@ def get_builder(build_policy=None, cwd=None, **kwargs):
     reference = "{0}/{1}".format(name, version)
     upload = get_conan_upload(username)
     remotes = get_conan_remotes(username)
-    upload_when_stable = get_upload_when_stable()
+    kwargs = get_upload_when_stable(kwargs)
     stable_branch_pattern = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "stable/*")
     archs = get_archs()
     build_policy = os.getenv('CONAN_BUILD_POLICY', build_policy)
@@ -196,7 +199,6 @@ def get_builder(build_policy=None, cwd=None, **kwargs):
         remotes=remotes,
         archs=archs,
         build_policy=build_policy,
-        upload_only_when_stable=upload_when_stable,
         stable_branch_pattern=stable_branch_pattern,
         cwd=cwd,
         **kwargs)

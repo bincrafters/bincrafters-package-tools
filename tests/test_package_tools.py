@@ -185,6 +185,11 @@ def test_upload_only_when_stable_builder(set_upload_when_stable_false):
     assert False == builder.upload_only_when_stable
 
 
+def test_upload_only_when_stable_parameter(set_upload_when_stable_false):
+    builder = build_template_default.get_builder(upload_only_when_stable=True)
+    assert True == builder.upload_only_when_stable
+
+
 def test_upload_only_when_stable_header_only(set_upload_when_stable_false):
     builder = build_template_header_only.get_builder()
     assert False == builder.upload_only_when_stable
