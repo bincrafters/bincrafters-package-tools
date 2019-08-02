@@ -8,6 +8,7 @@ def get_builder(shared_option_name=None,
                 dll_with_static_runtime=False,
                 build_policy=None,
                 cwd=None,
+                reference=None,
                 **kwargs):
     recipe = build_shared.get_recipe_path(cwd)
 
@@ -19,6 +20,6 @@ def get_builder(shared_option_name=None,
         shared_option_name=shared_option_name,
         pure_c=pure_c,
         dll_with_static_runtime=dll_with_static_runtime,
-        **kwargs)
+        reference=reference)
 
     return builder
