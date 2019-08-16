@@ -9,8 +9,8 @@ from cpt.tools import split_colon_env
 from cpt.remotes import RemotesManager
 from bincrafters.build_paths import BINCRAFTERS_REPO_URL
 
-def get_recipe_path(cwd=None):
-    conanfile = os.getenv("CONAN_CONANFILE", "conanfile.py")
+def get_recipe_path(cwd=None, kwargs={}):
+    conanfile = kwargs.get("conanfile", os.getenv("CONAN_CONANFILE", "conanfile.py"))
     if cwd is None:
         return conanfile
     else:
@@ -42,17 +42,17 @@ def inspect_value_from_recipe(attribute, recipe_path):
 
 
 def get_name_from_recipe(recipe=None):
-    name = inspect_value_from_recipe(attribute="name", recipe_path=get_recipe_path())
+    name = inspect_value_from_recipe(attribute="name", recipe_path=get_recipe_path(kwargs={"conanfile": recipe}))
     return name or get_value_from_recipe(r'''name\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def get_version_from_recipe(recipe=None):
-    version = inspect_value_from_recipe(attribute="version", recipe_path=get_recipe_path())
+    version = inspect_value_from_recipe(attribute="version", recipe_path=get_recipe_path(kwargs={"conanfile": recipe}))
     return version or get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def is_shared(recipe=None):
-    options = inspect_value_from_recipe(attribute="options", recipe_path=get_recipe_path())
+    options = inspect_value_from_recipe(attribute="options", recipe_path=get_recipe_path(kwargs={"conanfile": recipe}))
     if options:
         return "shared" in options
 
@@ -119,7 +119,7 @@ def get_version(recipe=None):
 def get_conan_vars(recipe=None, kwargs={}):
     username = kwargs.get("username", os.getenv("CONAN_USERNAME", get_username_from_ci() or "bincrafters"))
     kwargs["channel"] = kwargs.get("channel", os.getenv("CONAN_CHANNEL", get_channel_from_ci()))
-    version = os.getenv("CONAN_VERSION", get_version(recipe=recipe))
+    version = kwargs.get("version", os.getenv("CONAN_VERSION", get_version(recipe=recipe)))
     kwargs["login_username"] = kwargs.get("login_username", os.getenv("CONAN_LOGIN_USERNAME", username))
     kwargs["username"] = username
 
@@ -205,7 +205,7 @@ def get_reference(name, version, kwargs):
 
 
 def get_builder(build_policy=None, cwd=None, **kwargs):
-    recipe = get_recipe_path(cwd)
+    recipe = get_recipe_path(cwd, kwargs)
     name = get_name_from_recipe(recipe=recipe)
     username, version, kwargs = get_conan_vars(recipe=recipe, kwargs=kwargs)
     kwargs = get_reference(name, version, kwargs)

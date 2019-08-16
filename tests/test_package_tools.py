@@ -216,7 +216,7 @@ def test_format_multi_remotes(set_multi_remote_address):
     builder = build_template_default.get_builder()
     assert 2 == len(builder.remotes_manager._remotes)
     remote = builder.remotes_manager._remotes[0]
-    assert "remotefoo" == remote.name
+    assert "remote0" == remote.name
     assert "https://api.bintray.com/conan/foo/bar" == remote.url
     assert remote.use_ssl
     remote = builder.remotes_manager._remotes[1]
@@ -245,5 +245,5 @@ def test_default_remote_address(set_upload_address):
     assert "remotefoo" == remote.name
     assert "https://api.bintray.com/conan/foo/bar" == remote.url
     remote = builder.remotes_manager._remotes[1]
-    assert "upload_repo" == remote.name
+    assert "remote1" == remote.name
     assert "https://api.bintray.com/conan/bincrafters/public-conan" == remote.url
