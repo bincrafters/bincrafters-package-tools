@@ -244,5 +244,5 @@ def test_default_remote_address(set_upload_address):
     assert "remotefoo" == remote.name
     assert "https://api.bintray.com/conan/foo/bar" == remote.url
     remote = builder.remotes_manager._remotes[1]
-    assert "bincrafters" == remote.name
+    assert "upload_repo" == remote.name
     assert "https://api.bintray.com/conan/bincrafters/public-conan" == remote.url
