@@ -3,23 +3,17 @@ matrix:
   include:
   - os: linux
     dist: xenial
-    sudo: false
-    language: python
-    python: '2.7'
-  - os: linux
-    dist: xenial
-    sudo: false
     language: python
     python: '3.7'
   - os: osx
     language: generic
-    osx_image: xcode9
+    osx_image: xcode9.4
 
 install:
-  - ".travis/install.sh"
+  - ".ci/install.sh"
 
 script:
-  - ".travis/run.sh"
+  - ".ci/run.sh"
 
 after_success:
   - codecov
@@ -30,11 +24,11 @@ deploy:
     password: ${PYPI_PASSWORD}
     on:
       tags: true
-      python: 2.7
+      python: 3.7
   - provider: pypi
     user: ${TEST_PYPI_LOGIN_USERNAME}
     server: https://test.pypi.org/legacy/
     password: ${TEST_PYPI_PASSWORD}
     on:
       branch: master
-      python: 2.7
+      python: 3.7
