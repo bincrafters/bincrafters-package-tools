@@ -23,7 +23,7 @@ def set_matrix_variables():
 
 @pytest.fixture()
 def set_minimal_build_environment():
-    os.environ["CONAN_ARCHS"] = "x86"
+    os.environ["CONAN_ARCHS"] = "x86_64"
     os.environ["CONAN_BUILD_TYPES"] = "Release"
     yield
     del os.environ["CONAN_ARCHS"]
@@ -75,9 +75,9 @@ def test_build_template_boost_default():
             assert "x86_64" == settings['arch']
 
     if platform.system() == "Linux":
-        assert 16 == len(builder.items)
+        assert 8 == len(builder.items)
     elif platform.system() == "Windows":
-        assert 12 == len(builder.items)
+        assert 6 == len(builder.items)
     elif platform.system() == "Darwin":
         assert 4 == len(builder.items)
 
@@ -92,9 +92,9 @@ def test_build_template_default():
             assert "x86_64" == settings['arch']
 
     if platform.system() == "Linux":
-        assert 8 == len(builder.items)
+        assert 4 == len(builder.items)
     elif platform.system() == "Windows":
-        assert 12 == len(builder.items)
+        assert 6 == len(builder.items)
     elif platform.system() == "Darwin":
         assert 4 == len(builder.items)
 
@@ -105,7 +105,7 @@ def test_build_template_default_minimal(set_minimal_build_environment):
     builder = build_template_default.get_builder()
     for settings, options, env_vars, build_requires, reference in builder.items:
         assert "foobar:shared" in options
-        assert "x86" == settings['arch']
+        assert "x86_64" == settings['arch']
 
     if platform.system() == "Linux":
         assert 2 == len(builder.items)
@@ -119,13 +119,12 @@ def test_build_template_default_non_pure_c():
     builder = build_template_default.get_builder(pure_c=False)
     for settings, options, env_vars, build_requires, reference in builder.items:
         assert "foobar:shared" in options
-        if platform.system() == "Darwin":
-            assert "x86_64" == settings['arch']
+        assert "x86_64" == settings['arch']
 
     if platform.system() == "Linux":
-        assert 16 == len(builder.items)
+        assert 8 == len(builder.items)
     elif platform.system() == "Windows":
-        assert 12 == len(builder.items)
+        assert 6 == len(builder.items)
     elif platform.system() == "Darwin":
         assert 4 == len(builder.items)
 
@@ -245,5 +244,5 @@ def test_default_remote_address(set_upload_address):
     assert "remotefoo" == remote.name
     assert "https://api.bintray.com/conan/foo/bar" == remote.url
     remote = builder.remotes_manager._remotes[1]
-    assert "upload_repo" == remote.name
+    assert "bincrafters" == remote.name
     assert "https://api.bintray.com/conan/bincrafters/public-conan" == remote.url
