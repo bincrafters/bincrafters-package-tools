@@ -185,7 +185,8 @@ def get_os():
 def get_archs(kwargs):
     if "archs" not in kwargs:
         archs = os.getenv("CONAN_ARCHS", None)
-        if get_os() == "Macos" and archs is None:
+        if archs is None:
+            # Per default only build 64-bit artifacts
             kwargs["archs"] = ["x86_64"]
         else:
             kwargs["archs"] = split_colon_env("CONAN_ARCHS") if archs else None
