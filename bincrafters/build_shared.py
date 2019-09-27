@@ -65,7 +65,8 @@ def is_shared(recipe=None):
 def is_ci_running():
     result = os.getenv("APPVEYOR_REPO_NAME", False) or \
              os.getenv("TRAVIS_REPO_SLUG", False) or \
-             os.getenv("CIRCLECI", False)
+             os.getenv("CIRCLECI", False) or \
+             os.getenv("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI", False)
     return result != False
 
 
@@ -74,14 +75,18 @@ def get_repo_name_from_ci():
     reponame_t = os.getenv("TRAVIS_REPO_SLUG", "")
     reponame_c = "%s/%s" % (os.getenv("CIRCLE_PROJECT_USERNAME", ""),
                             os.getenv("CIRCLE_PROJECT_REPONAME", ""))
-    return reponame_a or reponame_t or reponame_c
+    reponame_azp = os.getenv("BUILD_REPOSITORY_NAME", "")
+    return reponame_a or reponame_t or reponame_c or reponame_azp
 
 
 def get_repo_branch_from_ci():
     repobranch_a = os.getenv("APPVEYOR_REPO_BRANCH", "")
     repobranch_t = os.getenv("TRAVIS_BRANCH", "")
     repobranch_c = os.getenv("CIRCLE_BRANCH", "")
-    return repobranch_a or repobranch_t or repobranch_c
+    repobranch_azp = os.getenv("BUILD_SOURCEBRANCH", "")
+    if branch.startswith("refs/heads/"):
+        branch = branch[11:]
+    return repobranch_a or repobranch_t or repobranch_c or repobranch_azp
 
 
 def get_ci_vars():
