@@ -84,8 +84,8 @@ def get_repo_branch_from_ci():
     repobranch_t = os.getenv("TRAVIS_BRANCH", "")
     repobranch_c = os.getenv("CIRCLE_BRANCH", "")
     repobranch_azp = os.getenv("BUILD_SOURCEBRANCH", "")
-    if branch.startswith("refs/heads/"):
-        branch = branch[11:]
+    if repobranch_azp .startswith("refs/heads/"):
+        repobranch_azp = repobranch_azp [11:]
     return repobranch_a or repobranch_t or repobranch_c or repobranch_azp
 
 
