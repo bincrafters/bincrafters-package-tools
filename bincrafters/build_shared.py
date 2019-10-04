@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 import re
 import platform
@@ -8,6 +6,7 @@ from cpt.packager import ConanMultiPackager
 from cpt.tools import split_colon_env
 from cpt.remotes import RemotesManager
 from bincrafters.build_paths import BINCRAFTERS_REPO_URL
+
 
 def get_recipe_path(cwd=None):
     conanfile = os.getenv("CONAN_CONANFILE", "conanfile.py")
@@ -84,7 +83,9 @@ def get_repo_branch_from_ci():
     repobranch_t = os.getenv("TRAVIS_BRANCH", "")
     repobranch_c = os.getenv("CIRCLE_BRANCH", "")
     repobranch_azp = os.getenv("BUILD_SOURCEBRANCH", "")
-    if repobranch_azp .startswith("refs/heads/"):
+    if repobranch_azp.startswith("refs/pull/"):
+        repobranch_azp = os.getenv("SYSTEM_PULLREQUEST_TARGETBRANCH", "")
+    if repobranch_azp.startswith("refs/heads/"):
         repobranch_azp = repobranch_azp [11:]
     return repobranch_a or repobranch_t or repobranch_c or repobranch_azp
 
