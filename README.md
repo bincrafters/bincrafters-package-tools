@@ -1,4 +1,4 @@
-[![Build Status: Linux and Macos](https://travis-ci.org/bincrafters/bincrafters-package-tools.svg?branch=master)](https://travis-ci.org/bincrafters/bincrafters-package-tools)
+[![Build Status: Linux and Macos](https://travis-ci.com/bincrafters/bincrafters-package-tools.svg?branch=master)](https://travis-ci.com/bincrafters/bincrafters-package-tools)
 [![Build status: Windows](https://ci.appveyor.com/api/projects/status/github/bincrafters/bincrafters-package-tools?svg=true)](https://ci.appveyor.com/project/BinCrafters/bincrafters-package-tools)
 [![codecov](https://codecov.io/gh/bincrafters/bincrafters-package-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/bincrafters/bincrafters-package-tools)
 [![Pypi Download](https://img.shields.io/badge/download-pypi-blue.svg)](https://pypi.python.org/pypi/bincrafters-package-tools)
