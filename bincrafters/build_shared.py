@@ -65,7 +65,8 @@ def is_ci_running():
     result = os.getenv("APPVEYOR_REPO_NAME", False) or \
              os.getenv("TRAVIS_REPO_SLUG", False) or \
              os.getenv("CIRCLECI", False) or \
-             os.getenv("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI", False)
+             os.getenv("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI", False) or \
+             os.getenv("GITHUB_WORKFLOW", False)
     return result != False
 
 
@@ -75,7 +76,8 @@ def get_repo_name_from_ci():
     reponame_c = "%s/%s" % (os.getenv("CIRCLE_PROJECT_USERNAME", ""),
                             os.getenv("CIRCLE_PROJECT_REPONAME", ""))
     reponame_azp = os.getenv("BUILD_REPOSITORY_NAME", "")
-    return reponame_a or reponame_t or reponame_c or reponame_azp
+    reponame_g = os.getenv("GITHUB_REPOSITORY", "")
+    return reponame_a or reponame_t or reponame_c or reponame_azp or reponame_g
 
 
 def get_repo_branch_from_ci():
@@ -85,9 +87,12 @@ def get_repo_branch_from_ci():
     repobranch_azp = os.getenv("BUILD_SOURCEBRANCH", "")
     if repobranch_azp.startswith("refs/pull/"):
         repobranch_azp = os.getenv("SYSTEM_PULLREQUEST_TARGETBRANCH", "")
-    if repobranch_azp.startswith("refs/heads/"):
-        repobranch_azp = repobranch_azp [11:]
-    return repobranch_a or repobranch_t or repobranch_c or repobranch_azp
+    def _clean_branch(branch):        
+        return branch[11:] if branch.startswith("refs/heads/") else branch
+    repobranch_azp = _clean_branch(repobranch_azp)
+    repobranch_g = _clean_branch(os.getenv("GITHUB_REF", ""))
+    
+    return repobranch_a or repobranch_t or repobranch_c or repobranch_azp or repobranch_g
 
 
 def get_ci_vars():
