@@ -91,6 +91,8 @@ def get_repo_branch_from_ci():
         return branch[11:] if branch.startswith("refs/heads/") else branch
     repobranch_azp = _clean_branch(repobranch_azp)
     repobranch_g = _clean_branch(os.getenv("GITHUB_REF", ""))
+    if os.getenv("GITHUB_EVENT_NAME", "") == "pull_request":
+        repobranch_g = os.getenv("GITHUB_BASE_REF", "")
     
     return repobranch_a or repobranch_t or repobranch_c or repobranch_azp or repobranch_g
 
