@@ -5,7 +5,7 @@ from conans.client import conan_api
 from cpt.packager import ConanMultiPackager
 from cpt.tools import split_colon_env
 from cpt.remotes import RemotesManager
-from bincrafters.build_paths import BINCRAFTERS_REPO_URL
+from bincrafters.build_paths import BINCRAFTERS_REPO_URL, BINCRAFTERS_LOGIN_USERNAME, BINCRAFTERS_USERNAME, BINCRAFTERS_REPO_NAME
 
 
 def get_recipe_path(cwd=None):
@@ -130,10 +130,12 @@ def get_version(recipe=None):
 
 
 def get_conan_vars(recipe=None, kwargs={}):
-    username = kwargs.get("username", os.getenv("CONAN_USERNAME", get_username_from_ci() or "bincrafters"))
+    username = kwargs.get("username", os.getenv(
+        "CONAN_USERNAME", get_username_from_ci() or BINCRAFTERS_USERNAME))
     kwargs["channel"] = kwargs.get("channel", os.getenv("CONAN_CHANNEL", get_channel_from_ci()))
     version = os.getenv("CONAN_VERSION", get_version(recipe=recipe))
-    kwargs["login_username"] = kwargs.get("login_username", os.getenv("CONAN_LOGIN_USERNAME", "bincrafters-user"))
+    kwargs["login_username"] = kwargs.get("login_username", os.getenv(
+        "CONAN_LOGIN_USERNAME", BINCRAFTERS_LOGIN_USERNAME))
     kwargs["username"] = username
 
     return username, version, kwargs
@@ -148,7 +150,7 @@ def get_conan_upload(username):
     if upload:
         return upload.split('@') if '@' in upload else upload
 
-    repository_name = os.getenv("BINTRAY_REPOSITORY", "public-conan")
+    repository_name = os.getenv("BINTRAY_REPOSITORY", BINCRAFTERS_REPO_NAME)
     return get_user_repository(username, repository_name)
 
 
@@ -172,7 +174,7 @@ def get_conan_remotes(username, kwargs):
             remotes = [get_conan_upload(username)]
             # Add bincrafters repository for other users, e.g. if the package would
             # require other packages from the bincrafters repo.
-            bincrafters_user = "bincrafters"
+            bincrafters_user = BINCRAFTERS_USERNAME
             if username != bincrafters_user:
                 remotes.append(get_conan_upload(bincrafters_user))
 
