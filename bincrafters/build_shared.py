@@ -133,7 +133,7 @@ def get_conan_vars(recipe=None, kwargs={}):
     username = kwargs.get("username", os.getenv("CONAN_USERNAME", get_username_from_ci() or "bincrafters"))
     kwargs["channel"] = kwargs.get("channel", os.getenv("CONAN_CHANNEL", get_channel_from_ci()))
     version = os.getenv("CONAN_VERSION", get_version(recipe=recipe))
-    kwargs["login_username"] = kwargs.get("login_username", os.getenv("CONAN_LOGIN_USERNAME", username))
+    kwargs["login_username"] = kwargs.get("login_username", os.getenv("CONAN_LOGIN_USERNAME", "bincrafters-user"))
     kwargs["username"] = username
 
     return username, version, kwargs
