@@ -6,7 +6,7 @@ environment:
 
 install:
   - set PATH=%PATH%;%PYTHON%/Scripts/
-  - pip.exe install -e .[test]
+  - pip install -e .[test]
 
 build_script:
   - cd tests
