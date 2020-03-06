@@ -66,15 +66,6 @@ def is_shared(recipe=None):
     return "shared" in match.groups()[0]
 
 
-def is_ci_running():
-    result = os.getenv("APPVEYOR_REPO_NAME", False) or \
-             os.getenv("TRAVIS_REPO_SLUG", False) or \
-             os.getenv("CIRCLECI", False) or \
-             os.getenv("SYSTEM_TEAMFOUNDATIONCOLLECTIONURI", False) or \
-             os.getenv("GITHUB_WORKFLOW", False)
-    return result != False
-
-
 def get_repo_name_from_ci():
     reponame_a = os.getenv("APPVEYOR_REPO_NAME", "")
     reponame_t = os.getenv("TRAVIS_REPO_SLUG", "")

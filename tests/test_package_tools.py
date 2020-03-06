@@ -159,11 +159,6 @@ def test_get_os():
     assert expected_os == build_shared.get_os()
 
 
-def test_ci_is_running():
-    expected = True if os.getenv("CI", None) is not None else False
-    assert expected == build_shared.is_ci_running()
-
-
 def test_build_policy_not_set():
     builder = build_template_default.get_builder()
     assert None == builder.build_policy
