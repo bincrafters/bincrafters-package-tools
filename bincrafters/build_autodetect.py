@@ -150,14 +150,13 @@ def _is_installer():
     return False
 
 
-def run_autodetect():
+def run_autodetect() -> int:
     has_custom_build_py, custom_build_py_path = _is_custom_build_py_existing()
 
     if has_custom_build_py:
         printer.print_message("Custom build.py detected. Executing ...")
         _flush_output()
-        exit_code = os.system("python {}".format(custom_build_py_path))
-        sys.exit(exit_code)
+        return os.system("python {}".format(custom_build_py_path))
 
     download_directories = _perform_downloads()
 
@@ -182,12 +181,13 @@ def run_autodetect():
 
     if is_unconditional_header_only:
         builder = build_template_header_only.get_builder()
-        builder.run()
+        return builder.run()
     elif is_installer:
         arch = os.getenv("ARCH", "x86_64")
         builder = build_template_installer.get_builder()
         builder.add({"os": get_os(), "arch_build": arch, "arch": arch}, {}, {}, {})
-        builder.run()
+        return builder.run()
     else:
         builder = build_template_default.get_builder(pure_c=is_pure_c)
-        builder.run()
+        return builder.run()
+
