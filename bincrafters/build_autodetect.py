@@ -2,6 +2,7 @@ import os
 import tempfile
 import contextlib
 import yaml
+import sys
 
 from bincrafters.build_shared import get_version, get_recipe_path, printer, inspect_value_from_recipe, get_os
 import bincrafters.build_template_default as build_template_default
@@ -79,6 +80,11 @@ def _get_files_with_extensions(folder, extensions):
     return files
 
 
+def _flush_output():
+    sys.stderr.flush()
+    sys.stdout.flush()
+
+
 def _is_custom_build_py_existing() -> (bool, str):
     custom_build_path = os.path.join(_recipe_path, "build.py")
     if os.path.isfile(custom_build_path):
@@ -149,6 +155,7 @@ def run_autodetect():
 
     if has_custom_build_py:
         printer.print_message("Custom build.py detected. Executing ...")
+        _flush_output()
         os.system("python {}".format(custom_build_py_path))
         return
 
@@ -170,6 +177,8 @@ def run_autodetect():
 
             is_pure_c = _is_pure_c(download_directories)
             printer.print_message("Is the package C-only? {}".format(str(is_pure_c)))
+
+    _flush_output()
 
     if is_unconditional_header_only:
         builder = build_template_header_only.get_builder()
