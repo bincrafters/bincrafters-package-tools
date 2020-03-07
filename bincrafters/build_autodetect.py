@@ -156,8 +156,8 @@ def run_autodetect():
     if has_custom_build_py:
         printer.print_message("Custom build.py detected. Executing ...")
         _flush_output()
-        os.system("python {}".format(custom_build_py_path))
-        return
+        exit_code = os.system("python {}".format(custom_build_py_path))
+        sys.exit(exit_code)
 
     download_directories = _perform_downloads()
 
