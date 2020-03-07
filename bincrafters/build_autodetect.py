@@ -79,6 +79,14 @@ def _get_files_with_extensions(folder, extensions):
     return files
 
 
+def _is_custom_build_py_existing() -> (bool, str):
+    custom_build_path = os.path.join(_recipe_path, "build.py")
+    if os.path.isfile(custom_build_path):
+        return True, custom_build_path
+
+    return False, None
+
+
 def _perform_downloads() -> list:
     conandata_file = load(os.path.join(_recipe_path, "conandata.yml"))
     conan_data = yaml.safe_load(conandata_file)
@@ -137,6 +145,13 @@ def _is_installer():
 
 
 def run_autodetect():
+    has_custom_build_py, custom_build_py_path = _is_custom_build_py_existing()
+
+    if has_custom_build_py:
+        printer.print_message("Custom build.py detected. Executing ...")
+        os.system("python {}".format(custom_build_py_path))
+        return
+
     download_directories = _perform_downloads()
 
     is_unconditional_header_only = _is_unconditional_header_only()
