@@ -3,6 +3,7 @@ import tempfile
 import contextlib
 import yaml
 import sys
+import subprocess
 
 from bincrafters.build_shared import get_version, get_recipe_path, printer, inspect_value_from_recipe, get_os
 import bincrafters.build_template_default as build_template_default
@@ -156,7 +157,8 @@ def run_autodetect():
     if has_custom_build_py:
         printer.print_message("Custom build.py detected. Executing ...")
         _flush_output()
-        sys.exit(os.system("python {}".format(custom_build_py_path)))
+        subprocess.run(["python",  "{}".format(custom_build_py_path)], check=True)
+        return
 
     download_directories = _perform_downloads()
 
