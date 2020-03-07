@@ -77,7 +77,14 @@ def get_repo_name_from_ci():
 
 
 def get_repo_branch_from_ci():
-    return ci_manager.get_branch()
+    # TODO: Remove GHA special handling after CPT 0.32.0 is released
+    def _clean_branch(branch):
+        return branch[11:] if branch.startswith("refs/heads/") else branch
+    repobranch_g = _clean_branch(os.getenv("GITHUB_REF", ""))
+    if os.getenv("GITHUB_EVENT_NAME", "") == "pull_request":
+        repobranch_g = os.getenv("GITHUB_BASE_REF", "")
+    
+    return repobranch_g or ci_manager.get_branch()
 
 
 def get_ci_vars():
