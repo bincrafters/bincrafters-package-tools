@@ -3,9 +3,10 @@ import tempfile
 import contextlib
 import yaml
 
-from bincrafters.build_shared import get_version, get_recipe_path, printer, inspect_value_from_recipe
+from bincrafters.build_shared import get_version, get_recipe_path, printer, inspect_value_from_recipe, get_os
 import bincrafters.build_template_default as build_template_default
 import bincrafters.build_template_header_only as build_template_header_only
+import bincrafters.build_template_installer as build_template_installer
 from conans.util.files import load
 from conans import tools
 
@@ -40,6 +41,26 @@ def _file_contains(file, word):
             content = ifd.read()
             if word in content:
                 return True
+    return False
+
+
+def _recipe_contains(word):
+    return _file_contains(get_recipe_path(), word)
+
+
+def _has_option(option_name):
+    options = inspect_value_from_recipe(attribute="options", recipe_path=get_recipe_path())
+    if options and option_name in options:
+        return True
+
+    return False
+
+
+def _has_setting(setting_name):
+    settings = inspect_value_from_recipe(attribute="settings", recipe_path=get_recipe_path())
+    if settings and setting_name in settings:
+        return True
+
     return False
 
 
@@ -95,16 +116,22 @@ def _is_pure_c(download_directories):
 
 
 def _is_conditional_header_only():
-    options = inspect_value_from_recipe(attribute="options", recipe_path=get_recipe_path())
-    if options and "header_only" in options:
+    return _has_option("header_only")
+
+
+def _is_unconditional_header_only():
+    if not _is_conditional_header_only() and _recipe_contains("self.info.header_only()"):
         return True
 
     return False
 
 
-def _is_unconditional_header_only():
-    if not _is_conditional_header_only() and _file_contains(get_recipe_path(), "self.info.header_only()"):
-        return True
+def _is_installer():
+    if not _is_unconditional_header_only() and not _is_conditional_header_only():
+        if (_recipe_contains("self.env_info.PATH.append") or _recipe_contains("self.env_info.PATH.extend")) \
+            and _has_setting("os_build") and _has_setting("arch_build") and \
+                (not _has_setting("compiler") or _recipe_contains("del self.info.settings.compiler")):
+            return True
 
     return False
 
@@ -117,15 +144,25 @@ def run_autodetect():
                           .format(str(is_unconditional_header_only)))
 
     if not is_unconditional_header_only:
-        is_conditional_header_only = _is_conditional_header_only()
-        printer.print_message("Is the package conditionally header only ('header_only' option)? {}"
-                              .format(str(is_conditional_header_only)))
+        is_installer = _is_installer()
+        printer.print_message("Is the package an installer for executable(s)? {}"
+                              .format(str(is_installer)))
 
-        is_pure_c = _is_pure_c(download_directories)
-        printer.print_message("Is the package C-only? {}".format(str(is_pure_c)))
+        if not is_installer:
+            is_conditional_header_only = _is_conditional_header_only()
+            printer.print_message("Is the package conditionally header only ('header_only' option)? {}"
+                                  .format(str(is_conditional_header_only)))
+
+            is_pure_c = _is_pure_c(download_directories)
+            printer.print_message("Is the package C-only? {}".format(str(is_pure_c)))
 
     if is_unconditional_header_only:
         builder = build_template_header_only.get_builder()
+        builder.run()
+    elif is_installer:
+        arch = os.getenv("ARCH", "x86_64")
+        builder = build_template_installer.get_builder()
+        builder.add({"os": get_os(), "arch_build": arch, "arch": arch}, {}, {}, {})
         builder.run()
     else:
         builder = build_template_default.get_builder(pure_c=is_pure_c)
