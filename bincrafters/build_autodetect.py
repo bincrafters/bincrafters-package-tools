@@ -3,8 +3,9 @@ import tempfile
 import contextlib
 import yaml
 
-from bincrafters.build_shared import get_version, get_recipe_path, printer
-from bincrafters.build_template_default import get_builder
+from bincrafters.build_shared import get_version, get_recipe_path, printer, inspect_value_from_recipe
+import bincrafters.build_template_default as build_template_default
+import bincrafters.build_template_header_only as build_template_header_only
 from conans.util.files import load
 from conans import tools
 
@@ -25,6 +26,21 @@ def chdir(newdir):
         yield
     finally:
         os.chdir(old_path)
+
+
+def _file_contains(file, word):
+    """ Read file and search for word
+
+    :param file: File path to be read
+    :param word: word to be found
+    :return: True if found. Otherwise, False
+    """
+    if os.path.isfile(file):
+        with open(file) as ifd:
+            content = ifd.read()
+            if word in content:
+                return True
+    return False
 
 
 def _get_files_with_extensions(folder, extensions):
@@ -78,11 +94,39 @@ def _is_pure_c(download_directories):
     return True
 
 
+def _is_conditional_header_only():
+    options = inspect_value_from_recipe(attribute="options", recipe_path=get_recipe_path())
+    if options and "header_only" in options:
+        return True
+
+    return False
+
+
+def _is_unconditional_header_only():
+    if not _is_conditional_header_only() and _file_contains(get_recipe_path(), "self.info.header_only()"):
+        return True
+
+    return False
+
+
 def run_autodetect():
     download_directories = _perform_downloads()
 
-    is_pure_c = _is_pure_c(download_directories)
-    printer.print_message("Is library C-only? {}".format(str(is_pure_c)))
+    is_unconditional_header_only = _is_unconditional_header_only()
+    printer.print_message("Is the package header only? {}"
+                          .format(str(is_unconditional_header_only)))
 
-    builder = get_builder(pure_c=is_pure_c)
-    builder.run()
+    if not is_unconditional_header_only:
+        is_conditional_header_only = _is_conditional_header_only()
+        printer.print_message("Is the package conditionally header only ('header_only' option)? {}"
+                              .format(str(is_conditional_header_only)))
+
+        is_pure_c = _is_pure_c(download_directories)
+        printer.print_message("Is the package C-only? {}".format(str(is_pure_c)))
+
+    if is_unconditional_header_only:
+        builder = build_template_header_only.get_builder()
+        builder.run()
+    else:
+        builder = build_template_default.get_builder(pure_c=is_pure_c)
+        builder.run()

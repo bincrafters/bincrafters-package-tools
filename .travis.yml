@@ -43,4 +43,3 @@ deploy:
     on:
       branch: develop
       python: 3.7
-
