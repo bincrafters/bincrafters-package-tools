@@ -14,16 +14,14 @@ def _parse_arguments(*args):
     return args
 
 
-def run(*args) -> int:
+def run(*args):
     arguments = _parse_arguments(*args)
     if arguments.auto:
-        return run_autodetect()
-
-    return 1
+        run_autodetect()
 
 
-def cli() -> int:
-    return run(sys.argv[1:])
+def cli():
+    run(sys.argv[1:])
 
 
 if __name__ == '__main__':
