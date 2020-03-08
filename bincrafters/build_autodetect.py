@@ -1,5 +1,4 @@
 import os
-import tempfile
 import sys
 import subprocess
 
@@ -116,13 +115,13 @@ def run_autodetect():
 
     _flush_output()
 
-    if is_unconditional_header_only:
-        builder = build_template_header_only.get_builder()
-        builder.run()
-    elif is_installer:
+    if is_installer:
         arch = os.getenv("ARCH", "x86_64")
         builder = build_template_installer.get_builder()
         builder.add({"os": get_os(), "arch_build": arch, "arch": arch}, {}, {}, {})
+        builder.run()
+    elif is_unconditional_header_only:
+        builder = build_template_header_only.get_builder()
         builder.run()
     else:
         builder = build_template_default.get_builder(pure_c=is_pure_c)
