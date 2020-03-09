@@ -5,12 +5,12 @@ from conans.client import conan_api
 from cpt.packager import ConanMultiPackager
 from cpt.tools import split_colon_env
 from cpt.remotes import RemotesManager
-from cpt.ci_manager import *
+# from cpt.ci_manager import *
 from cpt.printer import Printer
 from bincrafters.build_paths import BINCRAFTERS_REPO_URL, BINCRAFTERS_LOGIN_USERNAME, BINCRAFTERS_USERNAME, BINCRAFTERS_REPO_NAME
 
 printer = Printer()
-ci_manager = CIManager(printer=printer)
+# ci_manager = CIManager(printer=printer)
 
 
 def get_recipe_path(cwd=None):
@@ -77,14 +77,24 @@ def get_repo_name_from_ci():
 
 
 def get_repo_branch_from_ci():
-    # TODO: Remove GHA special handling after CPT 0.32.0 is released
+    # TODO: Try one day again to migrate this to CPTs CI Manager
+    # Since CPTs CI Managers varies in logic this break to much of the existing behaviour
+    # in a first attempt (Croydon)
+    # ~~Remove GHA special handling after CPT 0.32.0 is released~~
+    repobranch_a = os.getenv("APPVEYOR_REPO_BRANCH", "")
+    repobranch_t = os.getenv("TRAVIS_BRANCH", "")
+    repobranch_c = os.getenv("CIRCLE_BRANCH", "")
+    repobranch_azp = os.getenv("BUILD_SOURCEBRANCH", "")
+    if repobranch_azp.startswith("refs/pull/"):
+        repobranch_azp = os.getenv("SYSTEM_PULLREQUEST_TARGETBRANCH", "")
     def _clean_branch(branch):
         return branch[11:] if branch.startswith("refs/heads/") else branch
+    repobranch_azp = _clean_branch(repobranch_azp)
     repobranch_g = _clean_branch(os.getenv("GITHUB_REF", ""))
     if os.getenv("GITHUB_EVENT_NAME", "") == "pull_request":
         repobranch_g = os.getenv("GITHUB_BASE_REF", "")
-    
-    return repobranch_g or ci_manager.get_branch()
+
+    return repobranch_a or repobranch_t or repobranch_c or repobranch_azp or repobranch_g
 
 
 def get_ci_vars():
