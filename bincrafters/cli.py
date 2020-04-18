@@ -14,7 +14,7 @@ def _parse_arguments(*args):
     genmatrix = subparsers.add_parser("generate-ci-jobs", help="Provides a CI job matrix as a JSON-fied string")
     genmatrix.add_argument('--platform', type=str, choices=["gha"],
                         help="Specfies the CI platform")
-    genmatrix.add_argument('--split-by-build-types', action='store_true',
+    genmatrix.add_argument('--split-by-build-types', type=str, choices=["true", "false"],
                         help="Split build jobs by build types")
 
     args = parser.parse_args(*args)

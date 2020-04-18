@@ -1,5 +1,6 @@
 import json
-import os
+
+from bincrafters.build_shared import get_bool_from_env
 
 
 def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool) -> str:
@@ -9,7 +10,7 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
     matrix = {}
 
     if split_by_build_types is None:
-        split_by_build_types = os.getenv("splitByBuildTypes", False)
+        split_by_build_types = get_bool_from_env("splitByBuildTypes", False)
 
     if recipe_type == "installer":
         matrix["config"] = [
