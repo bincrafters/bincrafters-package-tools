@@ -68,8 +68,7 @@ def is_unconditional_header_only():
 def is_installer():
     if not is_unconditional_header_only() and not is_conditional_header_only():
         if (recipe_contains("self.env_info.PATH.append") or recipe_contains("self.env_info.PATH.extend")) \
-            and recipe_has_setting("os_build") and recipe_has_setting("arch_build") and \
-                (not recipe_has_setting("compiler") or recipe_contains("del self.info.settings.compiler")):
+                and (not recipe_has_setting("compiler") or recipe_contains("del self.info.settings.compiler")):
             return True
 
     return False
