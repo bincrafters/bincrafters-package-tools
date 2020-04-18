@@ -26,12 +26,12 @@ def run_autodetect():
     printer.print_message("Is the package an installer for executable(s)? {}"
                           .format(str(recipe_is_installer)))
 
-    if not is_installer:
+    if not recipe_is_installer:
         recipe_is_unconditional_header_only = is_unconditional_header_only()
         printer.print_message("Is the package header only? {}"
                               .format(str(recipe_is_unconditional_header_only)))
 
-        if not is_unconditional_header_only:
+        if not recipe_is_unconditional_header_only:
             recipe_is_conditional_header_only = is_conditional_header_only()
             printer.print_message("Is the package conditionally header only ('header_only' option)? {}"
                                   .format(str(recipe_is_conditional_header_only)))
