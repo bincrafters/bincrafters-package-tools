@@ -21,6 +21,8 @@ def run_autodetect():
     tmpdir = os.path.join(tempfile.gettempdir(), "conan")
 
     os.makedirs(tmpdir, mode=0o777)
+    # In some cases Python may ignore the mode of makedirs, do it again explicitly with chmod
+    os.chmod(tmpdir, mode=0o777)
 
     os.system('conan config set storage.download_cache="{}"'.format(tmpdir))
     os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] = 'conan config set storage.download_cache="{}"'.format(tmpdir)
