@@ -1,5 +1,7 @@
 import sys
 import subprocess
+import tempfile
+import os
 
 from bincrafters.build_shared import printer, get_os
 import bincrafters.build_template_default as build_template_default
@@ -14,6 +16,16 @@ def _flush_output():
 
 
 def run_autodetect():
+    printer.print_message("Enabling Conan download cache ...")
+
+    tmpdir = os.path.join(tempfile.gettempdir(), "conan")
+
+    os.makedirs(tmpdir, mode=0o777)
+
+    os.system('conan config set storage.download_cache="{}"'.format(tmpdir))
+    os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] = 'conan config set storage.download_cache="{}"'.format(tmpdir)
+    os.environ["CONAN_DOCKER_RUN_OPTIONS"] = '-v "{}":"/tmp/conan""'.format(tmpdir)
+
     has_custom_build_py, custom_build_py_path = is_custom_build_py_existing()
 
     if has_custom_build_py:
