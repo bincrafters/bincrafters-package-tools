@@ -38,6 +38,8 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
                 {"name": "GCC 8 Release", "compiler": "GCC", "version": "8", "os": "ubuntu-18.04", "buildType": "Release"},
                 {"name": "GCC 9 Debug", "compiler": "GCC", "version": "9", "os": "ubuntu-18.04", "buildType": "Debug"},
                 {"name": "GCC 9 Release", "compiler": "GCC", "version": "9", "os": "ubuntu-18.04", "buildType": "Release"},
+                {"name": "GCC 10 Debug", "compiler": "GCC", "version": "10", "os": "ubuntu-18.04", "buildType": "Debug"},
+                {"name": "GCC 10 Release", "compiler": "GCC", "version": "10", "os": "ubuntu-18.04", "buildType": "Release"},
                 {"name": "CLANG 3.9 Debug", "compiler": "CLANG", "version": "3.9", "os": "ubuntu-18.04", "buildType": "Debug"},
                 {"name": "CLANG 3.9 Release", "compiler": "CLANG", "version": "3.9", "os": "ubuntu-18.04", "buildType": "Release"},
                 {"name": "CLANG 4.0 Debug", "compiler": "CLANG", "version": "4.0", "os": "ubuntu-18.04", "buildType": "Debug"},
@@ -51,7 +53,9 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
                 {"name": "CLANG 8 Debug", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04", "buildType": "Debug"},
                 {"name": "CLANG 8 Release", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04", "buildType": "Release"},
                 {"name": "CLANG 9 Debug", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04", "buildType": "Debug"},
-                {"name": "CLANG 9 Release", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04", "buildType": "Release"}
+                {"name": "CLANG 9 Release", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04", "buildType": "Release"},
+                {"name": "CLANG 10 Debug", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04", "buildType": "Debug"},
+                {"name": "CLANG 10 Release", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04", "buildType": "Release"}
             ]
         else:
             matrix["config"] = [
@@ -61,6 +65,7 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
                 {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
                 {"name": "GCC 8", "compiler": "GCC", "version": "8", "os": "ubuntu-18.04"},
                 {"name": "GCC 9", "compiler": "GCC", "version": "9", "os": "ubuntu-18.04"},
+                {"name": "GCC 10", "compiler": "GCC", "version": "10", "os": "ubuntu-18.04"},
                 {"name": "CLANG 3.9", "compiler": "CLANG", "version": "3.9", "os": "ubuntu-18.04"},
                 {"name": "CLANG 4.0", "compiler": "CLANG", "version": "4.0", "os": "ubuntu-18.04"},
                 {"name": "CLANG 5.0", "compiler": "CLANG", "version": "5.0", "os": "ubuntu-18.04"},
@@ -68,6 +73,7 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
                 {"name": "CLANG 7.0", "compiler": "CLANG", "version": "7.0", "os": "ubuntu-18.04"},
                 {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
                 {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04"},
+                {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04"},
             ]
 
     matrix_string = json.dumps(matrix)
