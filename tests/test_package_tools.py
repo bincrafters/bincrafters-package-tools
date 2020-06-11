@@ -166,12 +166,12 @@ def test_build_policy_not_set():
 
 def test_build_policy_set_in_args():
     builder = build_template_default.get_builder(build_policy='missing')
-    assert 'missing' == builder.build_policy
+    assert ['missing'] == builder.build_policy
 
 
 def test_build_policy_set_header_only():
     builder = build_template_header_only.get_builder(build_policy='missing')
-    assert 'missing' == builder.build_policy
+    assert ['missing'] == builder.build_policy
 
 
 def test_upload_only_when_stable_builder(set_upload_when_stable_false):
