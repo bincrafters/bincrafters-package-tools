@@ -28,6 +28,8 @@ def run_autodetect():
     os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] = "conan config set storage.download_cache='{}'".format(tmpdir)
     os.environ["CONAN_DOCKER_RUN_OPTIONS"] = "-v '{}':'/tmp/conan'".format(tmpdir)
 
+    os.environ["CONAN_SYSREQUIRES_MODE"] = "enabled"
+
     has_custom_build_py, custom_build_py_path = is_custom_build_py_existing()
 
     if has_custom_build_py:
