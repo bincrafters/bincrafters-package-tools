@@ -46,17 +46,17 @@ def inspect_value_from_recipe(attribute, recipe_path):
 
 
 def get_name_from_recipe(recipe=None):
-    name = inspect_value_from_recipe(attribute="name", recipe_path=get_recipe_path())
+    name = inspect_value_from_recipe(attribute="name", recipe_path=get_recipe_path(cwd=recipe))
     return name or get_value_from_recipe(r'''name\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def get_version_from_recipe(recipe=None):
-    version = inspect_value_from_recipe(attribute="version", recipe_path=get_recipe_path())
+    version = inspect_value_from_recipe(attribute="version", recipe_path=get_recipe_path(cwd=recipe))
     return version or get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def is_shared(recipe=None):
-    options = inspect_value_from_recipe(attribute="options", recipe_path=get_recipe_path())
+    options = inspect_value_from_recipe(attribute="options", recipe_path=get_recipe_path(cwd=recipe))
     if options:
         return "shared" in options
 
