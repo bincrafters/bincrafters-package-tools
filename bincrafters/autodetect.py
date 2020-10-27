@@ -88,3 +88,29 @@ def autodetect() -> str:
                     return "pure_c_lib"
                 else:
                     return "cxx_lib"
+
+
+ONE_RECIPE_ONE_VERSION = "one_recipe_one_file"
+ONE_RECIPE_MANY_VERSIONS = "one_recipe_many_versions"
+CCI_STRUCTURE = "cci_many_recipes_many_versions"
+
+
+def autodetect_directory_structure() -> str:
+    """ Return the directory type as classified above this method
+    """
+    if "CONAN_CONANFILE" in os.environ:
+        return ONE_RECIPE_ONE_VERSION
+
+    pwd = os.getcwd()
+
+    if os.path.exists(os.path.join(pwd, "conanfile.py")):
+        return ONE_RECIPE_ONE_VERSION
+
+    if os.path.exists(os.path.join(pwd, "config.yml")):
+        return ONE_RECIPE_MANY_VERSIONS
+
+    if os.path.exists(os.path.join(pwd, "recipes")):
+        return CCI_STRUCTURE
+
+    # Assume ONE_RECIPE_ONE_VERSION as the default for legacy reasons
+    return ONE_RECIPE_ONE_VERSION

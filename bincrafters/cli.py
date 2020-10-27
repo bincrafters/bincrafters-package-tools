@@ -2,7 +2,7 @@ import argparse
 import sys
 
 from bincrafters.build_autodetect import run_autodetect
-from bincrafters.autodetect import autodetect
+from bincrafters.autodetect import autodetect, autodetect_directory_structure
 from bincrafters.generate_ci_jobs import generate_ci_jobs
 
 
@@ -27,7 +27,11 @@ def run(*args):
         run_autodetect()
     elif arguments.commands == "generate-ci-jobs":
         recipe_type = autodetect()
+        directory_structure = autodetect_directory_structure()
         split_by_build_types = arguments.split_by_build_types
+
+        print("Auto detected directory structure: ".format(directory_structure))
+        print("")
         print(generate_ci_jobs(platform=arguments.platform, recipe_type=recipe_type, split_by_build_types=split_by_build_types))
 
 
