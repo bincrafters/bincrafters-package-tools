@@ -14,6 +14,7 @@ printer = Printer()
 
 
 def get_recipe_path(cwd=None):
+    cwd = os.getenv("BPT_CWD", cwd)
     conanfile = os.getenv("CONAN_CONANFILE", "conanfile.py")
     if cwd is None:
         return conanfile
@@ -46,17 +47,17 @@ def inspect_value_from_recipe(attribute, recipe_path):
 
 
 def get_name_from_recipe(recipe=None):
-    name = inspect_value_from_recipe(attribute="name", recipe_path=get_recipe_path(cwd=recipe))
+    name = inspect_value_from_recipe(attribute="name", recipe_path=recipe)
     return name or get_value_from_recipe(r'''name\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def get_version_from_recipe(recipe=None):
-    version = inspect_value_from_recipe(attribute="version", recipe_path=get_recipe_path(cwd=recipe))
+    version = inspect_value_from_recipe(attribute="version", recipe_path=recipe)
     return version or get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def is_shared(recipe=None):
-    options = inspect_value_from_recipe(attribute="options", recipe_path=get_recipe_path(cwd=recipe))
+    options = inspect_value_from_recipe(attribute="options", recipe_path=recipe)
     if options:
         return "shared" in options
 
@@ -125,15 +126,21 @@ def get_version_from_ci():
 
 
 def get_version(recipe=None):
+    env_ver = os.getenv("CONAN_VERSION", None)
     ci_ver = get_version_from_ci()
-    return ci_ver if ci_ver else get_version_from_recipe(recipe=recipe)
+    if env_ver:
+        return env_ver
+    elif ci_ver:
+        return ci_ver
+    else:
+        return get_version_from_recipe(recipe=recipe)
 
 
 def get_conan_vars(recipe=None, kwargs={}):
     username = kwargs.get("username", os.getenv(
         "CONAN_USERNAME", get_username_from_ci() or BINCRAFTERS_USERNAME))
     kwargs["channel"] = kwargs.get("channel", os.getenv("CONAN_CHANNEL", get_channel_from_ci()))
-    version = os.getenv("CONAN_VERSION", get_version(recipe=recipe))
+    version = get_version(recipe=recipe)
     kwargs["login_username"] = kwargs.get("login_username", os.getenv(
         "CONAN_LOGIN_USERNAME", BINCRAFTERS_LOGIN_USERNAME))
     kwargs["username"] = username
@@ -221,6 +228,7 @@ def get_reference(name, version, kwargs):
 
 
 def get_builder(build_policy=None, cwd=None, **kwargs):
+    cwd = os.getenv("BPT_CWD", cwd)
     recipe = get_recipe_path(cwd)
     name = get_name_from_recipe(recipe=recipe)
     username, version, kwargs = get_conan_vars(recipe=recipe, kwargs=kwargs)
@@ -230,7 +238,7 @@ def get_builder(build_policy=None, cwd=None, **kwargs):
     kwargs = get_upload_when_stable(kwargs)
     kwargs = get_stable_branch_pattern(kwargs)
     kwargs = get_archs(kwargs)
-    build_policy = os.getenv('CONAN_BUILD_POLICY', build_policy)
+    build_policy = os.getenv("CONAN_BUILD_POLICY", build_policy)
     builder = ConanMultiPackager(
         build_policy=build_policy,
         cwd=cwd,

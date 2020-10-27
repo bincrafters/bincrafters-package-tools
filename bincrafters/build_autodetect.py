@@ -44,7 +44,8 @@ def run_autodetect():
     if has_custom_build_py:
         printer.print_message("Custom build.py detected. Executing ...")
         _flush_output()
-        subprocess.run(["python",  "{}".format(custom_build_py_path)], check=True)
+        new_wd = os.path.dirname(custom_build_py_path)
+        subprocess.run("cd {} && python build.py".format(new_wd), shell=True, check=True)
         return
 
     ###
@@ -72,15 +73,21 @@ def run_autodetect():
     ###
     # Start the build
     ###
+    kwargs = None
+
+    if autodetect_directory_structure() == DIR_STRUCTURE_ONE_RECIPE_MANY_VERSIONS \
+            or autodetect_directory_structure() == DIR_STRUCTURE_CCI:
+        kwargs["stable_branch_pattern"] = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "main")
+
     if recipe_is_installer:
         arch = os.getenv("ARCH", "x86_64")
-        builder = build_template_installer.get_builder()
+        builder = build_template_installer.get_builder(**kwargs)
         builder.add({"os": get_os(), "arch_build": arch, "arch": arch}, {}, {}, {})
         builder.run()
     elif recipe_is_unconditional_header_only:
-        builder = build_template_header_only.get_builder()
+        builder = build_template_header_only.get_builder(**kwargs)
         builder.run()
     else:
-        builder = build_template_default.get_builder(pure_c=recipe_is_pure_c)
+        builder = build_template_default.get_builder(pure_c=recipe_is_pure_c, **kwargs)
         builder.run()
 

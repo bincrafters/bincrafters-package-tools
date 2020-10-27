@@ -1,9 +1,11 @@
 import argparse
 import sys
+import json
 
 from bincrafters.build_autodetect import run_autodetect
-from bincrafters.autodetect import autodetect, autodetect_directory_structure
+from bincrafters.autodetect import autodetect
 from bincrafters.generate_ci_jobs import generate_ci_jobs
+from bincrafters.prepare_env import prepare_env
 
 
 def _parse_arguments(*args):
@@ -16,7 +18,11 @@ def _parse_arguments(*args):
                         help="Specfies the CI platform")
     genmatrix.add_argument('--split-by-build-types', type=str, choices=["true", "false"],
                         help="Split build jobs by build types")
-
+    prepareenv = subparsers.add_parser("prepare-env", help="Prepares the environment by setting env vars and similar")
+    prepareenv.add_argument('--platform', type=str, required=True, choices=["gha"],
+                        help="Specfies the CI platform")
+    prepareenv.add_argument('--config', type=str, required=True,
+                        help="JSON config string in the bincrafters-package-tools format")
     args = parser.parse_args(*args)
     return args
 
@@ -25,13 +31,14 @@ def run(*args):
     arguments = _parse_arguments(*args)
     if arguments.auto:
         run_autodetect()
+    elif arguments.commands == "prepare-env":
+        config = json.loads(arguments.config)
+        prepare_env(platform=arguments.platform, config=config)
     elif arguments.commands == "generate-ci-jobs":
         recipe_type = autodetect()
-        directory_structure = autodetect_directory_structure()
         split_by_build_types = arguments.split_by_build_types
 
-        print("Auto detected directory structure: ".format(directory_structure))
-        print("")
+        # Note: it is important that we only print the matrix and absolutely nothing else
         print(generate_ci_jobs(platform=arguments.platform, recipe_type=recipe_type, split_by_build_types=split_by_build_types))
 
 
