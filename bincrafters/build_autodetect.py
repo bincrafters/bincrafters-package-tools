@@ -16,6 +16,9 @@ def _flush_output():
 
 
 def run_autodetect():
+    ###
+    # Enabling Conan download cache
+    ###
     printer.print_message("Enabling Conan download cache ...")
 
     tmpdir = os.path.join(tempfile.gettempdir(), "conan")
@@ -28,8 +31,14 @@ def run_autodetect():
     os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] = "conan config set storage.download_cache='{}'".format(tmpdir)
     os.environ["CONAN_DOCKER_RUN_OPTIONS"] = "-v '{}':'/tmp/conan'".format(tmpdir)
 
+    ###
+    # Enabling installing system_requirements
+    ###
     os.environ["CONAN_SYSREQUIRES_MODE"] = "enabled"
 
+    ###
+    # Detect and execute custom build.py file if existing
+    ###
     has_custom_build_py, custom_build_py_path = is_custom_build_py_existing()
 
     if has_custom_build_py:
@@ -38,6 +47,9 @@ def run_autodetect():
         subprocess.run(["python",  "{}".format(custom_build_py_path)], check=True)
         return
 
+    ###
+    # Output collected recipe information in the builds logs
+    ###
     recipe_is_installer = is_installer()
     printer.print_message("Is the package an installer for executable(s)? {}"
                           .format(str(recipe_is_installer)))
@@ -57,6 +69,9 @@ def run_autodetect():
 
     _flush_output()
 
+    ###
+    # Start the build
+    ###
     if recipe_is_installer:
         arch = os.getenv("ARCH", "x86_64")
         builder = build_template_installer.get_builder()
