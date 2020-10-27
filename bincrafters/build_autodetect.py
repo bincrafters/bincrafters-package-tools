@@ -45,6 +45,8 @@ def run_autodetect():
         printer.print_message("Custom build.py detected. Executing ...")
         _flush_output()
         new_wd = os.path.dirname(custom_build_py_path)
+        if new_wd == "":
+            new_wd = "."
         subprocess.run("cd {} && python build.py".format(new_wd), shell=True, check=True)
         return
 
