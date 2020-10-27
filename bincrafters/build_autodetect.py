@@ -75,7 +75,7 @@ def run_autodetect():
     ###
     # Start the build
     ###
-    kwargs = None
+    kwargs = {}
 
     if autodetect_directory_structure() == DIR_STRUCTURE_ONE_RECIPE_MANY_VERSIONS \
             or autodetect_directory_structure() == DIR_STRUCTURE_CCI:
