@@ -1,7 +1,7 @@
 import json
 
-from bincrafters.build_shared import get_bool_from_env
-
+from bincrafters.build_shared import get_bool_from_env, get_conan_vars
+from bincrafters.autodetect import autodetect_directory_structure
 
 def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool) -> str:
     if platform != "gha":
@@ -69,6 +69,11 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
                 {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
                 {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04"},
             ]
+
+    for build_config in matrix:
+        build_config["CONAN_CONANFILE"] = os.getpwd()
+        _, version, _ = get_conan_vars(recipe=os.getpwd())
+        build_config["CONAN_VERSION"] = version
 
     matrix_string = json.dumps(matrix)
     return matrix_string
