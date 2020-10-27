@@ -1,1 +1,1 @@
-conan-package-tools @ git+https://github.com/croydon/conan-package-tools@develop
+conan_package_tools>=0.34.3
