@@ -37,13 +37,23 @@ def get_value_from_recipe(search_string, recipe=None):
 
 
 def inspect_value_from_recipe(attribute, recipe_path):
+    cwd = os.getcwd()
+    result = None
+
     try:
+        dir_name = os.path.dirname(recipe_path)
+        conanfile_name = os.path.basename(recipe_path)
+        if dir_name == "":
+            dir_name = "./"
+        os.chdir(dir_name)
         conan_instance, _, _ = conan_api.Conan.factory()
-        inspect_result = conan_instance.inspect(path=recipe_path, attributes=[attribute])
-        return inspect_result.get(attribute)
+        inspect_result = conan_instance.inspect(path=conanfile_name, attributes=[attribute])
+        result = inspect_result.get(attribute)
     except:
         pass
-    return None
+
+    os.chdir(cwd)
+    return result
 
 
 def get_name_from_recipe(recipe=None):
