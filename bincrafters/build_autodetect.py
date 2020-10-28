@@ -44,10 +44,15 @@ def run_autodetect():
     if has_custom_build_py:
         printer.print_message("Custom build.py detected. Executing ...")
         _flush_output()
+
         new_wd = os.path.dirname(custom_build_py_path)
-        if new_wd == "":
-            new_wd = "."
-        subprocess.run("cd {} && python build.py".format(new_wd), shell=True, check=True)
+
+        # build.py files have no knowledge about the directory structure above them.
+        # Delete the env variable or BPT is appending the path a second time
+        # when build.py calls BPT
+        del os.environ["BPT_CWD"]
+
+        subprocess.run("python build.py", cwd=new_wd, shell=True, check=True)
         return
 
     ###

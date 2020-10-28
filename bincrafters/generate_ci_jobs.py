@@ -3,7 +3,7 @@ import os
 
 import yaml
 
-from bincrafters.build_shared import get_bool_from_env, get_conan_vars
+from bincrafters.build_shared import get_bool_from_env, get_conan_vars, get_recipe_path
 from bincrafters.autodetect import *
 
 
@@ -93,8 +93,8 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
     if directory_structure == DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION:
         for build_config in matrix["config"]:
             new_config = build_config.copy()
-            new_config["cwd"] = os.getcwd()
-            _, version, _ = get_conan_vars(recipe=os.path.join(os.getcwd(), "conanfile.py"))
+            new_config["cwd"] = "."
+            _, version, _ = get_conan_vars(recipe=get_recipe_path())
             new_config["recipe_version"] = version
             final_matrix["config"].append(new_config)
 
@@ -113,7 +113,7 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
 
                 for build_config in working_matrix["config"]:
                     new_config = build_config.copy()
-                    new_config["cwd"] = os.path.join(os.getcwd(), version_attr["folder"])
+                    new_config["cwd"] = version_attr["folder"]
                     new_config["recipe_version"] = version
                     new_config["name"] = "{} | {}".format(version, new_config["name"])
                     final_matrix["config"].append(new_config)

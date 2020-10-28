@@ -98,9 +98,6 @@ DIR_STRUCTURE_CCI = "cci_many_recipes_many_versions"
 def autodetect_directory_structure() -> str:
     """ Return the directory type as classified above this method
     """
-    if "CONAN_CONANFILE" in os.environ:
-        return DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION
-
     pwd = os.getcwd()
 
     if os.path.exists(os.path.join(pwd, "conanfile.py")):
