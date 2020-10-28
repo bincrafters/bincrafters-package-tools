@@ -4,8 +4,8 @@ import subprocess
 
 
 def prepare_env(platform: str, config: json):
-    if platform != "gha":
-        raise ValueError("Only GitHub Actions is supported at this point.")
+    if platform != "gha" and platform != "azp":
+        raise ValueError("Only GitHub Actions and Azure Pipelines is supported at this point.")
 
     subprocess.run("conan user", shell=True)
 
@@ -17,6 +17,16 @@ def prepare_env(platform: str, config: json):
                 'echo "{}={}" >> $GITHUB_ENV'.format(var_name, value),
                 shell=True
             )
+        if platform == "azp":
+            subprocess.run(
+                'echo "##vso[task.setvariable variable={};isOutput=true]{}"'.format(var_name, value),
+                shell=True
+            )
+
+    if platform == "azp":
+        _set_env_variable("config.msvc1.version", "15")
+        _set_env_variable("config.msvc2.version", "16")
+        return
 
     compiler = config["compiler"]
     compiler_version = config["version"]
