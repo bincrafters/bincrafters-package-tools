@@ -46,6 +46,8 @@ def run_autodetect():
         _flush_output()
 
         new_wd = os.path.dirname(custom_build_py_path)
+        if new_wd == "":
+            new_wd = ".{}".format(os.sep)
 
         # build.py files have no knowledge about the directory structure above them.
         # Delete the env variable or BPT is appending the path a second time
