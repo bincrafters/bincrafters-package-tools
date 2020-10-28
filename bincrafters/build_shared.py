@@ -249,6 +249,10 @@ def get_builder(build_policy=None, cwd=None, **kwargs):
     kwargs = get_stable_branch_pattern(kwargs)
     kwargs = get_archs(kwargs)
     build_policy = os.getenv("CONAN_BUILD_POLICY", build_policy)
+
+    # CPT is working better with an absolute path for the cwd
+    cwd = os.path.abspath(cwd)
+
     builder = ConanMultiPackager(
         build_policy=build_policy,
         cwd=cwd,
