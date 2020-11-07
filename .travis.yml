@@ -33,7 +33,7 @@ deploy:
     password: ${TEST_PYPI_PASSWORD}
     skip_existing: true
     on:
-      branch: master
+      branch: main
       python: 3.7
   - provider: pypi
     user: ${TEST_PYPI_LOGIN_USERNAME}
