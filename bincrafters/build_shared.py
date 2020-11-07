@@ -17,9 +17,9 @@ def get_recipe_path(cwd=None):
     cwd = os.getenv("BPT_CWD", cwd)
     conanfile = os.getenv("CONAN_CONANFILE", "conanfile.py")
     if cwd is None:
-        return conanfile
+        return os.path.abspath(conanfile)
     else:
-        return os.path.join(cwd, conanfile)
+        return os.path.abspath(os.path.join(cwd, conanfile))
 
 
 def get_bool_from_env(var_name, default="1"):
@@ -238,8 +238,9 @@ def get_reference(name, version, kwargs):
 
 
 def get_builder(build_policy=None, cwd=None, **kwargs):
-    cwd = os.getenv("BPT_CWD", cwd)
     recipe = get_recipe_path(cwd)
+    cwd = os.path.dirname(recipe)
+
     name = get_name_from_recipe(recipe=recipe)
     username, version, kwargs = get_conan_vars(recipe=recipe, kwargs=kwargs)
     kwargs = get_reference(name, version, kwargs)
@@ -249,10 +250,6 @@ def get_builder(build_policy=None, cwd=None, **kwargs):
     kwargs = get_stable_branch_pattern(kwargs)
     kwargs = get_archs(kwargs)
     build_policy = os.getenv("CONAN_BUILD_POLICY", build_policy)
-
-    # CPT is working better with an absolute path for the cwd
-    if cwd:
-        cwd = os.path.abspath(cwd)
 
     builder = ConanMultiPackager(
         build_policy=build_policy,

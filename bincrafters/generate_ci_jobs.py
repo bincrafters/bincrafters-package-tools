@@ -6,7 +6,7 @@ from bincrafters.build_shared import get_bool_from_env, get_conan_vars, get_reci
 from bincrafters.autodetect import *
 
 
-def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool) -> str:
+def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_build_types: bool = False) -> str:
     if platform != "gha" and platform != "azp":
         return ""
 
@@ -14,7 +14,8 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
     matrix_minimal = {}
 
     if split_by_build_types is None:
-        split_by_build_types = get_bool_from_env("splitByBuildTypes", False)
+        # env var BPT_SPLIT_BY_BUILD_TYPES should be preferred over splitByBuildTypes (deprecated)
+        split_by_build_types = get_bool_from_env("BPT_SPLIT_BY_BUILD_TYPES", get_bool_from_env("splitByBuildTypes", False))
 
     if platform == "gha":
         if recipe_type == "installer":
@@ -89,46 +90,41 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
     elif platform == "azp":
         if split_by_build_types:
             matrix["config"] = [
+                {"name": "macOS Apple-Clang 10 Release", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14", "buildType": "Release"},
                 {"name": "macOS Apple-Clang 10 Debug", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14", "buildType": "Debug"},
                 {"name": "macOS Apple-Clang 11 Release", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Release"},
-                {"name": "Windows VS 2017 Debug", "compiler": "MSVC", "version": "15", "os": "vs2017-win2016", "buildType": "Debug"},
-                {"name": "Windows VS 2019 Release", "compiler": "MSVC", "version": "16", "os": "windows-2019", "buildType": "Release"},
+                {"name": "macOS Apple-Clang 11 Debug", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Debug"},
+                {"name": "Windows VS 2017 Release", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "buildType": "Release"},
+                {"name": "Windows VS 2017 Debug", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "buildType": "Debug"},
+                {"name": "Windows VS 2019 Release", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "buildType": "Release"},
+                {"name": "Windows VS 2019 Debug", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "buildType": "Debug"},
             ]
             matrix_minimal["config"] = [
                 {"name": "macOS Apple-Clang 11 Debug", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Debug"},
                 {"name": "macOS Apple-Clang 11 Release", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Release"},
-                {"name": "Windows VS 2019 Debug", "compiler": "MSVC", "version": "16", "os": "windows-2019", "buildType": "Debug"},
-                {"name": "Windows VS 2019 Release", "compiler": "MSVC", "version": "16", "os": "windows-2019", "buildType": "Release"},
+                {"name": "Windows VS 2019 Debug", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "buildType": "Debug"},
+                {"name": "Windows VS 2019 Release", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "buildType": "Release"},
             ]
         else:
             matrix["config"] = [
                 {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14"},
                 {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-                {"name": "Windows VS 2017", "compiler": "MSVC", "version": "15", "os": "vs2017-win2016"},
-                {"name": "Windows VS 2019", "compiler": "MSVC", "version": "16", "os": "windows-2019"},
+                {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
+                {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
             ]
             matrix_minimal["config"] = [
                 {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-                {"name": "Windows VS 2019", "compiler": "MSVC", "version": "16", "os": "windows-2019"},
+                {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
             ]
 
     directory_structure = autodetect_directory_structure()
     final_matrix = {"config": []}
 
-    if directory_structure == DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION:
-        for build_config in matrix["config"]:
-            new_config = build_config.copy()
+    def _detect_changed_directories():
+        return None
 
-            # Docker refuses to take a one letter volume name
-            # Instead of just . we have to use ./
-            new_config["cwd"] = os.path.join(".{}".format(os.sep))
-
-            _, version, _ = get_conan_vars(recipe=get_recipe_path())
-            new_config["recipe_version"] = version
-            final_matrix["config"].append(new_config)
-
-    elif directory_structure == DIR_STRUCTURE_ONE_RECIPE_MANY_VERSIONS:
-        config_file = os.path.join(os.getcwd(), "config.yml")
+    def _parse_recipe_directory(path: str):
+        config_file = os.path.join(path, "config.yml")
         config_yml = yaml.load(open(config_file, "r"))
         for version, version_attr in config_yml["versions"].items():
             version_build_value = version_attr.get("build", "full")
@@ -147,11 +143,33 @@ def generate_ci_jobs(platform: str, recipe_type: str, split_by_build_types: bool
                         new_config = build_config.copy()
                         new_config["cwd"] = version_attr["folder"]
                         new_config["recipe_version"] = version
-                        new_config["name"] = "{} | {}".format(version, new_config["name"])
+                        new_config["name"] = "{} {}".format(version, new_config["name"])
                         final_matrix["config"].append(new_config)
+
+    if directory_structure == DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION:
+        for build_config in matrix["config"]:
+            new_config = build_config.copy()
+            new_config["cwd"] = "./"
+            _, fixed_version, _ = get_conan_vars(recipe=get_recipe_path())
+            new_config["recipe_version"] = fixed_version
+            final_matrix["config"].append(new_config)
+
+    elif directory_structure == DIR_STRUCTURE_ONE_RECIPE_MANY_VERSIONS:
+        _parse_recipe_directory(path=os.getcwd())
 
     elif directory_structure == DIR_STRUCTURE_CCI:
         raise ValueError("DIR_STRUCTURE_CCI is not yet implemented.")
 
-    matrix_string = json.dumps(final_matrix)
+    # Now where we have to complete matrix, we have to parse them in a final string
+    # which can be understood by the target platform
+    matrix_string = "{}"
+
+    if platform == "gha":
+        matrix_string = json.dumps(final_matrix)
+    elif platform == "azp":
+        platform_matrix = {}
+        for build_config in final_matrix["config"]:
+            platform_matrix[build_config["name"]] = build_config
+        matrix_string = json.dumps(platform_matrix)
+
     return matrix_string

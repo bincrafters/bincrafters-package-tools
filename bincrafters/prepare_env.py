@@ -3,11 +3,15 @@ import os
 import subprocess
 
 
-def prepare_env(platform: str, config: json):
+def prepare_env(platform: str, config: json, select_config: str = None):
     if platform != "gha" and platform != "azp":
         raise ValueError("Only GitHub Actions and Azure Pipelines is supported at this point.")
 
-    subprocess.run("conan user", shell=True)
+    if platform != "azp" and select_config is not None:
+        raise ValueError("The --select-config parameter can only be used with Azure Pipelines.")
+
+    if select_config:
+        config = config[select_config]
 
     def _set_env_variable(var_name: str, value: str):
         print("{} = {}".format(var_name, value))
@@ -18,23 +22,29 @@ def prepare_env(platform: str, config: json):
                 shell=True
             )
         if platform == "azp":
-            subprocess.run(
-                'echo "##vso[task.setvariable variable={};isOutput=true]{}"'.format(var_name, value),
-                shell=True
-            )
-
-    if platform == "azp":
-        _set_env_variable("config.msvc1.version", "15")
-        _set_env_variable("config.msvc2.version", "16")
-        return
+            if compiler == "VISUAL":
+                subprocess.run(
+                    'echo ##vso[task.setvariable variable={}]{}'.format(var_name, value),
+                    shell=True
+                )
+            else:
+                subprocess.run(
+                    'echo "##vso[task.setvariable variable={}]{}"'.format(var_name, value),
+                    shell=True
+                )
 
     compiler = config["compiler"]
     compiler_version = config["version"]
-    docker_image = config.get("docker_image", "")
-    build_type = config.get("build_type", "")
+    docker_image = config.get("dockerImage", "")
+    build_type = config.get("buildType", "")
 
     _set_env_variable("BPT_CWD", config["cwd"])
     _set_env_variable("CONAN_VERSION", config["recipe_version"])
+
+    if compiler == "APPLE_CLANG":
+        if "." not in compiler_version:
+            compiler_version = "{}.0".format(compiler_version)
+
     _set_env_variable("CONAN_{}_VERSIONS".format(compiler), compiler_version)
 
     if compiler == "GCC" or compiler == "CLANG":
@@ -47,14 +57,35 @@ def prepare_env(platform: str, config: json):
     if build_type != "":
         _set_env_variable("CONAN_BUILD_TYPES", build_type)
 
-    if platform == "gha":
-        if compiler == "APPLE_CLANG" and compiler_version == "11.0":
-            subprocess.run(
-                'sudo xcode-select -switch "/Applications/Xcode_11.3.1.app"',
-                shell=True
-            )
+    if platform == "gha" or platform == "azp":
+        if compiler == "APPLE_CLANG":
+            xcode_mapping = {
+                "9.1": "/Applications/Xcode_9.4.1.app",
+                "10.0": "/Applications/Xcode_10.3.app",
+                "11.0": "/Applications/Xcode_11.3.1.app",
+                "12.0": "/Applications/Xcode_12.2.app",
+            }
+            if compiler_version in xcode_mapping:
+                subprocess.run(
+                    'sudo xcode-select -switch "{}"'.format(xcode_mapping[compiler_version]),
+                    shell=True
+                )
+                print('executing: xcode-select -switch "{}"'.format(xcode_mapping[compiler_version]))
+
             subprocess.run(
                 'clang++ --version',
                 shell=True
             )
 
+    if platform == "azp" and compiler == "VISUAL":
+        with open(os.path.join(os.path.dirname(__file__), "prepare_env_azp_windows.ps1"), "r") as file:
+            content = file.read()
+            file.close()
+
+        with open("execute.ps1", "w", encoding="utf-8") as file:
+            file.write(content)
+            file.close()
+
+        subprocess.run("powershell -file {}".format(os.path.join(os.getcwd(), "execute.ps1")), shell=True, check=True)
+
+    subprocess.run("conan user", shell=True)
