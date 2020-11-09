@@ -4,6 +4,7 @@ import yaml
 
 from bincrafters.build_shared import get_bool_from_env, get_conan_vars, get_recipe_path, get_version_from_ci
 from bincrafters.autodetect import *
+from bincrafters.utils import *
 
 
 def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_build_types: bool = False) -> str:
@@ -120,17 +121,38 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
     directory_structure = autodetect_directory_structure()
     final_matrix = {"config": []}
 
-    def _detect_changed_directories():
-        return None
+    def _detect_changed_directories(path_filter: str = None) -> set:
+        changed_dirs = []
+        current_commit = utils_git_get_current_commit()
+        current_branch = utils_git_get_current_branch()
+        default_branch = utils_git_get_default_branch()
+        changed_dirs.extend(utils_git_get_changed_dirs(base=current_commit))
+
+        if default_branch != current_branch:
+            changed_dirs.extend(utils_git_get_changed_dirs(base=default_branch, head=current_branch))
+
+        if path_filter:
+            # Only list directories which start with a certain path
+            # It also removes this filter prefix from the path
+            # e.g. only get changed directories in recipes/ and remove recipes/ from results
+            changed_dirs = [x.replace(path_filter, "") for x in changed_dirs if path_filter in x]
+
+        # Remove trailing /
+        changed_dirs = [os.path.dirname(x) for x in changed_dirs]
+
+        return set(changed_dirs)
 
     def _parse_recipe_directory(path: str):
+        changed_dirs = _detect_changed_directories()
         config_file = os.path.join(path, "config.yml")
         config_yml = yaml.load(open(config_file, "r"))
         for version, version_attr in config_yml["versions"].items():
             version_build_value = version_attr.get("build", "full")
-            # If we are on a branch like testing/3.0.0 then only build v3.0.0
+            # If we are on a branch like testing/3.0.0 then only build 3.0.0
             # regardless of config.yml settings
-            if get_version_from_ci() == "" or get_version_from_ci() == version:
+            # If we are on an unversioned branch, only build versions which dirs got changed
+            if (get_version_from_ci() == "" and version_attr["folder"] in changed_dirs)\
+                    or get_version_from_ci() == version:
                 if version_build_value != "none":
                     if version_build_value == "full":
                         working_matrix = matrix.copy()
