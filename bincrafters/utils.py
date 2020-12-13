@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 
 def _utils_execute_script(script: str, remove_newlines: bool = True) -> str:
@@ -16,7 +17,17 @@ def utils_git_get_default_branch(remote: str = "origin") -> str:
 
 
 def utils_git_get_current_branch() -> str:
-    return _utils_execute_script("git branch --show-current")
+    def _clean_branch(branch):
+        return branch[11:] if branch.startswith("refs/heads/") else branch
+
+    repobranch_azp = os.getenv("BUILD_SOURCEBRANCHNAME", "")
+    repobranch_gha = _clean_branch(os.getenv("GITHUB_REF", ""))
+    if os.getenv("GITHUB_EVENT_NAME", "") == "pull_request":
+        repobranch_gha = _clean_branch(os.getenv("GITHUB_HEAD_REF", ""))
+
+    repobranch_git = _utils_execute_script("git branch --show-current")
+
+    return repobranch_azp or repobranch_gha or repobranch_git
 
 
 def utils_git_get_current_commit() -> str:
@@ -26,9 +37,13 @@ def utils_git_get_current_commit() -> str:
 def utils_git_get_changed_dirs(base: str, head: str = None) -> list:
     if not head:
         # Per default lets get the diff between the provided base and the commit before that
-        head = "{}^1".format(base)
+        head_merge_base = "{}^1".format(base)
+        head = base
+    else:
+        head_merge_base = head
 
-    merge_base = _utils_execute_script("git merge-base {} {}".format(base, head))
+    merge_base = _utils_execute_script("git merge-base {} {}".format(base, head_merge_base))
     dirs = _utils_execute_script("git diff --dirstat=files,0 {}..{} | sed 's/^[ 0-9.]\\+% //g'".format(merge_base, head),
                                  remove_newlines=False)
+
     return dirs.splitlines()

@@ -147,12 +147,25 @@ def get_version(recipe=None):
 
 
 def get_conan_vars(recipe=None, kwargs={}):
-    username = kwargs.get("username", os.getenv(
-        "CONAN_USERNAME", get_username_from_ci() or BINCRAFTERS_USERNAME))
+    # these fallbacks have to handle empty environment variables too!
+    # this is the case for e.g. external pull request (i.e. no secrets available)
+    # This combined with versioned branches, lead to the error
+    # that the channel is defined but not the username and CPT fails
+    if "CONAN_USERNAME" is os.environ and os.getenv("CONAN_USERNAME") != "":
+        username_fallback = os.getenv("CONAN_USERNAME")
+    else:
+        username_fallback = get_username_from_ci() or BINCRAFTERS_USERNAME
+
+    if "CONAN_LOGIN_USERNAME" is os.environ and os.getenv("CONAN_LOGIN_USERNAME") != "":
+        login_username_fallback = os.getenv("CONAN_LOGIN_USERNAME")
+    else:
+        login_username_fallback = BINCRAFTERS_LOGIN_USERNAME
+
+    username = kwargs.get("username", username_fallback)
     kwargs["channel"] = kwargs.get("channel", os.getenv("CONAN_CHANNEL", get_channel_from_ci()))
     version = get_version(recipe=recipe)
-    kwargs["login_username"] = kwargs.get("login_username", os.getenv(
-        "CONAN_LOGIN_USERNAME", BINCRAFTERS_LOGIN_USERNAME))
+
+    kwargs["login_username"] = kwargs.get("login_username", login_username_fallback)
     kwargs["username"] = username
 
     return username, version, kwargs

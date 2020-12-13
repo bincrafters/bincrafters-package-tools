@@ -126,10 +126,14 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
         current_commit = utils_git_get_current_commit()
         current_branch = utils_git_get_current_branch()
         default_branch = utils_git_get_default_branch()
+
         changed_dirs.extend(utils_git_get_changed_dirs(base=current_commit))
 
         if default_branch != current_branch:
-            changed_dirs.extend(utils_git_get_changed_dirs(base=default_branch, head=current_branch))
+            # The default branch might not be tracked locally
+            # i.e. "main" might be unknown, while "origin/main" should always be known
+            # similar for the current_branch, so lets use the hash commit which should be always be known
+            changed_dirs.extend(utils_git_get_changed_dirs(base="origin/{}".format(default_branch), head=current_commit))
 
         if path_filter:
             # Only list directories which start with a certain path
@@ -142,8 +146,8 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
 
         return set(changed_dirs)
 
-    def _parse_recipe_directory(path: str):
-        changed_dirs = _detect_changed_directories()
+    def _parse_recipe_directory(path: str, path_filter: str = None, recipe_displayname: str = None):
+        changed_dirs = _detect_changed_directories(path_filter=path_filter)
         config_file = os.path.join(path, "config.yml")
         config_yml = yaml.load(open(config_file, "r"))
         for version, version_attr in config_yml["versions"].items():
@@ -163,9 +167,13 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
 
                     for build_config in working_matrix["config"]:
                         new_config = build_config.copy()
-                        new_config["cwd"] = version_attr["folder"]
+                        if not path_filter:
+                            new_config["cwd"] = version_attr["folder"]
+                            new_config["name"] = "{} {}".format(version, new_config["name"])
+                        else:
+                            new_config["cwd"] = "{}{}".format(path_filter, version_attr["folder"])
+                            new_config["name"] = "{}/{} {}".format(recipe_displayname, version, new_config["name"])
                         new_config["recipe_version"] = version
-                        new_config["name"] = "{} {}".format(version, new_config["name"])
                         final_matrix["config"].append(new_config)
 
     if directory_structure == DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION:
@@ -180,7 +188,13 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
         _parse_recipe_directory(path=os.getcwd())
 
     elif directory_structure == DIR_STRUCTURE_CCI:
-        raise ValueError("DIR_STRUCTURE_CCI is not yet implemented.")
+        recipes = [f.path for f in os.scandir("recipes") if f.is_dir()]
+        for recipe_folder in recipes:
+            # the path_filter should end with a / so that the results don't start with one
+            recipe_displayname = recipe_folder.replace("recipes/", "")
+            _parse_recipe_directory(path=recipe_folder,
+                                    path_filter="{}/".format(recipe_folder),
+                                    recipe_displayname=recipe_displayname)
 
     # Now where we have to complete matrix, we have to parse them in a final string
     # which can be understood by the target platform
