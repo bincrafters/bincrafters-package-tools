@@ -151,12 +151,12 @@ def get_conan_vars(recipe=None, kwargs={}):
     # this is the case for e.g. external pull request (i.e. no secrets available)
     # This combined with versioned branches, lead to the error
     # that the channel is defined but not the username and CPT fails
-    if "CONAN_USERNAME" is os.environ and os.getenv("CONAN_USERNAME") != "":
+    if "CONAN_USERNAME" in os.environ and os.getenv("CONAN_USERNAME") != "":
         username_fallback = os.getenv("CONAN_USERNAME")
     else:
         username_fallback = get_username_from_ci() or BINCRAFTERS_USERNAME
 
-    if "CONAN_LOGIN_USERNAME" is os.environ and os.getenv("CONAN_LOGIN_USERNAME") != "":
+    if "CONAN_LOGIN_USERNAME" in os.environ and os.getenv("CONAN_LOGIN_USERNAME") != "":
         login_username_fallback = os.getenv("CONAN_LOGIN_USERNAME")
     else:
         login_username_fallback = BINCRAFTERS_LOGIN_USERNAME
