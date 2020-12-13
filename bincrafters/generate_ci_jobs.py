@@ -7,6 +7,17 @@ from bincrafters.autodetect import *
 from bincrafters.utils import *
 
 
+def _run_macos_jobs_on_gha():
+    if utils_file_contains("azure-pipelines.yml", "name: bincrafters/templates")\
+            and utils_file_contains("azure-pipelines.yml", "template: .ci/azure.yml@templates"):
+        return False
+
+    if utils_file_contains(".travis.yml", "import: bincrafters/templates:.ci/travis"):
+        return False
+
+    return True
+
+
 def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_build_types: bool = False) -> str:
     if platform != "gha" and platform != "azp":
         return ""
@@ -19,6 +30,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
         split_by_build_types = get_bool_from_env("BPT_SPLIT_BY_BUILD_TYPES", get_bool_from_env("splitByBuildTypes", False))
 
     if platform == "gha":
+        run_macos = _run_macos_jobs_on_gha()
         if recipe_type == "installer":
             matrix["config"] = [
                 {"name": "Installer Linux", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04", "dockerImage": "conanio/gcc7-centos6"},
@@ -62,12 +74,25 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                     {"name": "CLANG 9 Debug", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04", "buildType": "Debug"},
                     {"name": "CLANG 9 Release", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04", "buildType": "Release"}
                 ]
+                if run_macos:
+                    matrix["config"] += [
+                        {"name": "macOS Apple-Clang 10 Release", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14", "buildType": "Release"},
+                        {"name": "macOS Apple-Clang 10 Debug", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14", "buildType": "Debug"},
+                        {"name": "macOS Apple-Clang 11 Release", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Release"},
+                        {"name": "macOS Apple-Clang 11 Debug", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Debug"},
+                    ]
                 matrix_minimal["config"] = [
                     {"name": "GCC 7 Debug", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04", "buildType": "Debug"},
                     {"name": "GCC 7 Release", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04", "buildType": "Release"},
                     {"name": "CLANG 8 Debug", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04", "buildType": "Debug"},
                     {"name": "CLANG 8 Release", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04", "buildType": "Release"},
                 ]
+                if run_macos:
+                    matrix_minimal["config"] += [
+                        {"name": "macOS Apple-Clang 11 Debug", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Debug"},
+                        {"name": "macOS Apple-Clang 11 Release", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Release"},
+                    ]
+
             else:
                 matrix["config"] = [
                     {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-18.04"},
@@ -84,10 +109,19 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                     {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
                     {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04"},
                 ]
+                if run_macos:
+                    matrix["config"] += [
+                        {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14"},
+                        {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
+                    ]
                 matrix_minimal["config"] = [
                     {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
                     {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
                 ]
+                if run_macos:
+                    matrix_minimal["config"] += [
+                        {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
+                    ]
     elif platform == "azp":
         if split_by_build_types:
             matrix["config"] = [

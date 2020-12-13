@@ -47,3 +47,19 @@ def utils_git_get_changed_dirs(base: str, head: str = None) -> list:
                                  remove_newlines=False)
 
     return dirs.splitlines()
+
+
+def utils_file_contains(file, word):
+    """ Read file and search for word
+
+    :param file: File path to be read
+    :param word: word to be found
+    :return: True if found. Otherwise, False
+    """
+    if os.path.isfile(file):
+        with open(file) as ifd:
+            content = ifd.read()
+            if word in content:
+                return True
+    return False
+
