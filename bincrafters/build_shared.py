@@ -115,8 +115,8 @@ def get_ci_vars():
     repobranch = get_repo_branch_from_ci()
     repobranch_split = repobranch.split("/")
 
-    username, _ = reponame_split if len(reponame_split) > 1 else ["", ""]
-    channel, version = repobranch_split if len(repobranch_split) > 1 else ["", ""]
+    username, _ = reponame_split if len(reponame_split) == 2 else ["", ""]
+    channel, version = repobranch_split if len(repobranch_split) == 2 else ["", ""]
     return username, channel, version
 
 
