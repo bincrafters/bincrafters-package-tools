@@ -1,4 +1,4 @@
-![Build status](https://github.com/bincrafters/bincrafters-package-tools/workflows/bincrafters-package-tools/badge.svg)
+[![Build status](https://github.com/bincrafters/bincrafters-package-tools/workflows/bincrafters-package-tools/badge.svg)](https://github.com/bincrafters/bincrafters-package-tools/actions)
 [![Codecov](https://codecov.io/gh/bincrafters/bincrafters-package-tools/branch/main/graph/badge.svg)](https://codecov.io/gh/bincrafters/bincrafters-package-tools)
 [![Pypi Download](https://img.shields.io/badge/download-pypi-blue.svg)](https://pypi.python.org/pypi/bincrafters-package-tools)
 
