@@ -88,4 +88,13 @@ def prepare_env(platform: str, config: json, select_config: str = None):
 
         subprocess.run("powershell -file {}".format(os.path.join(os.getcwd(), "execute.ps1")), shell=True, check=True)
 
+    if platform == "gha" and (compiler == "GCC" or compiler == "CLANG"):
+        subprocess.run('docker system prune --all --force --volumes', shell=True)
+        subprocess.run('sudo rm -rf "/usr/local/share/boost"', shell=True)
+        subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/CodeQL"', shell=True)
+        subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/Ruby"', shell=True)
+        subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/boost"', shell=True)
+        subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/go"', shell=True)
+        subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/node"', shell=True)
+
     subprocess.run("conan user", shell=True)
