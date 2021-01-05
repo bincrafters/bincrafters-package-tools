@@ -24,11 +24,6 @@ Or if you want to download our pip package
 
     pip install bincrafters_package_tools
 
-#### HOW TO USE
-We listed two common [examples](examples):
-* How to [build shared library](examples/build_shared_library.py)
-* How to [build header only](examples/build_header_only.py)
-
 
 #### ENVIRONMENT
 All variables supported by Conan package tools, are treated by Bincrafters package tools as well.
