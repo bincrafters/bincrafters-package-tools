@@ -27,7 +27,8 @@ def run_autodetect():
     # In some cases Python may ignore the mode of makedirs, do it again explicitly with chmod
     os.chmod(tmpdir, mode=0o777)
 
-    os.system('conan config set storage.download_cache="{}"; conan config set general.revisions_enabled=1'.format(tmpdir))
+    os.system('conan config set storage.download_cache="{}"'.format(tmpdir))
+    os.system('conan config set general.revisions_enabled=1')
     os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] =\
         "conan config set storage.download_cache='{}'; conan config set general.revisions_enabled=1".format(tmpdir)
     os.environ["CONAN_DOCKER_RUN_OPTIONS"] = "-v '{}':'/tmp/conan'".format(tmpdir)
