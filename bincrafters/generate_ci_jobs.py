@@ -18,6 +18,17 @@ def _run_macos_jobs_on_gha():
     return True
 
 
+def _run_windows_jobs_on_gha():
+    if utils_file_contains("azure-pipelines.yml", "name: bincrafters/templates")\
+            and utils_file_contains("azure-pipelines.yml", "template: .ci/azure.yml@templates"):
+        return False
+
+    if utils_file_contains("appveyor.yml", "pip install bincrafters_package_tools"):
+        return False
+
+    return True
+
+
 def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_build_types: bool = False) -> str:
     if platform != "gha" and platform != "azp":
         return ""
@@ -31,6 +42,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
 
     if platform == "gha":
         run_macos = _run_macos_jobs_on_gha()
+        run_windows = _run_windows_jobs_on_gha()
         if recipe_type == "installer":
             matrix["config"] = [
                 {"name": "Installer Linux", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04", "dockerImage": "conanio/gcc8"},
@@ -81,6 +93,13 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                         {"name": "macOS Apple-Clang 11 Release", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Release"},
                         {"name": "macOS Apple-Clang 11 Debug", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Debug"},
                     ]
+                if run_windows:
+                    matrix["config"] += [
+                        {"name": "Windows VS 2017 Release", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "buildType": "Release"},
+                        {"name": "Windows VS 2017 Debug", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "buildType": "Debug"},
+                        {"name": "Windows VS 2019 Release", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "buildType": "Release"},
+                        {"name": "Windows VS 2019 Debug", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "buildType": "Debug"},
+                    ]
                 matrix_minimal["config"] = [
                     {"name": "GCC 7 Debug", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04", "buildType": "Debug"},
                     {"name": "GCC 7 Release", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04", "buildType": "Release"},
@@ -92,7 +111,11 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                         {"name": "macOS Apple-Clang 11 Debug", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Debug"},
                         {"name": "macOS Apple-Clang 11 Release", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Release"},
                     ]
-
+                if run_windows:
+                    matrix_minimal["config"] += [
+                        {"name": "Windows VS 2019 Debug", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "buildType": "Debug"},
+                        {"name": "Windows VS 2019 Release", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "buildType": "Release"},
+                    ]
             else:
                 matrix["config"] = [
                     {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-18.04"},
@@ -114,6 +137,11 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                         {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14"},
                         {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
                     ]
+                if run_windows:
+                    matrix["config"] += [
+                        {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
+                        {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
+                    ]
                 matrix_minimal["config"] = [
                     {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
                     {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
@@ -121,6 +149,10 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                 if run_macos:
                     matrix_minimal["config"] += [
                         {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
+                    ]
+                if run_windows:
+                    matrix_minimal["config"] += [
+                        {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
                     ]
     elif platform == "azp":
         if split_by_build_types:

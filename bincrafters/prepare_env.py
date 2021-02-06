@@ -77,16 +77,16 @@ def prepare_env(platform: str, config: json, select_config: str = None):
                 shell=True
             )
 
-    if platform == "azp" and compiler == "VISUAL":
-        with open(os.path.join(os.path.dirname(__file__), "prepare_env_azp_windows.ps1"), "r") as file:
-            content = file.read()
-            file.close()
+        if compiler == "VISUAL":
+            with open(os.path.join(os.path.dirname(__file__), "prepare_env_azp_windows.ps1"), "r") as file:
+                content = file.read()
+                file.close()
 
-        with open("execute.ps1", "w", encoding="utf-8") as file:
-            file.write(content)
-            file.close()
+            with open("execute.ps1", "w", encoding="utf-8") as file:
+                file.write(content)
+                file.close()
 
-        subprocess.run("powershell -file {}".format(os.path.join(os.getcwd(), "execute.ps1")), shell=True, check=True)
+            subprocess.run("powershell -file {}".format(os.path.join(os.getcwd(), "execute.ps1")), shell=True, check=True)
 
     if platform == "gha" and (compiler == "GCC" or compiler == "CLANG"):
         subprocess.run('docker system prune --all --force --volumes', shell=True)
