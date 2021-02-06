@@ -86,6 +86,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
                 file.write(content)
                 file.close()
 
+            subprocess.run("pip install --upgrade cmake", shell=True, check=True)
             subprocess.run("powershell -file {}".format(os.path.join(os.getcwd(), "execute.ps1")), shell=True, check=True)
 
     if platform == "gha" and (compiler == "GCC" or compiler == "CLANG"):
