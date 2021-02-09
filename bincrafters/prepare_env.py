@@ -17,10 +17,14 @@ def prepare_env(platform: str, config: json, select_config: str = None):
         print("{} = {}".format(var_name, value))
         os.environ[var_name] = value
         if platform == "gha":
-            subprocess.run(
-                'echo "{}={}" >> $GITHUB_ENV'.format(var_name, value),
-                shell=True
-            )
+            if compiler == "VISUAL":
+                os.system('echo {}={}>> {}'.format(var_name, value, os.getenv("GITHUB_ENV")))
+            else:
+                subprocess.run(
+                    'echo "{}={}" >> $GITHUB_ENV'.format(var_name, value),
+                    shell=True
+                )
+
         if platform == "azp":
             if compiler == "VISUAL":
                 subprocess.run(
