@@ -107,7 +107,7 @@ setup(
     # have to be included in MANIFEST.in as well.
     package_data={
         '': ['*.md'],
-        'bincrafters' : ['*.txt'],
+        'bincrafters': ['*.txt', '*.ps1'],
     },
 
     # Although 'package_data' is the preferred approach, in some case you may

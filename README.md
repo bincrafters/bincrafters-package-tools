@@ -1,6 +1,5 @@
-[![Build Status: Linux and Macos](https://travis-ci.com/bincrafters/bincrafters-package-tools.svg?branch=master)](https://travis-ci.com/bincrafters/bincrafters-package-tools)
-[![Build status: Windows](https://ci.appveyor.com/api/projects/status/github/bincrafters/bincrafters-package-tools?svg=true)](https://ci.appveyor.com/project/BinCrafters/bincrafters-package-tools)
-[![codecov](https://codecov.io/gh/bincrafters/bincrafters-package-tools/branch/master/graph/badge.svg)](https://codecov.io/gh/bincrafters/bincrafters-package-tools)
+[![Build status](https://github.com/bincrafters/bincrafters-package-tools/workflows/bincrafters-package-tools/badge.svg)](https://github.com/bincrafters/bincrafters-package-tools/actions)
+[![Codecov](https://codecov.io/gh/bincrafters/bincrafters-package-tools/branch/main/graph/badge.svg)](https://codecov.io/gh/bincrafters/bincrafters-package-tools)
 [![Pypi Download](https://img.shields.io/badge/download-pypi-blue.svg)](https://pypi.python.org/pypi/bincrafters-package-tools)
 
 # Bincrafters Package Tools
@@ -24,11 +23,6 @@ If you want to install by local copy
 Or if you want to download our pip package
 
     pip install bincrafters_package_tools
-
-#### HOW TO USE
-We listed two common [examples](examples):
-* How to [build shared library](examples/build_shared_library.py)
-* How to [build header only](examples/build_header_only.py)
 
 
 #### ENVIRONMENT
@@ -58,30 +52,6 @@ To run all unit test + code coverage, just execute:
     pip install -r bincrafters/requirements_test.txt
     cd tests
     pytest -v --cov=bincrafters
-
-
-#### REQUIREMENTS and DEVELOPMENT
-To develop or run Bincrafters package tools, Conan package tools will be required
-However, you could solve by pip
-
-    pip install -r bincrafters/requirements.txt
-
-
-#### UPLOAD
-There are two ways to upload this project.
-
-##### Travis CI
-After to create a new tag, the package will be uploaded automatically to Pypi.  
-Both username and password (encrypted) are in travis file.  
-Only one job (python 2.7) will upload, the second one will be skipped.
-
-
-##### Command line
-To upload this package on pypi (legacy mode):
-
-    pip install twine
-    python setup.py sdist
-    twine upload dist/*
 
 
 #### LICENSE

@@ -14,11 +14,12 @@ printer = Printer()
 
 
 def get_recipe_path(cwd=None):
+    cwd = os.getenv("BPT_CWD", cwd)
     conanfile = os.getenv("CONAN_CONANFILE", "conanfile.py")
     if cwd is None:
-        return conanfile
+        return os.path.abspath(conanfile)
     else:
-        return os.path.join(cwd, conanfile)
+        return os.path.abspath(os.path.join(cwd, conanfile))
 
 
 def get_bool_from_env(var_name, default="1"):
@@ -36,27 +37,37 @@ def get_value_from_recipe(search_string, recipe=None):
 
 
 def inspect_value_from_recipe(attribute, recipe_path):
+    cwd = os.getcwd()
+    result = None
+
     try:
+        dir_name = os.path.dirname(recipe_path)
+        conanfile_name = os.path.basename(recipe_path)
+        if dir_name == "":
+            dir_name = "./"
+        os.chdir(dir_name)
         conan_instance, _, _ = conan_api.Conan.factory()
-        inspect_result = conan_instance.inspect(path=recipe_path, attributes=[attribute])
-        return inspect_result.get(attribute)
+        inspect_result = conan_instance.inspect(path=conanfile_name, attributes=[attribute])
+        result = inspect_result.get(attribute)
     except:
         pass
-    return None
+
+    os.chdir(cwd)
+    return result
 
 
 def get_name_from_recipe(recipe=None):
-    name = inspect_value_from_recipe(attribute="name", recipe_path=get_recipe_path())
+    name = inspect_value_from_recipe(attribute="name", recipe_path=recipe)
     return name or get_value_from_recipe(r'''name\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def get_version_from_recipe(recipe=None):
-    version = inspect_value_from_recipe(attribute="version", recipe_path=get_recipe_path())
+    version = inspect_value_from_recipe(attribute="version", recipe_path=recipe)
     return version or get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
 
 
 def is_shared(recipe=None):
-    options = inspect_value_from_recipe(attribute="options", recipe_path=get_recipe_path())
+    options = inspect_value_from_recipe(attribute="options", recipe_path=recipe)
     if options:
         return "shared" in options
 
@@ -104,8 +115,8 @@ def get_ci_vars():
     repobranch = get_repo_branch_from_ci()
     repobranch_split = repobranch.split("/")
 
-    username, _ = reponame_split if len(reponame_split) > 1 else ["", ""]
-    channel, version = repobranch_split if len(repobranch_split) > 1 else ["", ""]
+    username, _ = reponame_split if len(reponame_split) == 2 else ["", ""]
+    channel, version = repobranch_split if len(repobranch_split) == 2 else ["", ""]
     return username, channel, version
 
 
@@ -125,17 +136,36 @@ def get_version_from_ci():
 
 
 def get_version(recipe=None):
+    env_ver = os.getenv("CONAN_VERSION", None)
     ci_ver = get_version_from_ci()
-    return ci_ver if ci_ver else get_version_from_recipe(recipe=recipe)
+    if env_ver:
+        return env_ver
+    elif ci_ver:
+        return ci_ver
+    else:
+        return get_version_from_recipe(recipe=recipe)
 
 
 def get_conan_vars(recipe=None, kwargs={}):
-    username = kwargs.get("username", os.getenv(
-        "CONAN_USERNAME", get_username_from_ci() or BINCRAFTERS_USERNAME))
+    # these fallbacks have to handle empty environment variables too!
+    # this is the case for e.g. external pull request (i.e. no secrets available)
+    # This combined with versioned branches, lead to the error
+    # that the channel is defined but not the username and CPT fails
+    if "CONAN_USERNAME" in os.environ and os.getenv("CONAN_USERNAME") != "":
+        username_fallback = os.getenv("CONAN_USERNAME")
+    else:
+        username_fallback = get_username_from_ci() or BINCRAFTERS_USERNAME
+
+    if "CONAN_LOGIN_USERNAME" in os.environ and os.getenv("CONAN_LOGIN_USERNAME") != "":
+        login_username_fallback = os.getenv("CONAN_LOGIN_USERNAME")
+    else:
+        login_username_fallback = BINCRAFTERS_LOGIN_USERNAME
+
+    username = kwargs.get("username", username_fallback)
     kwargs["channel"] = kwargs.get("channel", os.getenv("CONAN_CHANNEL", get_channel_from_ci()))
-    version = os.getenv("CONAN_VERSION", get_version(recipe=recipe))
-    kwargs["login_username"] = kwargs.get("login_username", os.getenv(
-        "CONAN_LOGIN_USERNAME", BINCRAFTERS_LOGIN_USERNAME))
+    version = get_version(recipe=recipe)
+
+    kwargs["login_username"] = kwargs.get("login_username", login_username_fallback)
     kwargs["username"] = username
 
     return username, version, kwargs
@@ -222,6 +252,8 @@ def get_reference(name, version, kwargs):
 
 def get_builder(build_policy=None, cwd=None, **kwargs):
     recipe = get_recipe_path(cwd)
+    cwd = os.path.dirname(recipe)
+
     name = get_name_from_recipe(recipe=recipe)
     username, version, kwargs = get_conan_vars(recipe=recipe, kwargs=kwargs)
     kwargs = get_reference(name, version, kwargs)
@@ -230,7 +262,8 @@ def get_builder(build_policy=None, cwd=None, **kwargs):
     kwargs = get_upload_when_stable(kwargs)
     kwargs = get_stable_branch_pattern(kwargs)
     kwargs = get_archs(kwargs)
-    build_policy = os.getenv('CONAN_BUILD_POLICY', build_policy)
+    build_policy = os.getenv("CONAN_BUILD_POLICY", build_policy)
+
     builder = ConanMultiPackager(
         build_policy=build_policy,
         cwd=cwd,

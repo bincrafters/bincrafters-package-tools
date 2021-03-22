@@ -14,12 +14,12 @@ def set_conanfile_path():
 
 
 def test_get_recipe_path_default():
-    assert "conanfile.py" == get_recipe_path()
+    assert os.path.join(os.getcwd(), "conanfile.py") == get_recipe_path()
 
 
 def test_get_recipe_path_conanfile(set_conanfile_path):
-    assert "foobar.py" == get_recipe_path()
+    assert os.path.join(os.getcwd(), "foobar.py") == get_recipe_path()
 
 
 def test_get_recipe_path_custom():
-    assert os.path.join("tmp", "conanfile.py") == get_recipe_path(cwd="tmp")
+    assert os.path.join(os.getcwd(), "tmp", "conanfile.py") == get_recipe_path(cwd="tmp")
