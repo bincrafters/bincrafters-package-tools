@@ -71,6 +71,8 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                     {"name": "GCC 8 Release", "compiler": "GCC", "version": "8", "os": "ubuntu-18.04", "buildType": "Release"},
                     {"name": "GCC 9 Debug", "compiler": "GCC", "version": "9", "os": "ubuntu-18.04", "buildType": "Debug"},
                     {"name": "GCC 9 Release", "compiler": "GCC", "version": "9", "os": "ubuntu-18.04", "buildType": "Release"},
+                    {"name": "GCC 10 Debug", "compiler": "GCC", "version": "10", "os": "ubuntu-18.04", "buildType": "Debug"},
+                    {"name": "GCC 10 Release", "compiler": "GCC", "version": "10", "os": "ubuntu-18.04", "buildType": "Release"},
                     {"name": "CLANG 3.9 Debug", "compiler": "CLANG", "version": "3.9", "os": "ubuntu-18.04", "buildType": "Debug"},
                     {"name": "CLANG 3.9 Release", "compiler": "CLANG", "version": "3.9", "os": "ubuntu-18.04", "buildType": "Release"},
                     {"name": "CLANG 4.0 Debug", "compiler": "CLANG", "version": "4.0", "os": "ubuntu-18.04", "buildType": "Debug"},
@@ -85,6 +87,10 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                     {"name": "CLANG 8 Release", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04", "buildType": "Release"},
                     {"name": "CLANG 9 Debug", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04", "buildType": "Debug"},
                     {"name": "CLANG 9 Release", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04", "buildType": "Release"}
+                    {"name": "CLANG 10 Debug", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04", "buildType": "Debug"},
+                    {"name": "CLANG 10 Release", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04", "buildType": "Release"}
+                    {"name": "CLANG 11 Debug", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04", "buildType": "Debug"},
+                    {"name": "CLANG 11 Release", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04", "buildType": "Release"}
                 ]
                 if run_macos:
                     matrix["config"] += [
@@ -92,6 +98,8 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                         {"name": "macOS Apple-Clang 10 Debug", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14", "buildType": "Debug"},
                         {"name": "macOS Apple-Clang 11 Release", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Release"},
                         {"name": "macOS Apple-Clang 11 Debug", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Debug"},
+                        {"name": "macOS Apple-Clang 12 Release", "compiler": "APPLE_CLANG", "version": "12.0", "os": "macOS-10.15", "buildType": "Release"},
+                        {"name": "macOS Apple-Clang 12 Debug", "compiler": "APPLE_CLANG", "version": "12.0", "os": "macOS-10.15", "buildType": "Debug"},
                     ]
                 if run_windows:
                     matrix["config"] += [
@@ -124,6 +132,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                     {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
                     {"name": "GCC 8", "compiler": "GCC", "version": "8", "os": "ubuntu-18.04"},
                     {"name": "GCC 9", "compiler": "GCC", "version": "9", "os": "ubuntu-18.04"},
+                    {"name": "GCC 10", "compiler": "GCC", "version": "10", "os": "ubuntu-18.04"},
                     {"name": "CLANG 3.9", "compiler": "CLANG", "version": "3.9", "os": "ubuntu-18.04"},
                     {"name": "CLANG 4.0", "compiler": "CLANG", "version": "4.0", "os": "ubuntu-18.04"},
                     {"name": "CLANG 5.0", "compiler": "CLANG", "version": "5.0", "os": "ubuntu-18.04"},
@@ -131,11 +140,14 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                     {"name": "CLANG 7.0", "compiler": "CLANG", "version": "7.0", "os": "ubuntu-18.04"},
                     {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
                     {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04"},
+                    {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04"},
+                    {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04"},
                 ]
                 if run_macos:
                     matrix["config"] += [
                         {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14"},
                         {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
+                        {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
                     ]
                 if run_windows:
                     matrix["config"] += [
@@ -161,6 +173,8 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                 {"name": "macOS Apple-Clang 10 Debug", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14", "buildType": "Debug"},
                 {"name": "macOS Apple-Clang 11 Release", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Release"},
                 {"name": "macOS Apple-Clang 11 Debug", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15", "buildType": "Debug"},
+                {"name": "macOS Apple-Clang 12 Release", "compiler": "APPLE_CLANG", "version": "12.0", "os": "macOS-10.15", "buildType": "Release"},
+                {"name": "macOS Apple-Clang 12 Debug", "compiler": "APPLE_CLANG", "version": "12.0", "os": "macOS-10.15", "buildType": "Debug"},
                 {"name": "Windows VS 2017 Release", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "buildType": "Release"},
                 {"name": "Windows VS 2017 Debug", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "buildType": "Debug"},
                 {"name": "Windows VS 2019 Release", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "buildType": "Release"},
@@ -176,6 +190,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
             matrix["config"] = [
                 {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14"},
                 {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
+                {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "12.0", "os": "macOS-10.15"},
                 {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
                 {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
             ]
