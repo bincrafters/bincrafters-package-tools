@@ -86,11 +86,11 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                     {"name": "CLANG 8 Debug", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04", "buildType": "Debug"},
                     {"name": "CLANG 8 Release", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04", "buildType": "Release"},
                     {"name": "CLANG 9 Debug", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04", "buildType": "Debug"},
-                    {"name": "CLANG 9 Release", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04", "buildType": "Release"}
+                    {"name": "CLANG 9 Release", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04", "buildType": "Release"},
                     {"name": "CLANG 10 Debug", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04", "buildType": "Debug"},
-                    {"name": "CLANG 10 Release", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04", "buildType": "Release"}
+                    {"name": "CLANG 10 Release", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04", "buildType": "Release"},
                     {"name": "CLANG 11 Debug", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04", "buildType": "Debug"},
-                    {"name": "CLANG 11 Release", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04", "buildType": "Release"}
+                    {"name": "CLANG 11 Release", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04", "buildType": "Release"},
                 ]
                 if run_macos:
                     matrix["config"] += [
