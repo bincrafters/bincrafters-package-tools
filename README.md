@@ -29,7 +29,7 @@ Or if you want to download our pip package
 All variables supported by Conan package tools, are treated by Bincrafters package tools as well.
 To solve the upload, some variables are customized by default:
 
-**CONAN_UPLOAD**: https://api.bintray.com/conan/bincrafters/public-conan  
+**CONAN_UPLOAD**: https://bincrafters.jfrog.io/artifactory/api/conan/public-conan
 **CONAN_REFERENCE**: Fields **name** and **version** from conanfile.py  
 **CONAN_USERNAME**: Get from CI env vars. Otherwise, use **bincrafters**  
 **CONAN_VERSION**: Get from CI env vars.  
