@@ -24,7 +24,7 @@ def conan_config_install_commands(global_config: GlobalConfiguration):
     return commands
 
 
-def prepare_env(platform: str, config: json, select_config: str = None):
+def prepare_env(platform: str, config: json, global_config: GlobalConfiguration, select_config: str = None):
     if platform != "gha" and platform != "azp":
         raise ValueError("Only GitHub Actions and Azure Pipelines is supported at this point.")
 
@@ -124,3 +124,6 @@ def prepare_env(platform: str, config: json, select_config: str = None):
         subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/node"', shell=True)
 
     subprocess.run("conan user", shell=True)
+
+    for command in conan_config_install_commands(global_config):
+        subprocess.run(command, shell=True)

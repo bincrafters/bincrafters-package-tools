@@ -6,7 +6,7 @@ from bincrafters.build_autodetect import run_autodetect
 from bincrafters.autodetect import autodetect
 from bincrafters.generate_ci_jobs import generate_ci_jobs
 from bincrafters.prepare_env import prepare_env
-
+from bincrafters.configuration import GlobalConfiguration
 
 def _parse_arguments(*args):
     parser = argparse.ArgumentParser(description="Bincrafters Package Tools")
@@ -35,7 +35,8 @@ def run(*args):
         run_autodetect()
     elif arguments.commands == "prepare-env":
         config = json.loads(arguments.config)
-        prepare_env(platform=arguments.platform, config=config, select_config=arguments.select_config)
+        global_config = GlobalConfiguration("bincrafters-package-tools.yml")
+        prepare_env(platform=arguments.platform, config=config, global_config=global_config, select_config=arguments.select_config)
     elif arguments.commands == "generate-ci-jobs":
         split_by_build_types = arguments.split_by_build_types
 
