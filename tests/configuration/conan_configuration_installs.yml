@@ -1,0 +1,13 @@
+---
+conan_configuration_sources:
+  - url: https://github.com/
+  - url: https://github.com/
+    type: git
+    args:
+      - -b
+      - main
+  - url: /local/file
+    verify_ssl: false
+  - url: https://github.com/
+    source_folder: foo
+    target_folder: bar
