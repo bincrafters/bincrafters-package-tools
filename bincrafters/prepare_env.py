@@ -1,6 +1,27 @@
 import json
 import os
 import subprocess
+from bincrafters.configuration import GlobalConfiguration
+
+
+def conan_config_install_commands(global_config: GlobalConfiguration):
+    commands = []
+    for c in global_config.conan_configuration_sources:
+        command = ["conan", "config", "install"]
+        if "type" in c:
+            command.extend(["--type", c["type"]])
+        if "verify_ssl" in c:
+            command.extend(["--verify-ssl", f"{c['verify_ssl']}"])
+        if "source_folder" in c:
+            command.extend(["--source-folder", c["source_folder"]])
+        if "target_folder" in c:
+            command.extend(["--target-folder", c["target_folder"]])
+        if "args" in c:
+            command.append("--args")
+            command.extend(c["args"])
+        command.append(c["url"])
+        commands.append(command)
+    return commands
 
 
 def prepare_env(platform: str, config: json, select_config: str = None):

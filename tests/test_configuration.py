@@ -4,6 +4,7 @@ import os
 import platform
 import pytest
 from bincrafters.configuration import GlobalConfiguration
+from bincrafters.prepare_env import conan_config_install_commands
 
 
 def test_default_global_configuration():
@@ -22,3 +23,30 @@ def test_conan_configuration_sources():
     assert cfg.conan_configuration_sources[0]["url"] == "https://github.com/"
 
 
+def test_conan_config_install_commands():
+    cfg = GlobalConfiguration("configuration/conan_configuration_installs.yml")
+    assert conan_config_install_commands(cfg) == [
+        ["conan", "config", "install", "https://github.com/"],
+        [
+            "conan",
+            "config",
+            "install",
+            "--type",
+            "git",
+            "--args",
+            "-b",
+            "main",
+            "https://github.com/",
+        ],
+        ["conan", "config", "install", "--verify-ssl", "False", "/local/file"],
+        [
+            "conan",
+            "config",
+            "install",
+            "--source-folder",
+            "foo",
+            "--target-folder",
+            "bar",
+            "https://github.com/",
+        ],
+    ]
