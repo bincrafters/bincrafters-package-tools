@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import subprocess
 from bincrafters.configuration import GlobalConfiguration
 
@@ -124,7 +125,8 @@ def prepare_env(platform: str, config: json, global_config: GlobalConfiguration,
 
     subprocess.run("conan user", shell=True)
 
+    conan_script = shutil.which('conan')
     for command_args in conan_config_install_commands(global_config):
-        joined_command = ' '.join(command_args)
-        print(f'running {joined_command}')
-        subprocess.run(joined_command, shell=True)
+        command_args[0]=conan_script
+        print(f'running {command_args}')
+        subprocess.run(command_args, shell=True)
