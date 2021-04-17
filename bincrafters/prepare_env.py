@@ -123,10 +123,10 @@ def prepare_env(platform: str, config: json, global_config: GlobalConfiguration,
         subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/go"', shell=True)
         subprocess.run('sudo rm -rf "$AGENT_TOOLSDIRECTORY/node"', shell=True)
 
-    subprocess.run("conan user", shell=True)
-
     conan_script = shutil.which('conan')
     for command_args in conan_config_install_commands(global_config):
         command_args[0]=conan_script
         print(f'running {command_args}')
         subprocess.run(command_args, shell=True)
+
+    subprocess.run("conan user", shell=True)
