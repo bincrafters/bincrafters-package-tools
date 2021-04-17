@@ -40,10 +40,30 @@ To solve the upload, some variables are customized by default:
 
 **BINTRAY_REPOSITORY**: Bintray repository name. This variable replaces "public-conan" for **CONAN_UPLOAD**.
 
+#### Repository configuration
+Options that are not specific to a single package build can be specified by adding a bincrafters-package-tools.yml file in the root of the recipes repository.
+
+Sample file:
+
+```yaml
+---
+# Apply conan config install before building packages
+conan_configuration_sources:
+  - url: https://server.local/common-conan-configuration.zip
+    # Optional arguments
+    # type: git
+    # args:
+    #   - -b
+    #   - main
+    # verify_ssl: false
+    # source_folder: foo
+    # target_folder: bar
+```
+
 ##### Testing and Development
 To install extra packages required to test
 
-    pip install .[test]
+    pip install '.[test]'
 
 
 #### TESTING
