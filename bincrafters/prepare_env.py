@@ -17,8 +17,7 @@ def conan_config_install_commands(global_config: GlobalConfiguration):
         if "target_folder" in c:
             command.extend(["--target-folder", c["target_folder"]])
         if "args" in c:
-            command.append("--args")
-            command.extend(c["args"])
+            command.extend(["--args", c["args"]])
         command.append(c["url"])
         commands.append(command)
     return commands
