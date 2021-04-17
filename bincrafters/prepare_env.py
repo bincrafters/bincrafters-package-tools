@@ -124,5 +124,6 @@ def prepare_env(platform: str, config: json, global_config: GlobalConfiguration,
 
     subprocess.run("conan user", shell=True)
 
-    for command in conan_config_install_commands(global_config):
-        subprocess.run(command, shell=True)
+    for command_args in conan_config_install_commands(global_config):
+        print('running conan install f{command_args}')
+        subprocess.run(command_args, shell=True)
