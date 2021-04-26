@@ -42,7 +42,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
         run_windows = _run_windows_jobs_on_gha()
         if recipe_type == "installer":
             matrix["config"] = [
-                {"name": "Installer Linux", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04", "dockerImage": "conanio/gcc8"},
+                {"name": "Installer Linux", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04", "dockerImage": "conanio/gcc7"},
                 {"name": "Installer Windows", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
                 {"name": "Installer macOS", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macos-10.15"}
             ]
