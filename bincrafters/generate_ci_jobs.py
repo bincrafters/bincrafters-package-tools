@@ -123,8 +123,10 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             for i, config_set in enumerate(m_tmp["config"], start=0):
                 m["config"].insert((i * 2) + 1, config_set.copy())
             for config_set in m["config"][0::2]:
+                config_set["name"] = "{} Release".format(config_set["name"])
                 config_set["buildType"] = "Release"
             for config_set in m["config"][1::2]:
+                config_set["name"] = "{} Debug".format(config_set["name"])
                 config_set["buildType"] = "Debug"
 
     if build_set == "full":
