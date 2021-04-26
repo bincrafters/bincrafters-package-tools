@@ -27,9 +27,12 @@ def _run_windows_jobs_on_gha():
     return True
 
 
-def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_build_types: bool = False) -> str:
-    if platform != "gha" and platform != "azp":
-        return ""
+def _get_base_config(recipe_directory: str, platform: str, split_by_build_types: bool, build_set: str = "full", recipe_type: str = ""):
+    if recipe_type == "":
+        cwd = os.getcwd()
+        os.chdir(recipe_directory)
+        recipe_type = autodetect()
+        os.chdir(cwd)
 
     matrix = {}
     matrix_minimal = {}
@@ -109,7 +112,8 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
     # Duplicate each builds job, then add the buildType value
     if split_by_build_types is None:
         # env var BPT_SPLIT_BY_BUILD_TYPES should be preferred over splitByBuildTypes (deprecated)
-        split_by_build_types = get_bool_from_env("BPT_SPLIT_BY_BUILD_TYPES", get_bool_from_env("splitByBuildTypes", False))
+        split_by_build_types = get_bool_from_env("BPT_SPLIT_BY_BUILD_TYPES",
+                                                 get_bool_from_env("splitByBuildTypes", False))
 
     if split_by_build_types:
         matrix_tmp = copy.deepcopy(matrix)
@@ -117,11 +121,23 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
 
         for m_tmp, m in [[matrix_tmp, matrix], [matrix_minimal_tmp, matrix_minimal]]:
             for i, config_set in enumerate(m_tmp["config"], start=0):
-                m["config"].insert((i*2)+1, config_set.copy())
+                m["config"].insert((i * 2) + 1, config_set.copy())
             for config_set in m["config"][0::2]:
                 config_set["buildType"] = "Release"
             for config_set in m["config"][1::2]:
                 config_set["buildType"] = "Debug"
+
+    if build_set == "full":
+        return matrix
+    elif build_set == "minimal":
+        return matrix_minimal
+    else:
+        return {"config": []}
+
+
+def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_build_types: bool = False) -> str:
+    if platform != "gha" and platform != "azp":
+        return ""
 
     directory_structure = autodetect_directory_structure()
     final_matrix = {"config": []}
@@ -163,10 +179,13 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
             if (get_version_from_ci() == "" and version_attr["folder"] in changed_dirs)\
                     or get_version_from_ci() == version:
                 if version_build_value != "none":
-                    if version_build_value == "full":
-                        working_matrix = matrix.copy()
-                    elif version_build_value == "minimal":
-                        working_matrix = matrix_minimal.copy()
+                    if version_build_value == "full" or version_build_value == "minimal":
+                        working_matrix = _get_base_config(
+                            recipe_directory=os.path.join(path, version_attr["folder"]),
+                            platform=platform,
+                            split_by_build_types=split_by_build_types,
+                            build_set=version_build_value
+                        )
                     else:
                         raise ValueError("Unknown build value for version {} detected!".format(version))
 
@@ -182,6 +201,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                         final_matrix["config"].append(new_config)
 
     if directory_structure == DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION:
+        matrix = _get_base_config(recipe_directory=".", platform=platform, split_by_build_types=split_by_build_types)
         for build_config in matrix["config"]:
             new_config = build_config.copy()
             new_config["cwd"] = "./"
@@ -201,7 +221,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                                     path_filter="{}/".format(recipe_folder),
                                     recipe_displayname=recipe_displayname)
 
-    # Now where we have to complete matrix, we have to parse them in a final string
+    # Now where we have the complete matrix, we have to parse it in a final string
     # which can be understood by the target platform
     matrix_string = "{}"
 
