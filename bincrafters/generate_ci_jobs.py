@@ -13,9 +13,6 @@ def _run_macos_jobs_on_gha():
             and utils_file_contains("azure-pipelines.yml", "template: .ci/azure.yml@templates"):
         return False
 
-    if utils_file_contains(".travis.yml", "import: bincrafters/templates:.ci/travis"):
-        return False
-
     return True
 
 
