@@ -6,10 +6,12 @@ import copy
 from bincrafters.build_shared import get_bool_from_env, get_conan_vars, get_recipe_path, get_version_from_ci
 from bincrafters.autodetect import *
 from bincrafters.utils import *
+from bincrafters.check_compatibility import *
+import bincrafters
 
 
 def _run_macos_jobs_on_gha():
-    if utils_file_contains("azure-pipelines.yml", "name: bincrafters/templates")\
+    if utils_file_contains("azure-pipelines.yml", "name: bincrafters/templates") \
             and utils_file_contains("azure-pipelines.yml", "template: .ci/azure.yml@templates"):
         return False
 
@@ -17,7 +19,7 @@ def _run_macos_jobs_on_gha():
 
 
 def _run_windows_jobs_on_gha():
-    if utils_file_contains("azure-pipelines.yml", "name: bincrafters/templates")\
+    if utils_file_contains("azure-pipelines.yml", "name: bincrafters/templates") \
             and utils_file_contains("azure-pipelines.yml", "template: .ci/azure.yml@templates"):
         return False
 
@@ -141,6 +143,15 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
     if platform != "gha" and platform != "azp":
         return ""
 
+    if not is_ci_config_compatible(platform=platform, feature="generate-ci-jobs"):
+        raise Exception(
+            "bincrafters-package-tools {} requires a newer {} CI config file; minimum version {} - current version {}".format(
+                bincrafters.__version__,
+                platform,
+                get_minimum_compatible_version(platform=platform, feature="generate-ci-jobs"),
+                get_config_file_version()
+            ))
+
     directory_structure = autodetect_directory_structure()
     final_matrix = {"config": []}
 
@@ -178,7 +189,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
             # If we are on a branch like testing/3.0.0 then only build 3.0.0
             # regardless of config.yml settings
             # If we are on an unversioned branch, only build versions which dirs got changed
-            if (get_version_from_ci() == "" and version_attr["folder"] in changed_dirs)\
+            if (get_version_from_ci() == "" and version_attr["folder"] in changed_dirs) \
                     or get_version_from_ci() == version:
                 if version_build_value != "none":
                     if version_build_value == "full" or version_build_value == "minimal":
