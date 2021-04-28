@@ -1,7 +1,7 @@
 import os
 
 MINIMUM_CONFIG_FILE_VERSIONS = {
-    "generate_ci_jobs": {
+    "generate-ci-jobs": {
         "gha": 11,
         "azp": 2
     }
