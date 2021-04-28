@@ -80,11 +80,9 @@ def is_shared(recipe=None):
 def get_repo_name_from_ci():
     reponame_a = os.getenv("APPVEYOR_REPO_NAME", "")
     reponame_t = os.getenv("TRAVIS_REPO_SLUG", "")
-    reponame_c = "%s/%s" % (os.getenv("CIRCLE_PROJECT_USERNAME", ""),
-                            os.getenv("CIRCLE_PROJECT_REPONAME", ""))
     reponame_azp = os.getenv("BUILD_REPOSITORY_NAME", "")
     reponame_g = os.getenv("GITHUB_REPOSITORY", "")
-    return reponame_a or reponame_t or reponame_c or reponame_azp or reponame_g
+    return reponame_a or reponame_t or reponame_azp or reponame_g
 
 
 def get_repo_branch_from_ci():
@@ -94,7 +92,6 @@ def get_repo_branch_from_ci():
     # ~~Remove GHA special handling after CPT 0.32.0 is released~~
     repobranch_a = os.getenv("APPVEYOR_REPO_BRANCH", "")
     repobranch_t = os.getenv("TRAVIS_BRANCH", "")
-    repobranch_c = os.getenv("CIRCLE_BRANCH", "")
     repobranch_azp = os.getenv("BUILD_SOURCEBRANCH", "")
     if repobranch_azp.startswith("refs/pull/"):
         repobranch_azp = os.getenv("SYSTEM_PULLREQUEST_TARGETBRANCH", "")
@@ -105,7 +102,7 @@ def get_repo_branch_from_ci():
     if os.getenv("GITHUB_EVENT_NAME", "") == "pull_request":
         repobranch_g = os.getenv("GITHUB_BASE_REF", "")
 
-    return repobranch_a or repobranch_t or repobranch_c or repobranch_azp or repobranch_g
+    return repobranch_a or repobranch_t or repobranch_azp or repobranch_g
 
 
 def get_ci_vars():
