@@ -49,12 +49,6 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 {"name": "Installer macOS", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macos-10.15"}
             ]
             matrix_minimal["config"] = matrix["config"].copy()
-        elif recipe_type == "unconditional_header_only":
-            matrix["config"] = [
-                {"name": "Header-only Linux", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
-                {"name": "Header-only Windows", "compiler": "VISUAL", "version": "16", "os": "windows-latest"}
-            ]
-            matrix_minimal["config"] = matrix["config"].copy()
         else:
             matrix["config"] = [
                 {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-18.04"},
