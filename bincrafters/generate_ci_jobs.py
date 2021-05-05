@@ -65,8 +65,8 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 {"name": "CLANG 7.0", "compiler": "CLANG", "version": "7.0", "os": "ubuntu-18.04"},
                 {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
                 {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04"},
-                {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-20.04"},
-                {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-20.04"},
+                {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04"},
+                {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04", "dockerImage": "uilianries/clang11-conanfy"},
             ]
             if run_macos:
                 matrix["config"] += [
