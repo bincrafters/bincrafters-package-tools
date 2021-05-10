@@ -56,30 +56,40 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             ]
             matrix_minimal["config"] = matrix["config"].copy()
         else:
-            matrix["config"] = [
-                {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-18.04"},
-                {"name": "GCC 5", "compiler": "GCC", "version": "5", "os": "ubuntu-18.04"},
-                {"name": "GCC 6", "compiler": "GCC", "version": "6", "os": "ubuntu-18.04"},
-                {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
-                {"name": "GCC 8", "compiler": "GCC", "version": "8", "os": "ubuntu-18.04"},
-                {"name": "GCC 9", "compiler": "GCC", "version": "9", "os": "ubuntu-18.04"},
-                {"name": "GCC 10", "compiler": "GCC", "version": "10", "os": "ubuntu-18.04"},
-                {"name": "CLANG 3.9", "compiler": "CLANG", "version": "3.9", "os": "ubuntu-18.04"},
-                {"name": "CLANG 4.0", "compiler": "CLANG", "version": "4.0", "os": "ubuntu-18.04"},
-                {"name": "CLANG 5.0", "compiler": "CLANG", "version": "5.0", "os": "ubuntu-18.04"},
-                {"name": "CLANG 6.0", "compiler": "CLANG", "version": "6.0", "os": "ubuntu-18.04"},
-                {"name": "CLANG 7.0", "compiler": "CLANG", "version": "7.0", "os": "ubuntu-18.04"},
-                {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
-                {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04"},
-                {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04"},
-                {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04"},
-            ]
+            matrix["config"] = []
+            gcc_versions_str = get_string_from_env("BPT_GCC_VERSIONS","")
+            if gcc_versions_str != "":
+                gcc_versions = gcc_versions_str.split(",")
+            else:
+                gcc_versions = ["4.9","5","6","7","8","9", "10"]
+            
+            for version in gcc_versions:
+                matrix["config"].append(
+                    {"name": "GCC "+version, "compiler": "GCC", "version": version, "os": "ubuntu-18.04"}
+                )
+
+            clang_versions_str = get_string_from_env("BPT_CLANG_VERSIONS","")
+            if clang_versions_str != "":
+                clang_versions = clang_versions_str.split()
+            else:
+                clang_versions = ["3.9","4.0","5.0","6.0","7.0","8","9", "10","11"]
+            
+            for version in clang_versions:
+                matrix["config"].append(
+                    {"name": "CLANG "+version, "compiler": "CLANG", "version": version, "os": "ubuntu-18.04"}
+                )
+
             if run_macos:
-                matrix["config"] += [
-                    {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14"},
-                    {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-                    {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-                ]
+                apple_clang_versions_str = get_string_from_env("BPT_APPLE_CLANG_VERSIONS","")
+            if apple_clang_versions_str != "":
+                apple_clang_versions = apple_clang_versions_str.split()
+            else:
+                apple_clang_versions = ["10.0","11.0","12.0"]
+            
+            for version in apple_clang_versions:
+                matrix["config"].append(
+                    {"name": "macOS Apple-Clang "+version, "compiler": "APPLE_CLANG", "version": version, "os": "macOS-10.15"}
+                )
             if run_windows:
                 matrix["config"] += [
                     {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
@@ -109,7 +119,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
             {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
         ]
-
+        
     # Split build jobs by build_type (Debug, Release)
     # Duplicate each builds job, then add the buildType value
     if split_by_build_types is None:
