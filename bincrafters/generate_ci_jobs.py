@@ -3,11 +3,13 @@ import os
 import yaml
 import copy
 
-from bincrafters.build_shared import get_bool_from_env, get_conan_vars, get_recipe_path, get_version_from_ci
+from bincrafters.build_shared import get_bool_from_env, get_conan_vars, get_recipe_path, get_version_from_ci, get_archs
 from bincrafters.autodetect import *
 from bincrafters.utils import *
 from bincrafters.check_compatibility import *
 import bincrafters
+
+from cpt.tools import split_colon_env
 
 
 def _run_macos_jobs_on_gha():
@@ -57,44 +59,61 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             matrix_minimal["config"] = matrix["config"].copy()
         else:
             matrix["config"] = []
-            gcc_versions_str = get_string_from_env("BPT_GCC_VERSIONS","")
-            if gcc_versions_str != "":
-                gcc_versions = gcc_versions_str.split(",")
-            else:
+            gcc_versions = split_colon_env("BPT_GCC_VERSIONS")
+            if not gcc_versions:
                 gcc_versions = ["4.9","5","6","7","8","9", "10"]
             
+            valid_gcc_archs = ["x86", "x86_64", "armv7", "armv7hf", "armv8"]
+            archs = split_colon_env("BPT_CONAN_ARCHS")
+            if not archs:
+                archs=["x86_64"]
+            
             for version in gcc_versions:
-                matrix["config"].append(
-                    {"name": "GCC "+version, "compiler": "GCC", "version": version, "os": "ubuntu-18.04"}
-                )
+                for arch in archs:
+                    if arch in valid_gcc_archs and version is not "4.9":
+                        matrix["config"].append(
+                            {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
+                        )
+                    elif version is "4.9" and arch in ["x86", "x86_64"]:
+                        matrix["config"].append(
+                            {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
+                        )
 
-            clang_versions_str = get_string_from_env("BPT_CLANG_VERSIONS","")
-            if clang_versions_str != "":
-                clang_versions = clang_versions_str.split()
-            else:
+            clang_versions = split_colon_env("BPT_CLANG_VERSIONS")
+            if not clang_versions:
                 clang_versions = ["3.9","4.0","5.0","6.0","7.0","8","9", "10","11"]
             
+            valid_clang_archs = ["x86", "x86_64"]
+
             for version in clang_versions:
-                matrix["config"].append(
-                    {"name": "CLANG "+version, "compiler": "CLANG", "version": version, "os": "ubuntu-18.04"}
-                )
+                for arch in archs:
+                    if arch in valid_clang_archs :
+                        matrix["config"].append(
+                            {"name": "CLANG "+version+" " + arch, "compiler": "CLANG", "version": version, "os": "ubuntu-18.04", "arch": arch}
+                        )
 
             if run_macos:
-                apple_clang_versions_str = get_string_from_env("BPT_APPLE_CLANG_VERSIONS","")
-            if apple_clang_versions_str != "":
-                apple_clang_versions = apple_clang_versions_str.split()
-            else:
-                apple_clang_versions = ["10.0","11.0","12.0"]
-            
-            for version in apple_clang_versions:
-                matrix["config"].append(
-                    {"name": "macOS Apple-Clang "+version, "compiler": "APPLE_CLANG", "version": version, "os": "macOS-10.15"}
-                )
+                apple_clang_versions = split_colon_env("BPT_APPLE_CLANG_VERSIONS")
+                if not apple_clang_versions:
+                    apple_clang_versions = ["10.0","11.0","12.0"]
+                
+                for version in apple_clang_versions:
+                    matrix["config"].append(
+                        {"name": "macOS Apple-Clang "+version, "compiler": "APPLE_CLANG", "version": version, "os": "macOS-10.15", "arch": "x86_64"}
+                    )
+
             if run_windows:
-                matrix["config"] += [
-                    {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
-                    {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
-                ]
+                valid_windows_archs = ["x86", "x86_64", "armv7", "armv7hf", "armv8"]
+                for arch in archs:
+                    if arch in valid_windows_archs and not "armv8":
+                        matrix["config"] += [
+                            {"name": "Windows VS 2017"+" " + arch, "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "arch": arch},
+                            {"name": "Windows VS 2019"+" " + arch, "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
+                        ]
+                    elif arch == "armv8":
+                        matrix["config"] += [
+                            {"name": "Windows VS 2019"+" " + arch, "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
+                        ]
             matrix_minimal["config"] = [
                 {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
                 {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
@@ -119,7 +138,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
             {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
         ]
-        
+
     # Split build jobs by build_type (Debug, Release)
     # Duplicate each builds job, then add the buildType value
     if split_by_build_types is None:
