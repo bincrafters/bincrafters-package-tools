@@ -106,17 +106,26 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                         {"name": "macOS Apple-Clang "+version, "compiler": "APPLE_CLANG", "version": version, "os": "macOS-10.15", "arch": "x86_64"}
                     )
 
+            valid_windows_archs = ["x86", "x86_64", "armv7", "armv7hf", "armv8"]
+            for arch in valid_windows_archs:
+                matrix["config"].append(
+                    {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "arch": arch},
+                )
+                matrix["config"].append(
+                    {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
+                )
+
             if run_windows:
                 valid_windows_archs = ["x86", "x86_64", "armv7", "armv7hf", "armv8"]
                 for arch in archs:
-                    if arch in valid_windows_archs and not "armv8":
+                    if arch in valid_windows_archs and arch not in ["armv8"]:
                         matrix["config"] += [
-                            {"name": "Windows VS 2017"+" " + arch, "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "arch": arch},
-                            {"name": "Windows VS 2019"+" " + arch, "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
+                            {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "arch": arch},
+                            {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
                         ]
-                    elif arch == "armv8":
+                    elif arch in ["armv8"]:
                         matrix["config"] += [
-                            {"name": "Windows VS 2019"+" " + arch, "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
+                            {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
                         ]
             matrix_minimal["config"] = [
                 {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
