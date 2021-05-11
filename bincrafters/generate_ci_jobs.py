@@ -70,11 +70,15 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             
             for version in gcc_versions:
                 for arch in archs:
-                    if arch in valid_gcc_archs and version is not "4.9":
+                    if arch in valid_gcc_archs and version is not "4.9" and version is not "10":
                         matrix["config"].append(
                             {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
                         )
                     elif version is "4.9" and arch in ["x86", "x86_64"]:
+                        matrix["config"].append(
+                            {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
+                        )
+                    elif version is "10" and arch not in ["armv8"]:
                         matrix["config"].append(
                             {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
                         )
