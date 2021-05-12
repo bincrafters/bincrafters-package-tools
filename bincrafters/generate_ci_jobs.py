@@ -31,7 +31,7 @@ def _run_windows_jobs_on_gha():
     return True
 
 def _generate_gcc_matrix():
-    gcc_matrix = []
+    gcc_matrix = ["config"]
     gcc_versions = split_colon_env("BPT_GCC_VERSIONS")
     if not gcc_versions:
         gcc_versions = ["4.9", "5", "6", "7", "8", "9", "10"]
