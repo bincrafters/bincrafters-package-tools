@@ -30,33 +30,40 @@ def _run_windows_jobs_on_gha():
 
     return True
 
-def _generate_gcc_matrix():
-    gcc_matrix = ["config"]
-    gcc_versions = split_colon_env("BPT_GCC_VERSIONS")
-    if not gcc_versions:
-        gcc_versions = ["4.9", "5", "6", "7", "8", "9", "10"]
-
+def _generate_gcc_matrix(archs, versions):
     valid_gcc_archs = ["x86", "x86_64", "armv7", "armv7hf", "armv8"]
-    archs = split_colon_env("BPT_CONAN_ARCHS")
-    if not archs:
-        archs = ["x86_64"]
+    valid_gcc_versions = gcc_versions = ["4.9", "5", "6", "7", "8", "9", "10"]
+
+    gcc_matrix = {}
+    gcc_matrix["config"] = []
+    
+    gcc_versions = versions
+    
+    if not gcc_versions:
+        gcc_versions = valid_gcc_versions
+    
+    gcc_archs = archs
+    if not gcc_archs:
+        gcc_archs = valid_gcc_archs
 
     for version in gcc_versions:
-        for arch in archs:
-            if arch in valid_gcc_archs and version is not "4.9" and version is not "10":
+        for arch in gcc_archs:
+            if arch in valid_gcc_archs and version != "4.9" and version != "10":
                 gcc_matrix["config"].append(
                     {"name": "GCC "+version + " " + arch, "compiler": "GCC",
-                     "version": version, "os": "ubuntu-18.04", "arch": arch}
+                        "version": version, "os": "ubuntu-18.04", "arch": arch}
                 )
-            elif version is "4.9" and arch in ["x86", "x86_64"]:
+
+            elif version == "4.9" and arch in ["x86", "x86_64"]:
                 gcc_matrix["config"].append(
                     {"name": "GCC "+version + " " + arch, "compiler": "GCC",
-                     "version": version, "os": "ubuntu-18.04", "arch": arch}
+                        "version": version, "os": "ubuntu-18.04", "arch": arch}
                 )
-            elif version is "10" and arch is not "armv8":
+
+            elif version == "10" and arch != "armv8":
                 gcc_matrix["config"].append(
                     {"name": "GCC "+version + " " + arch, "compiler": "GCC",
-                     "version": version, "os": "ubuntu-18.04", "arch": arch}
+                        "version": version, "os": "ubuntu-18.04", "arch": arch}
                 )
     return gcc_matrix
 
