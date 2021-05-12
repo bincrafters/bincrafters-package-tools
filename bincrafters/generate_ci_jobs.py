@@ -30,6 +30,36 @@ def _run_windows_jobs_on_gha():
 
     return True
 
+def _generate_gcc_matrix():
+    gcc_matrix = []
+    gcc_versions = split_colon_env("BPT_GCC_VERSIONS")
+    if not gcc_versions:
+        gcc_versions = ["4.9", "5", "6", "7", "8", "9", "10"]
+
+    valid_gcc_archs = ["x86", "x86_64", "armv7", "armv7hf", "armv8"]
+    archs = split_colon_env("BPT_CONAN_ARCHS")
+    if not archs:
+        archs = ["x86_64"]
+
+    for version in gcc_versions:
+        for arch in archs:
+            if arch in valid_gcc_archs and version is not "4.9" and version is not "10":
+                gcc_matrix["config"].append(
+                    {"name": "GCC "+version + " " + arch, "compiler": "GCC",
+                     "version": version, "os": "ubuntu-18.04", "arch": arch}
+                )
+            elif version is "4.9" and arch in ["x86", "x86_64"]:
+                gcc_matrix["config"].append(
+                    {"name": "GCC "+version + " " + arch, "compiler": "GCC",
+                     "version": version, "os": "ubuntu-18.04", "arch": arch}
+                )
+            elif version is "10" and arch is not "armv8":
+                gcc_matrix["config"].append(
+                    {"name": "GCC "+version + " " + arch, "compiler": "GCC",
+                     "version": version, "os": "ubuntu-18.04", "arch": arch}
+                )
+    return gcc_matrix
+
 
 def _get_base_config(recipe_directory: str, platform: str, split_by_build_types: bool, build_set: str = "full", recipe_type: str = ""):
     if recipe_type == "":
@@ -59,29 +89,33 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             matrix_minimal["config"] = matrix["config"].copy()
         else:
             matrix["config"] = []
-            gcc_versions = split_colon_env("BPT_GCC_VERSIONS")
-            if not gcc_versions:
-                gcc_versions = ["4.9","5","6","7","8","9", "10"]
+            # gcc_versions = split_colon_env("BPT_GCC_VERSIONS")
+            # if not gcc_versions:
+            #     gcc_versions = ["4.9","5","6","7","8","9", "10"]
             
-            valid_gcc_archs = ["x86", "x86_64", "armv7", "armv7hf", "armv8"]
+            # valid_gcc_archs = ["x86", "x86_64", "armv7", "armv7hf", "armv8"]
             archs = split_colon_env("BPT_CONAN_ARCHS")
             if not archs:
                 archs=["x86_64"]
             
-            for version in gcc_versions:
-                for arch in archs:
-                    if arch in valid_gcc_archs and version is not "4.9" and version is not "10":
-                        matrix["config"].append(
-                            {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
-                        )
-                    elif version is "4.9" and arch in ["x86", "x86_64"]:
-                        matrix["config"].append(
-                            {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
-                        )
-                    elif version is "10" and arch is not "armv8":
-                        matrix["config"].append(
-                            {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
-                        )
+            # for version in gcc_versions:
+            #     for arch in archs:
+            #         if arch in valid_gcc_archs and version is not "4.9" and version is not "10":
+            #             matrix["config"].append(
+            #                 {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
+            #             )
+            #         elif version is "4.9" and arch in ["x86", "x86_64"]:
+            #             matrix["config"].append(
+            #                 {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
+            #             )
+            #         elif version is "10" and arch is not "armv8":
+            #             matrix["config"].append(
+            #                 {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
+            #             )
+            
+            matrix["config"].append(
+                _generate_gcc_matrix()
+            )
 
             clang_versions = split_colon_env("BPT_CLANG_VERSIONS")
             if not clang_versions:
