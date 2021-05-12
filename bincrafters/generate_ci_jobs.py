@@ -121,7 +121,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             #             )
             
             matrix["config"].append(
-                _generate_gcc_matrix()
+                _generate_gcc_matrix(archs, split_colon_env("BPT_GCC_VERSIONS"))
             )
 
             clang_versions = split_colon_env("BPT_CLANG_VERSIONS")
