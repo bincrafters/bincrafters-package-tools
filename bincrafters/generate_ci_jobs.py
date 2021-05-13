@@ -65,8 +65,33 @@ def _generate_gcc_matrix(archs, versions):
                     {"name": "GCC "+version + " " + arch, "compiler": "GCC",
                         "version": version, "os": "ubuntu-18.04", "arch": arch}
                 )
-    return gcc_matrix
+    return gcc_matrix["config"]
 
+def _generate_clang_matrix(archs, versions):
+    valid_clang_archs = ["x86", "x86_64"]
+    valid_clang_versions = ["3.9","4.0","5.0","6.0","7.0","8","9","10","11"]
+    clang_matrix = {}
+    clang_matrix["config"] = []
+    for version in versions:
+        for arch in archs:
+            if arch in valid_clang_archs:
+                clang_matrix["config"].append(
+                    {"name": "CLANG "+ version + " " + arch, "compiler": "CLANG","version": version, "os": "ubuntu-18.04", "arch": arch}
+                )
+    return clang_matrix["config"]
+
+def _generate_macos_clang_matrix(archs, versions):
+    valid_clang_archs = ["x86_64"]
+    valid_clang_versions = ["10.0","11.0","12.0"]
+    clang_matrix = {}
+    clang_matrix["config"] = []
+    for version in versions:
+        for arch in archs:
+            if arch in valid_clang_archs:
+                clang_matrix["config"].append(
+                    {"name": "macOS Apple-Clang "+ version+ " " + arch, "compiler": "APPLE_CLANG", "version": version, "os": "macOS-10.15", "arch": arch}
+                )
+    return clang_matrix["config"]
 
 def _get_base_config(recipe_directory: str, platform: str, split_by_build_types: bool, build_set: str = "full", recipe_type: str = ""):
     if recipe_type == "":
@@ -120,13 +145,17 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             #                 {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
             #             )
             
-            matrix["config"].append(
+            matrix["config"].extend(
                 _generate_gcc_matrix(archs, split_colon_env("BPT_GCC_VERSIONS"))
             )
 
+            matrix["config"].extend(
+                _generate_clang_matrix(archs, split_colon_env("BPT_CLANG_VERSIONS"))
+            ) 
+
             clang_versions = split_colon_env("BPT_CLANG_VERSIONS")
             if not clang_versions:
-                clang_versions = ["3.9","4.0","5.0","6.0","7.0","8","9", "10","11"]
+                clang_versions = ["3.9","4.0","5.0","6.0","7.0","8","9","10","11"]
             
             valid_clang_archs = ["x86", "x86_64"]
 
