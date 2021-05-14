@@ -164,24 +164,26 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                     _generate_macos_clang_matrix(archs, "12.0", ["x86_64"])
                 )
 
-                matrix_minimal["config"] += [
-                    {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-                ]
-
             if run_windows:
                 matrix["config"].extend(
                     _generate_vs2017_matrix(archs, ["x86", "x86_64", "armv7", "armv8"]) +
                     _generate_vs2019_matrix(archs, ["x86", "x86_64", "armv7", "armv8"])
                 )
-                
+
+            matrix_minimal["config"] = [
+                {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
+                {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
+            ]
+            if run_macos:
+                matrix_minimal["config"] += [
+                    {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
+                ]
+            if run_windows:        
                 matrix_minimal["config"] += [
                     {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
                 ]
             
-            matrix_minimal["config"] = [
-                {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
-                {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
-            ] 
+
                 
     elif platform == "azp":
         matrix["config"] = [
