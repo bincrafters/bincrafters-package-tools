@@ -166,7 +166,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
 
             if run_windows:
                 matrix["config"].extend(
-                    _generate_vs2017_matrix(archs, ["x86", "x86_64", "armv7", "armv8"]) +
+                    _generate_vs2017_matrix(archs, ["x86", "x86_64", "armv7"]) +
                     _generate_vs2019_matrix(archs, ["x86", "x86_64", "armv7", "armv8"])
                 )
 
