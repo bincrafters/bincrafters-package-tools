@@ -30,68 +30,81 @@ def _run_windows_jobs_on_gha():
 
     return True
 
-def _generate_gcc_matrix(archs, versions):
-    valid_gcc_archs = ["x86", "x86_64", "armv7", "armv7hf", "armv8"]
-    valid_gcc_versions = gcc_versions = ["4.9", "5", "6", "7", "8", "9", "10"]
-
+def _generate_gcc_matrix(archs, version, valid_archs):
+    valid_gcc_archs = set(valid_archs)
+    
     gcc_matrix = {}
     gcc_matrix["config"] = []
     
-    gcc_versions = versions
-    
-    if not gcc_versions:
-        gcc_versions = valid_gcc_versions
-    
-    gcc_archs = archs
-    if not gcc_archs:
-        gcc_archs = valid_gcc_archs
+    gcc_archs = [x for x in archs if x in valid_gcc_archs]
 
-    for version in gcc_versions:
-        for arch in gcc_archs:
-            if arch in valid_gcc_archs and version != "4.9" and version != "10":
-                gcc_matrix["config"].append(
-                    {"name": "GCC "+version + " " + arch, "compiler": "GCC",
-                        "version": version, "os": "ubuntu-18.04", "arch": arch}
-                )
+    for arch in gcc_archs:
+        gcc_matrix["config"].append(
+            {"name": "GCC "+ version + " " + arch, "compiler": "GCC",
+                "version": version, "os": "ubuntu-18.04", "arch": arch}
+        )
 
-            elif version == "4.9" and arch in ["x86", "x86_64"]:
-                gcc_matrix["config"].append(
-                    {"name": "GCC "+version + " " + arch, "compiler": "GCC",
-                        "version": version, "os": "ubuntu-18.04", "arch": arch}
-                )
-
-            elif version == "10" and arch != "armv8":
-                gcc_matrix["config"].append(
-                    {"name": "GCC "+version + " " + arch, "compiler": "GCC",
-                        "version": version, "os": "ubuntu-18.04", "arch": arch}
-                )
     return gcc_matrix["config"]
 
-def _generate_clang_matrix(archs, versions):
-    valid_clang_archs = ["x86", "x86_64"]
-    valid_clang_versions = ["3.9","4.0","5.0","6.0","7.0","8","9","10","11"]
+def _generate_clang_matrix(archs, version, valid_archs):
+    valid_clang_archs = set(valid_archs)
+    
     clang_matrix = {}
     clang_matrix["config"] = []
-    for version in versions:
-        for arch in archs:
-            if arch in valid_clang_archs:
-                clang_matrix["config"].append(
-                    {"name": "CLANG "+ version + " " + arch, "compiler": "CLANG","version": version, "os": "ubuntu-18.04", "arch": arch}
-                )
+
+    clang_archs = [x for x in archs if x in valid_clang_archs]
+
+    for arch in clang_archs:
+        clang_matrix["config"].append(
+            {"name": "CLANG "+ version + " " + arch, "compiler": "CLANG",
+            "version": version, "os": "ubuntu-18.04", "arch": arch}
+        )
     return clang_matrix["config"]
 
-def _generate_macos_clang_matrix(archs, versions):
-    valid_clang_archs = ["x86_64"]
-    valid_clang_versions = ["10.0","11.0","12.0"]
+def _generate_macos_clang_matrix(archs, version, valid_archs):
+    valid_clang_archs = set(valid_archs)
+
     clang_matrix = {}
     clang_matrix["config"] = []
-    for version in versions:
-        for arch in archs:
-            if arch in valid_clang_archs:
-                clang_matrix["config"].append(
-                    {"name": "macOS Apple-Clang "+ version+ " " + arch, "compiler": "APPLE_CLANG", "version": version, "os": "macOS-10.15", "arch": arch}
-                )
+
+    clang_archs = [x for x in archs if x in valid_clang_archs]
+
+    for arch in clang_archs:
+        clang_matrix["config"].append(
+            {"name": "macOS Apple-Clang "+ version+ " " + arch, "compiler": "APPLE_CLANG", 
+            "version": version, "os": "macOS-10.15", "arch": arch}
+        )
     return clang_matrix["config"]
+
+def _generate_vs2017_matrix(archs, valid_archs):
+    valid_vs2017_archs = set(valid_archs)
+    
+    vs2017_matrix = {}
+    vs2017_matrix["config"] = []
+    
+    vs2017_archs = [x for x in archs if x in valid_vs2017_archs]
+
+    for arch in vs2017_archs:
+        vs2017_matrix["config"].append(
+            {"name": "Windows VS 2017 "+ arch, "compiler": "VISUAL", 
+            "version": "15", "os": "vs2017-win2016", "arch": arch},
+        )
+    return vs2017_matrix["config"]
+
+def _generate_vs2019_matrix(archs, valid_archs):
+    valid_vs2019_archs = set(valid_archs)
+    
+    vs2019_matrix = {}
+    vs2019_matrix["config"] = []
+    
+    vs2019_archs = [x for x in archs if x in valid_vs2019_archs]
+
+    for arch in vs2019_archs:
+        vs2019_matrix["config"].append(
+            {"name": "Windows VS 2019 " + arch, "compiler": "VISUAL", 
+            "version": "16", "os": "windows-2019", "arch": arch},
+        )
+    return vs2019_matrix["config"]
 
 def _get_base_config(recipe_directory: str, platform: str, split_by_build_types: bool, build_set: str = "full", recipe_type: str = ""):
     if recipe_type == "":
@@ -121,94 +134,55 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             matrix_minimal["config"] = matrix["config"].copy()
         else:
             matrix["config"] = []
-            # gcc_versions = split_colon_env("BPT_GCC_VERSIONS")
-            # if not gcc_versions:
-            #     gcc_versions = ["4.9","5","6","7","8","9", "10"]
-            
-            # valid_gcc_archs = ["x86", "x86_64", "armv7", "armv7hf", "armv8"]
             archs = split_colon_env("BPT_CONAN_ARCHS")
-            if not archs:
-                archs=["x86_64"]
-            
-            # for version in gcc_versions:
-            #     for arch in archs:
-            #         if arch in valid_gcc_archs and version is not "4.9" and version is not "10":
-            #             matrix["config"].append(
-            #                 {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
-            #             )
-            #         elif version is "4.9" and arch in ["x86", "x86_64"]:
-            #             matrix["config"].append(
-            #                 {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
-            #             )
-            #         elif version is "10" and arch is not "armv8":
-            #             matrix["config"].append(
-            #                 {"name": "GCC "+version +" " + arch, "compiler": "GCC", "version": version, "os": "ubuntu-18.04", "arch": arch}
-            #             )
-            
             matrix["config"].extend(
-                _generate_gcc_matrix(archs, split_colon_env("BPT_GCC_VERSIONS"))
+                _generate_gcc_matrix(archs, "4.9", ["x86","x86_64","armv7","armv7hf"]) +
+                _generate_gcc_matrix(archs, "5", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+                _generate_gcc_matrix(archs, "6", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+                _generate_gcc_matrix(archs, "7", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+                _generate_gcc_matrix(archs, "8", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+                _generate_gcc_matrix(archs, "9", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+                _generate_gcc_matrix(archs, "10", ["x86_64","armv7","armv7hf"])
             )
 
             matrix["config"].extend(
-                _generate_clang_matrix(archs, split_colon_env("BPT_CLANG_VERSIONS"))
-            ) 
-
-            clang_versions = split_colon_env("BPT_CLANG_VERSIONS")
-            if not clang_versions:
-                clang_versions = ["3.9","4.0","5.0","6.0","7.0","8","9","10","11"]
-            
-            valid_clang_archs = ["x86", "x86_64"]
-
-            for version in clang_versions:
-                for arch in archs:
-                    if arch in valid_clang_archs :
-                        matrix["config"].append(
-                            {"name": "CLANG "+version+" " + arch, "compiler": "CLANG", "version": version, "os": "ubuntu-18.04", "arch": arch}
-                        )
+                _generate_clang_matrix(archs, "3.9", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "4.0", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "5.0", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "6.0", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "7.0", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "8", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "9", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "10", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "11", ["x86","x86_64"])
+            )
 
             if run_macos:
-                apple_clang_versions = split_colon_env("BPT_APPLE_CLANG_VERSIONS")
-                if not apple_clang_versions:
-                    apple_clang_versions = ["10.0","11.0","12.0"]
-                
-                for version in apple_clang_versions:
-                    matrix["config"].append(
-                        {"name": "macOS Apple-Clang "+version, "compiler": "APPLE_CLANG", "version": version, "os": "macOS-10.15", "arch": "x86_64"}
-                    )
-
-            valid_windows_archs = ["x86", "x86_64", "armv7", "armv8"]
-            for arch in valid_windows_archs:
-                matrix["config"].append(
-                    {"name": "Windows VS 2017 " + arch, "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "arch": arch},
-                )
-                matrix["config"].append(
-                    {"name": "Windows VS 2019 " + arch, "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
+                matrix["config"].extend(
+                    _generate_macos_clang_matrix(archs, "10.0", ["x86_64"]) +
+                    _generate_macos_clang_matrix(archs, "11.0", ["x86_64"]) +
+                    _generate_macos_clang_matrix(archs, "12.0", ["x86_64"])
                 )
 
-            if run_windows:
-                valid_windows_archs = ["x86", "x86_64", "armv7", "armv8"]
-                for arch in archs:
-                    if arch in valid_windows_archs and arch not in ["armv8"]:
-                        matrix["config"] += [
-                            {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "arch": arch},
-                            {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
-                        ]
-                    elif arch in ["armv8"]:
-                        matrix["config"] += [
-                            {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
-                        ]
-            matrix_minimal["config"] = [
-                {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
-                {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
-            ]
-            if run_macos:
                 matrix_minimal["config"] += [
                     {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
                 ]
+
             if run_windows:
+                matrix["config"].extend(
+                    _generate_vs2017_matrix(archs, ["x86", "x86_64", "armv7", "armv8"]) +
+                    _generate_vs2019_matrix(archs, ["x86", "x86_64", "armv7", "armv8"])
+                )
+                
                 matrix_minimal["config"] += [
                     {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
                 ]
+            
+            matrix_minimal["config"] = [
+                {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
+                {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
+            ] 
+                
     elif platform == "azp":
         matrix["config"] = [
             {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.14"},

@@ -14,6 +14,8 @@ valid_gcc_matrix["config"] = []
 valid_gcc_matrix["config"].extend([
     {'name': 'GCC 4.9 x86', 'compiler': 'GCC', 'version': '4.9', 'os': 'ubuntu-18.04', 'arch': 'x86'},
     {'name': 'GCC 4.9 x86_64', 'compiler': 'GCC', 'version': '4.9', 'os': 'ubuntu-18.04', 'arch': 'x86_64'},
+    {'name': 'GCC 4.9 armv7', 'compiler': 'GCC', 'version': '4.9', 'os': 'ubuntu-18.04', 'arch': 'armv7'},
+    {'name': 'GCC 4.9 armv7hf', 'compiler': 'GCC', 'version': '4.9', 'os': 'ubuntu-18.04', 'arch': 'armv7hf'},
     {'name': 'GCC 5 x86', 'compiler': 'GCC', 'version': '5', 'os': 'ubuntu-18.04', 'arch': 'x86'},
     {'name': 'GCC 5 x86_64', 'compiler': 'GCC', 'version': '5', 'os': 'ubuntu-18.04', 'arch': 'x86_64'},
     {'name': 'GCC 5 armv7', 'compiler': 'GCC', 'version': '5', 'os': 'ubuntu-18.04', 'arch': 'armv7'},
@@ -39,7 +41,6 @@ valid_gcc_matrix["config"].extend([
     {'name': 'GCC 9 armv7', 'compiler': 'GCC', 'version': '9', 'os': 'ubuntu-18.04', 'arch': 'armv7'},
     {'name': 'GCC 9 armv7hf', 'compiler': 'GCC', 'version': '9', 'os': 'ubuntu-18.04', 'arch': 'armv7hf'},
     {'name': 'GCC 9 armv8', 'compiler': 'GCC', 'version': '9', 'os': 'ubuntu-18.04', 'arch': 'armv8'},
-    {'name': 'GCC 10 x86', 'compiler': 'GCC', 'version': '10', 'os': 'ubuntu-18.04', 'arch': 'x86'},
     {'name': 'GCC 10 x86_64', 'compiler': 'GCC', 'version': '10', 'os': 'ubuntu-18.04', 'arch': 'x86_64'},
     {'name': 'GCC 10 armv7', 'compiler': 'GCC', 'version': '10', 'os': 'ubuntu-18.04', 'arch': 'armv7'},
     {'name': 'GCC 10 armv7hf', 'compiler': 'GCC', 'version': '10', 'os': 'ubuntu-18.04', 'arch': 'armv7hf'}
@@ -91,17 +92,35 @@ def test_generate_gcc_matrix():
     matrix =  {}
     matrix["config"] = []
     # Act
-    generated_matrix = _generate_gcc_matrix(valid_gcc_archs, valid_gcc_versions)
-    matrix["config"].extend(generated_matrix)
+    matrix["config"].extend(
+        _generate_gcc_matrix(valid_gcc_archs, "4.9", ["x86", "x86_64", "armv7", "armv7hf"]) +
+        _generate_gcc_matrix(valid_gcc_archs, "5", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+        _generate_gcc_matrix(valid_gcc_archs, "6", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+        _generate_gcc_matrix(valid_gcc_archs, "7", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+        _generate_gcc_matrix(valid_gcc_archs, "8", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+        _generate_gcc_matrix(valid_gcc_archs, "9", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+        _generate_gcc_matrix(valid_gcc_archs, "10", ["x86_64","armv7","armv7hf"])
+    )
     # Assert
     assert matrix["config"] == valid_gcc_matrix["config"]
 
-def test_generate_clang_matrix():
+def test_generate_gcc_matrix():
     # Arrange
     matrix =  {}
     matrix["config"] = []
     # Act
-    generated_matrix = _generate_clang_matrix(valid_clang_archs, valid_clang_versions)
-    matrix["config"].extend(generated_matrix)
+    matrix["config"].extend(
+        _generate_clang_matrix(valid_clang_archs, "3.9", ["x86","x86_64"]) +
+        _generate_clang_matrix(valid_clang_archs, "4.0", ["x86","x86_64"]) +
+        _generate_clang_matrix(valid_clang_archs, "5.0", ["x86","x86_64"]) +
+        _generate_clang_matrix(valid_clang_archs, "6.0", ["x86","x86_64"]) +
+        _generate_clang_matrix(valid_clang_archs, "7.0", ["x86","x86_64"]) +
+        _generate_clang_matrix(valid_clang_archs, "8", ["x86","x86_64"]) +
+        _generate_clang_matrix(valid_clang_archs, "9", ["x86","x86_64"]) +
+        _generate_clang_matrix(valid_clang_archs, "10", ["x86","x86_64"]) +
+        _generate_clang_matrix(valid_clang_archs, "11", ["x86","x86_64"])
+    )
+    print(matrix["config"])
+    print("\n", valid_clang_matrix["config"])
     # Assert
     assert matrix["config"] == valid_clang_matrix["config"]
