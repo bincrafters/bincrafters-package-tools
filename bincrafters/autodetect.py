@@ -38,7 +38,7 @@ def recipe_has_setting(setting_name):
 
 
 def is_custom_build_py_existing() -> (bool, str):
-    custom_build_path = os.path.join(os.path.dirname(get_recipe_path(), "build.py")
+    custom_build_path = os.path.join(os.path.dirname(get_recipe_path(), "build.py"))
     if os.path.isfile(custom_build_path):
         return True, custom_build_path
 
