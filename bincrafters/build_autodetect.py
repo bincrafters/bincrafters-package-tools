@@ -96,6 +96,9 @@ def run_autodetect():
         builder = build_template_installer.get_builder(**kwargs)
         builder.add({"os": get_os(), "arch_build": arch, "arch": arch}, {}, {}, {})
         builder.run()
+    elif is_testable_header_only():
+        builder = build_template_header_only.get_builder(**kwargs)
+        builder.run()
     elif recipe_is_unconditional_header_only:
         builder = build_template_header_only.get_builder(**kwargs)
         builder.run()

@@ -47,6 +47,14 @@ def is_custom_build_py_existing() -> (bool, str):
     return False, None
 
 
+def has_test_package():
+    test_package_path = os.path.join(_recipe_path, "test_package")
+    if os.path.isdir(test_package_path):
+        return True
+
+    return False
+
+
 def is_pure_c():
     if recipe_contains("del self.settings.compiler.libcxx") and recipe_contains("del self.settings.compiler.cppstd"):
         return True
@@ -65,6 +73,13 @@ def is_unconditional_header_only():
     return False
 
 
+def is_testable_header_only():
+    if not is_conditional_header_only() and recipe_contains("self.info.header_only()") and has_test_package():
+        return True
+
+    return False
+
+
 def is_installer():
     if not is_unconditional_header_only() and not is_conditional_header_only():
         if (recipe_contains("self.env_info.PATH.append") or recipe_contains("self.env_info.PATH.extend")) \
@@ -78,7 +93,9 @@ def autodetect() -> str:
     if is_installer():
         return "installer"
     else:
-        if is_unconditional_header_only():
+        if is_testable_header_only():
+            return "testable_header_only"
+        elif is_unconditional_header_only():
             return "unconditional_header_only"
         else:
             if is_conditional_header_only():
@@ -93,12 +110,16 @@ def autodetect() -> str:
 DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION = "one_recipe_one_file"
 DIR_STRUCTURE_ONE_RECIPE_MANY_VERSIONS = "one_recipe_many_versions"
 DIR_STRUCTURE_CCI = "cci_many_recipes_many_versions"
+DIR_STRUCTURE_STANDALONE_RECIPE_MANY_VERSIONS = "standalone_recipe_many_versions"
 
 
 def autodetect_directory_structure() -> str:
     """ Return the directory type as classified above this method
     """
     pwd = os.getcwd()
+
+    if os.path.exists(os.path.join(pwd, "conanfile.py")) and os.path.exists(os.path.join(pwd, "conandata.yml")):
+        return DIR_STRUCTURE_STANDALONE_RECIPE_MANY_VERSIONS
 
     if os.path.exists(os.path.join(pwd, "conanfile.py")):
         return DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION

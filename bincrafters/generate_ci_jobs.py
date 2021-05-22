@@ -49,6 +49,12 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 {"name": "Installer macOS", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macos-10.15"}
             ]
             matrix_minimal["config"] = matrix["config"].copy()
+        elif recipe_type == "unconditional_header_only":
+            matrix["config"] = [
+                {"name": "Header-only Linux", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
+                {"name": "Header-only Windows", "compiler": "VISUAL", "version": "16", "os": "windows-latest"}
+            ]
+            matrix_minimal["config"] = matrix["config"].copy()
         else:
             matrix["config"] = [
                 {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-18.04"},
@@ -207,6 +213,16 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
                         new_config["recipe_version"] = version
                         final_matrix["config"].append(new_config)
 
+    def _parse_standalone_recipe(path: str, path_filter: str = None, recipe_displayname: str = None):
+        data_file = os.path.join(path, "conandata.yml")
+        data_yml = yaml.load(open(data_file, "r"))
+        for version, _ in data_yml["sources"].items():
+            new_config = build_config.copy()
+            new_config["cwd"] = path
+            new_config["name"] = "{} {}".format(version, new_config["name"])
+            new_config["recipe_version"] = version
+            final_matrix["config"].append(new_config)
+
     if directory_structure == DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION:
         matrix = _get_base_config(recipe_directory=".", platform=platform, split_by_build_types=split_by_build_types)
         for build_config in matrix["config"]:
@@ -227,6 +243,9 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
             _parse_recipe_directory(path=recipe_folder,
                                     path_filter="{}/".format(recipe_folder),
                                     recipe_displayname=recipe_displayname)
+
+    elif directory_structure == DIR_STRUCTURE_STANDALONE_RECIPE_MANY_VERSIONS:
+        _parse_standalone_recipe(os.getcwd())
 
     # Now where we have the complete matrix, we have to parse it in a final string
     # which can be understood by the target platform
