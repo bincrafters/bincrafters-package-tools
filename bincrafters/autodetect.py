@@ -1,8 +1,6 @@
 import os
 from bincrafters.build_shared import get_recipe_path, inspect_value_from_recipe
 
-_recipe_path = os.path.dirname(get_recipe_path())
-
 
 def _file_contains(file, word):
     """ Read file and search for word
@@ -40,7 +38,7 @@ def recipe_has_setting(setting_name):
 
 
 def is_custom_build_py_existing() -> (bool, str):
-    custom_build_path = os.path.join(_recipe_path, "build.py")
+    custom_build_path = os.path.join(os.path.dirname(get_recipe_path(), "build.py")
     if os.path.isfile(custom_build_path):
         return True, custom_build_path
 
@@ -48,7 +46,7 @@ def is_custom_build_py_existing() -> (bool, str):
 
 
 def has_test_package():
-    test_package_path = os.path.join(_recipe_path, "test_package")
+    test_package_path = os.path.join(os.path.dirname(get_recipe_path()), "test_package")
     if os.path.isdir(test_package_path):
         return True
 
@@ -74,7 +72,7 @@ def is_unconditional_header_only():
 
 
 def is_testable_header_only():
-    if not is_conditional_header_only() and recipe_contains("self.info.header_only()") and has_test_package():
+    if is_unconditional_header_only() and has_test_package():
         return True
 
     return False
