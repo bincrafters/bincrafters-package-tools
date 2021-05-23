@@ -217,11 +217,18 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
         data_file = os.path.join(path, "conandata.yml")
         data_yml = yaml.load(open(data_file, "r"))
         for version, _ in data_yml["sources"].items():
-            new_config = build_config.copy()
-            new_config["cwd"] = path
-            new_config["name"] = "{} {}".format(version, new_config["name"])
-            new_config["recipe_version"] = version
-            final_matrix["config"].append(new_config)
+            working_matrix = _get_base_config(
+                recipe_directory=path,
+                platform=platform,
+                split_by_build_types=split_by_build_types,
+                build_set="full"
+            )
+            for build_config in working_matrix["config"]:
+                new_config = build_config.copy()
+                new_config["cwd"] = path
+                new_config["name"] = "{} {}".format(version, new_config["name"])
+                new_config["recipe_version"] = version
+                final_matrix["config"].append(new_config)
 
     if directory_structure == DIR_STRUCTURE_ONE_RECIPE_ONE_VERSION:
         matrix = _get_base_config(recipe_directory=".", platform=platform, split_by_build_types=split_by_build_types)
