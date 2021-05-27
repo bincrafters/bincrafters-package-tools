@@ -1,5 +1,6 @@
 import json
 import os
+from sys import version
 import yaml
 import copy
 
@@ -30,21 +31,70 @@ def _run_windows_jobs_on_gha():
 
     return True
 
-def _generate_gcc_matrix(archs, version, valid_archs):
-    valid_gcc_archs = set(valid_archs)
-    
+def _generate_gcc_matrices(archs, versions):
     gcc_matrix = {}
     gcc_matrix["config"] = []
-    
-    gcc_archs = [x for x in archs if x in valid_gcc_archs]
+    for v in versions:
+        if v == "4.9":
+            gcc_matrix["config"].extend(_generate_gcc4_9_matrix(archs))
+        if v == "5":
+            gcc_matrix["config"].extend(_generate_gcc5_matrix(archs))
+        if v == "6":
+            gcc_matrix["config"].extend(_generate_gcc6_matrix(archs))
+        if v == "7":
+            gcc_matrix["config"].extend(_generate_gcc7_matrix(archs))
+        if v == "8":
+            gcc_matrix["config"].extend(_generate_gcc8_matrix(archs))
+        if v == "9":
+            gcc_matrix["config"].extend(_generate_gcc9_matrix(archs))
+        if v == "10":
+            gcc_matrix["config"].extend(_generate_gcc10_matrix(archs))
+    return gcc_matrix["config"]
 
+def _generate_gcc_matrix(archs, version, valid_gcc_archs):
+    gcc_matrix = []
+    gcc_archs = [x for x in archs if x in valid_gcc_archs]
     for arch in gcc_archs:
-        gcc_matrix["config"].append(
+        gcc_matrix.append(
             {"name": "GCC "+ version + " " + arch, "compiler": "GCC",
                 "version": version, "os": "ubuntu-18.04", "arch": arch}
         )
+    return gcc_matrix
 
-    return gcc_matrix["config"]
+def _generate_gcc4_9_matrix(archs):
+    valid_gcc_archs = set(["armv7", "armv7hf", "x86", "x86_64"])
+    matrix = _generate_gcc_matrix(archs,"4.9",valid_gcc_archs)
+    return matrix
+
+def _generate_gcc5_matrix(archs):
+    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
+    matrix = _generate_gcc_matrix(archs,"5",valid_gcc_archs)
+    return matrix
+
+def _generate_gcc6_matrix(archs):
+    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
+    matrix = _generate_gcc_matrix(archs,"6",valid_gcc_archs)
+    return matrix
+
+def _generate_gcc7_matrix(archs):
+    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
+    matrix = _generate_gcc_matrix(archs,"7",valid_gcc_archs)
+    return matrix
+
+def _generate_gcc8_matrix(archs):
+    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
+    matrix = _generate_gcc_matrix(archs,"8",valid_gcc_archs)
+    return matrix
+
+def _generate_gcc9_matrix(archs):
+    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
+    matrix = _generate_gcc_matrix(archs,"9",valid_gcc_archs)
+    return matrix
+
+def _generate_gcc10_matrix(archs):
+    valid_gcc_archs = set(["armv7", "armv7hf", "x86_64"])
+    matrix = _generate_gcc_matrix(archs,"10",valid_gcc_archs)
+    return matrix
 
 def _generate_clang_matrix(archs, version, valid_archs):
     valid_clang_archs = set(valid_archs)
