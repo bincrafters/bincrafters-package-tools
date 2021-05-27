@@ -3,11 +3,13 @@ import os
 import yaml
 import copy
 
-from bincrafters.build_shared import get_bool_from_env, get_conan_vars, get_recipe_path, get_version_from_ci
+from bincrafters.build_shared import get_bool_from_env, get_conan_vars, get_recipe_path, get_version_from_ci, get_archs
 from bincrafters.autodetect import *
 from bincrafters.utils import *
 from bincrafters.check_compatibility import *
 import bincrafters
+
+from cpt.tools import split_colon_env
 
 
 def _run_macos_jobs_on_gha():
@@ -28,6 +30,81 @@ def _run_windows_jobs_on_gha():
 
     return True
 
+def _generate_gcc_matrix(archs, version, valid_archs):
+    valid_gcc_archs = set(valid_archs)
+    
+    gcc_matrix = {}
+    gcc_matrix["config"] = []
+    
+    gcc_archs = [x for x in archs if x in valid_gcc_archs]
+
+    for arch in gcc_archs:
+        gcc_matrix["config"].append(
+            {"name": "GCC "+ version + " " + arch, "compiler": "GCC",
+                "version": version, "os": "ubuntu-18.04", "arch": arch}
+        )
+
+    return gcc_matrix["config"]
+
+def _generate_clang_matrix(archs, version, valid_archs):
+    valid_clang_archs = set(valid_archs)
+    
+    clang_matrix = {}
+    clang_matrix["config"] = []
+
+    clang_archs = [x for x in archs if x in valid_clang_archs]
+
+    for arch in clang_archs:
+        clang_matrix["config"].append(
+            {"name": "CLANG "+ version + " " + arch, "compiler": "CLANG",
+            "version": version, "os": "ubuntu-18.04", "arch": arch}
+        )
+    return clang_matrix["config"]
+
+def _generate_macos_clang_matrix(archs, version, valid_archs):
+    valid_clang_archs = set(valid_archs)
+
+    clang_matrix = {}
+    clang_matrix["config"] = []
+
+    clang_archs = [x for x in archs if x in valid_clang_archs]
+
+    for arch in clang_archs:
+        clang_matrix["config"].append(
+            {"name": "macOS Apple-Clang "+ version+ " " + arch, "compiler": "APPLE_CLANG", 
+            "version": version, "os": "macOS-10.15", "arch": arch}
+        )
+    return clang_matrix["config"]
+
+def _generate_vs2017_matrix(archs, valid_archs):
+    valid_vs2017_archs = set(valid_archs)
+    
+    vs2017_matrix = {}
+    vs2017_matrix["config"] = []
+    
+    vs2017_archs = [x for x in archs if x in valid_vs2017_archs]
+
+    for arch in vs2017_archs:
+        vs2017_matrix["config"].append(
+            {"name": "Windows VS 2017 "+ arch, "compiler": "VISUAL", 
+            "version": "15", "os": "vs2017-win2016", "arch": arch},
+        )
+    return vs2017_matrix["config"]
+
+def _generate_vs2019_matrix(archs, valid_archs):
+    valid_vs2019_archs = set(valid_archs)
+    
+    vs2019_matrix = {}
+    vs2019_matrix["config"] = []
+    
+    vs2019_archs = [x for x in archs if x in valid_vs2019_archs]
+
+    for arch in vs2019_archs:
+        vs2019_matrix["config"].append(
+            {"name": "Windows VS 2019 " + arch, "compiler": "VISUAL", 
+            "version": "16", "os": "windows-2019", "arch": arch},
+        )
+    return vs2019_matrix["config"]
 
 def _get_base_config(recipe_directory: str, platform: str, split_by_build_types: bool, build_set: str = "full", recipe_type: str = ""):
     if recipe_type == "":
@@ -56,35 +133,43 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             ]
             matrix_minimal["config"] = matrix["config"].copy()
         else:
-            matrix["config"] = [
-                {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-18.04"},
-                {"name": "GCC 5", "compiler": "GCC", "version": "5", "os": "ubuntu-18.04"},
-                {"name": "GCC 6", "compiler": "GCC", "version": "6", "os": "ubuntu-18.04"},
-                {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
-                {"name": "GCC 8", "compiler": "GCC", "version": "8", "os": "ubuntu-18.04"},
-                {"name": "GCC 9", "compiler": "GCC", "version": "9", "os": "ubuntu-18.04"},
-                {"name": "GCC 10", "compiler": "GCC", "version": "10", "os": "ubuntu-18.04"},
-                {"name": "CLANG 3.9", "compiler": "CLANG", "version": "3.9", "os": "ubuntu-18.04"},
-                {"name": "CLANG 4.0", "compiler": "CLANG", "version": "4.0", "os": "ubuntu-18.04"},
-                {"name": "CLANG 5.0", "compiler": "CLANG", "version": "5.0", "os": "ubuntu-18.04"},
-                {"name": "CLANG 6.0", "compiler": "CLANG", "version": "6.0", "os": "ubuntu-18.04"},
-                {"name": "CLANG 7.0", "compiler": "CLANG", "version": "7.0", "os": "ubuntu-18.04"},
-                {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
-                {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04"},
-                {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04"},
-                {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04"},
-            ]
+            matrix["config"] = []
+            archs = split_colon_env("BPT_CONAN_ARCHS")
+            matrix["config"].extend(
+                _generate_gcc_matrix(archs, "4.9", ["x86","x86_64","armv7","armv7hf"]) +
+                _generate_gcc_matrix(archs, "5", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+                _generate_gcc_matrix(archs, "6", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+                _generate_gcc_matrix(archs, "7", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+                _generate_gcc_matrix(archs, "8", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+                _generate_gcc_matrix(archs, "9", ["x86","x86_64","armv7","armv7hf","armv8"]) +
+                _generate_gcc_matrix(archs, "10", ["x86_64","armv7","armv7hf"])
+            )
+
+            matrix["config"].extend(
+                _generate_clang_matrix(archs, "3.9", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "4.0", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "5.0", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "6.0", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "7.0", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "8", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "9", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "10", ["x86","x86_64"]) +
+                _generate_clang_matrix(archs, "11", ["x86","x86_64"])
+            )
+
             if run_macos:
-                matrix["config"] += [
-                    {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.15"},
-                    {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-                    {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-                ]
+                matrix["config"].extend(
+                    _generate_macos_clang_matrix(archs, "10.0", ["x86_64"]) +
+                    _generate_macos_clang_matrix(archs, "11.0", ["x86_64"]) +
+                    _generate_macos_clang_matrix(archs, "12.0", ["x86_64"])
+                )
+
             if run_windows:
-                matrix["config"] += [
-                    {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
-                    {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
-                ]
+                matrix["config"].extend(
+                    _generate_vs2017_matrix(archs, ["x86", "x86_64", "armv7"]) +
+                    _generate_vs2019_matrix(archs, ["x86", "x86_64", "armv7", "armv8"])
+                )
+
             matrix_minimal["config"] = [
                 {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
                 {"name": "CLANG 8", "compiler": "CLANG", "version": "8", "os": "ubuntu-18.04"},
@@ -93,10 +178,13 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 matrix_minimal["config"] += [
                     {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
                 ]
-            if run_windows:
+            if run_windows:        
                 matrix_minimal["config"] += [
                     {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
                 ]
+            
+
+                
     elif platform == "azp":
         matrix["config"] = [
             {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.15"},

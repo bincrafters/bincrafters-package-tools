@@ -26,6 +26,10 @@ def get_bool_from_env(var_name, default="1"):
     val = os.getenv(var_name, default)
     return str(val).lower() in ("1", "true", "yes", "y")
 
+def get_string_from_env(var_name, default=""):
+    val = os.getenv(var_name, default)
+    return str(val)
+
 
 def get_value_from_recipe(search_string, recipe=None):
     if recipe is None:
