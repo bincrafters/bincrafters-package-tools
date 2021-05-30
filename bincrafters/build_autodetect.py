@@ -31,7 +31,9 @@ def run_autodetect():
     os.system('conan config set general.revisions_enabled=1')
     os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] =\
         "conan config set storage.download_cache='{}'; conan config set general.revisions_enabled=1".format(tmpdir)
-    os.environ["CONAN_DOCKER_RUN_OPTIONS"] = "-v '{}':'/tmp/conan'".format(tmpdir)
+    conan_docker_run_options = os.environ.get('CONAN_DOCKER_RUN_OPTIONS','')
+    conan_docker_run_options += " -v '{}':'/tmp/conan'".format(tmpdir)
+    os.environ['CONAN_DOCKER_RUN_OPTIONS'] = conan_docker_run_options
 
     ###
     # Enabling installing system_requirements
