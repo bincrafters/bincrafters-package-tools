@@ -65,6 +65,9 @@ def run_autodetect():
     ###
     # Output collected recipe information in the builds logs
     ###
+    recipe_conanfile = get_recipe_path()
+    printer.print_message("Recipe path: {}".format(str(recipe_conanfile)))
+
     recipe_is_installer = is_installer()
     printer.print_message("Is the package an installer for executable(s)? {}"
                           .format(str(recipe_is_installer)))
@@ -73,6 +76,10 @@ def run_autodetect():
         recipe_is_unconditional_header_only = is_unconditional_header_only()
         printer.print_message("Is the package header only? {}"
                               .format(str(recipe_is_unconditional_header_only)))
+
+        resipe_is_testable_header_only = is_testable_header_only()
+        printer.print_message("Is the package testable header only? {}"
+                              .format(str(resipe_is_testable_header_only)))
 
         if not recipe_is_unconditional_header_only:
             recipe_is_conditional_header_only = is_conditional_header_only()
