@@ -36,10 +36,15 @@ def run(*args):
     if arguments.auto:
         printer.print_message("# CWD: {0}".format(str(os.getcwd())))
         printer.print_message("# CMD: {0}".format(str(args)))
+        sys.stderr.flush()
+        sys.stdout.flush()
+        printer.flu
         run_autodetect()
     elif arguments.commands == "prepare-env":
         printer.print_message("# CWD: {0}".format(str(os.getcwd())))
         printer.print_message("# CMD: {0}".format(str(args)))
+        sys.stderr.flush()
+        sys.stdout.flush()
         config = json.loads(arguments.config)
         prepare_env(platform=arguments.platform, config=config, select_config=arguments.select_config)
     elif arguments.commands == "generate-ci-jobs":
