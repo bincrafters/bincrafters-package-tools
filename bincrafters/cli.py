@@ -34,10 +34,10 @@ def _parse_arguments(*args):
 def run(*args):
     arguments = _parse_arguments(*args)
     if arguments.auto:
-        printer.print_message("# {0}> {1}".format(os.getcwd(), " ".join(args)))
+        printer.print_message("# {0}> {1}".format(str(os.getcwd()), str(" ".join(args))))
         run_autodetect()
     elif arguments.commands == "prepare-env":
-        printer.print_message("# {0}> {1}".format(os.getcwd(), " ".join(args)))
+        printer.print_message("# {0}> {1}".format(str(os.getcwd()), str(" ".join(args))))
         config = json.loads(arguments.config)
         prepare_env(platform=arguments.platform, config=config, select_config=arguments.select_config)
     elif arguments.commands == "generate-ci-jobs":
