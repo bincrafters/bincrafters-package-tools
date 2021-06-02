@@ -38,7 +38,6 @@ def run(*args):
         printer.print_message("# CMD: {0}".format(str(args)))
         sys.stderr.flush()
         sys.stdout.flush()
-        printer.flu
         run_autodetect()
     elif arguments.commands == "prepare-env":
         printer.print_message("# CWD: {0}".format(str(os.getcwd())))
