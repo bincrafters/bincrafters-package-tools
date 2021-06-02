@@ -1,11 +1,13 @@
 import argparse
 import sys
 import json
+import os
 
 from bincrafters.build_autodetect import run_autodetect
 from bincrafters.autodetect import autodetect
 from bincrafters.generate_ci_jobs import generate_ci_jobs
 from bincrafters.prepare_env import prepare_env
+from bincrafters.build_shared import printer
 
 
 def _parse_arguments(*args):
@@ -30,6 +32,7 @@ def _parse_arguments(*args):
 
 
 def run(*args):
+    printer.print_message("# {}> {}".format(os.getcwd(), " ".join(args)))
     arguments = _parse_arguments(*args)
     if arguments.auto:
         run_autodetect()
