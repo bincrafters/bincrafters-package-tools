@@ -1,4 +1,4 @@
-def generate_darwin_matrices(archs, versions):
+def generate_mac_matrices(archs, versions):
     clang_matrix = {}
     clang_matrix["config"] = []
     for v in versions:

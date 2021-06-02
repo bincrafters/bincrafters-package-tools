@@ -1,18 +1,18 @@
-from bincrafters.generate_win_jobs import generate_win_matrices
-from bincrafters import generate_darwin_jobs
-from bincrafters.generate_clang_jobs import generate_clang_matrices
-from bincrafters.generate_gcc_jobs import generate_gcc_matrices
 import json
 import os
 import bincrafters
 import yaml
 import copy
+
 from sys import version
 from bincrafters.build_shared import get_bool_from_env, get_conan_vars, get_recipe_path, get_version_from_ci, get_archs
 from bincrafters.autodetect import *
 from bincrafters.utils import *
 from bincrafters.check_compatibility import *
-
+from bincrafters.generate_win_jobs import generate_win_matrices
+from bincrafters.generate_mac_jobs import generate_mac_matrices
+from bincrafters.generate_clang_jobs import generate_clang_matrices
+from bincrafters.generate_gcc_jobs import generate_gcc_matrices
 
 
 
@@ -75,7 +75,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             matrix["config"].extend(generate_clang_matrices(archs, clang_versions))
 
             if run_macos:
-                matrix["config"].extend(archs, mac_versions)
+                matrix["config"].extend(generate_mac_matrices(archs, win_versions))
 
             if run_windows:
                 matrix["config"].extend(generate_win_matrices(archs, win_versions))
