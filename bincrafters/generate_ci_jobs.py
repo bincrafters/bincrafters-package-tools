@@ -1,14 +1,20 @@
+from bincrafters.generate_win_jobs import generate_win_matrices
+from bincrafters import generate_darwin_jobs
+from bincrafters.generate_clang_jobs import generate_clang_matrices
+from bincrafters.generate_gcc_jobs import generate_gcc_matrices
 import json
 import os
-from sys import version
+import bincrafters
 import yaml
 import copy
-
+from sys import version
 from bincrafters.build_shared import get_bool_from_env, get_conan_vars, get_recipe_path, get_version_from_ci, get_archs
 from bincrafters.autodetect import *
 from bincrafters.utils import *
 from bincrafters.check_compatibility import *
-import bincrafters
+
+
+
 
 from cpt.tools import split_colon_env
 
@@ -30,131 +36,6 @@ def _run_windows_jobs_on_gha():
         return False
 
     return True
-
-def _generate_gcc_matrices(archs, versions):
-    gcc_matrix = {}
-    gcc_matrix["config"] = []
-    for v in versions:
-        if v == "4.9":
-            gcc_matrix["config"].extend(_generate_gcc4_9_matrix(archs))
-        if v == "5":
-            gcc_matrix["config"].extend(_generate_gcc5_matrix(archs))
-        if v == "6":
-            gcc_matrix["config"].extend(_generate_gcc6_matrix(archs))
-        if v == "7":
-            gcc_matrix["config"].extend(_generate_gcc7_matrix(archs))
-        if v == "8":
-            gcc_matrix["config"].extend(_generate_gcc8_matrix(archs))
-        if v == "9":
-            gcc_matrix["config"].extend(_generate_gcc9_matrix(archs))
-        if v == "10":
-            gcc_matrix["config"].extend(_generate_gcc10_matrix(archs))
-    return gcc_matrix["config"]
-
-def _generate_gcc_matrix(archs, version, valid_gcc_archs):
-    gcc_matrix = []
-    gcc_archs = [x for x in archs if x in valid_gcc_archs]
-    for arch in gcc_archs:
-        gcc_matrix.append(
-            {"name": "GCC "+ version + " " + arch, "compiler": "GCC",
-                "version": version, "os": "ubuntu-18.04", "arch": arch}
-        )
-    return gcc_matrix
-
-def _generate_gcc4_9_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "x86", "x86_64"])
-    matrix = _generate_gcc_matrix(archs,"4.9",valid_gcc_archs)
-    return matrix
-
-def _generate_gcc5_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
-    matrix = _generate_gcc_matrix(archs,"5",valid_gcc_archs)
-    return matrix
-
-def _generate_gcc6_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
-    matrix = _generate_gcc_matrix(archs,"6",valid_gcc_archs)
-    return matrix
-
-def _generate_gcc7_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
-    matrix = _generate_gcc_matrix(archs,"7",valid_gcc_archs)
-    return matrix
-
-def _generate_gcc8_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
-    matrix = _generate_gcc_matrix(archs,"8",valid_gcc_archs)
-    return matrix
-
-def _generate_gcc9_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
-    matrix = _generate_gcc_matrix(archs,"9",valid_gcc_archs)
-    return matrix
-
-def _generate_gcc10_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "x86_64"])
-    matrix = _generate_gcc_matrix(archs,"10",valid_gcc_archs)
-    return matrix
-
-def _generate_clang_matrix(archs, version, valid_archs):
-    valid_clang_archs = set(valid_archs)
-    
-    clang_matrix = {}
-    clang_matrix["config"] = []
-
-    clang_archs = [x for x in archs if x in valid_clang_archs]
-
-    for arch in clang_archs:
-        clang_matrix["config"].append(
-            {"name": "CLANG "+ version + " " + arch, "compiler": "CLANG",
-            "version": version, "os": "ubuntu-18.04", "arch": arch}
-        )
-    return clang_matrix["config"]
-
-def _generate_macos_clang_matrix(archs, version, valid_archs):
-    valid_clang_archs = set(valid_archs)
-
-    clang_matrix = {}
-    clang_matrix["config"] = []
-
-    clang_archs = [x for x in archs if x in valid_clang_archs]
-
-    for arch in clang_archs:
-        clang_matrix["config"].append(
-            {"name": "macOS Apple-Clang "+ version+ " " + arch, "compiler": "APPLE_CLANG", 
-            "version": version, "os": "macOS-10.15", "arch": arch}
-        )
-    return clang_matrix["config"]
-
-def _generate_vs2017_matrix(archs, valid_archs):
-    valid_vs2017_archs = set(valid_archs)
-    
-    vs2017_matrix = {}
-    vs2017_matrix["config"] = []
-    
-    vs2017_archs = [x for x in archs if x in valid_vs2017_archs]
-
-    for arch in vs2017_archs:
-        vs2017_matrix["config"].append(
-            {"name": "Windows VS 2017 "+ arch, "compiler": "VISUAL", 
-            "version": "15", "os": "vs2017-win2016", "arch": arch},
-        )
-    return vs2017_matrix["config"]
-
-def _generate_vs2019_matrix(archs, valid_archs):
-    valid_vs2019_archs = set(valid_archs)
-    
-    vs2019_matrix = {}
-    vs2019_matrix["config"] = []
-    
-    vs2019_archs = [x for x in archs if x in valid_vs2019_archs]
-
-    for arch in vs2019_archs:
-        vs2019_matrix["config"].append(
-            {"name": "Windows VS 2019 " + arch, "compiler": "VISUAL", 
-            "version": "16", "os": "windows-2019", "arch": arch},
-        )
-    return vs2019_matrix["config"]
 
 def _get_base_config(recipe_directory: str, platform: str, split_by_build_types: bool, build_set: str = "full", recipe_type: str = ""):
     if recipe_type == "":
@@ -183,42 +64,21 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             ]
             matrix_minimal["config"] = matrix["config"].copy()
         else:
-            matrix["config"] = []
             archs = split_colon_env("BPT_CONAN_ARCHS")
-            matrix["config"].extend(
-                _generate_gcc_matrix(archs, "4.9", ["x86","x86_64","armv7","armv7hf"]) +
-                _generate_gcc_matrix(archs, "5", ["x86","x86_64","armv7","armv7hf","armv8"]) +
-                _generate_gcc_matrix(archs, "6", ["x86","x86_64","armv7","armv7hf","armv8"]) +
-                _generate_gcc_matrix(archs, "7", ["x86","x86_64","armv7","armv7hf","armv8"]) +
-                _generate_gcc_matrix(archs, "8", ["x86","x86_64","armv7","armv7hf","armv8"]) +
-                _generate_gcc_matrix(archs, "9", ["x86","x86_64","armv7","armv7hf","armv8"]) +
-                _generate_gcc_matrix(archs, "10", ["x86_64","armv7","armv7hf"])
-            )
+            gcc_versions = split_colon_env("BPT_GCC_VERSIONS")
+            clang_versions = split_colon_env("BPT_CLANG_VERSIONS")
+            mac_versions = split_colon_env("BPT_MAC_VERSIONS")
+            win_versions = split_colon_env("BPT_WIN_VERSIONS")
 
-            matrix["config"].extend(
-                _generate_clang_matrix(archs, "3.9", ["x86","x86_64"]) +
-                _generate_clang_matrix(archs, "4.0", ["x86","x86_64"]) +
-                _generate_clang_matrix(archs, "5.0", ["x86","x86_64"]) +
-                _generate_clang_matrix(archs, "6.0", ["x86","x86_64"]) +
-                _generate_clang_matrix(archs, "7.0", ["x86","x86_64"]) +
-                _generate_clang_matrix(archs, "8", ["x86","x86_64"]) +
-                _generate_clang_matrix(archs, "9", ["x86","x86_64"]) +
-                _generate_clang_matrix(archs, "10", ["x86","x86_64"]) +
-                _generate_clang_matrix(archs, "11", ["x86","x86_64"])
-            )
+            matrix["config"] = []
+            matrix["config"].extend(generate_gcc_matrices(archs, gcc_versions))
+            matrix["config"].extend(generate_clang_matrices(archs, clang_versions))
 
             if run_macos:
-                matrix["config"].extend(
-                    _generate_macos_clang_matrix(archs, "10.0", ["x86_64"]) +
-                    _generate_macos_clang_matrix(archs, "11.0", ["x86_64"]) +
-                    _generate_macos_clang_matrix(archs, "12.0", ["x86_64"])
-                )
+                matrix["config"].extend(archs, mac_versions)
 
             if run_windows:
-                matrix["config"].extend(
-                    _generate_vs2017_matrix(archs, ["x86", "x86_64", "armv7"]) +
-                    _generate_vs2019_matrix(archs, ["x86", "x86_64", "armv7", "armv8"])
-                )
+                matrix["config"].extend(generate_win_matrices(archs, win_versions))
 
             matrix_minimal["config"] = [
                 {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
