@@ -1,13 +1,11 @@
 import argparse
 import sys
 import json
-import os
 
 from bincrafters.build_autodetect import run_autodetect
 from bincrafters.autodetect import autodetect
 from bincrafters.generate_ci_jobs import generate_ci_jobs
 from bincrafters.prepare_env import prepare_env
-from bincrafters.build_shared import printer
 
 
 def _parse_arguments(*args):
@@ -34,16 +32,8 @@ def _parse_arguments(*args):
 def run(*args):
     arguments = _parse_arguments(*args)
     if arguments.auto:
-        printer.print_message("# CWD: {0}".format(str(os.getcwd())))
-        printer.print_message("# CMD: {0}".format(str(args)))
-        sys.stderr.flush()
-        sys.stdout.flush()
         run_autodetect()
     elif arguments.commands == "prepare-env":
-        printer.print_message("# CWD: {0}".format(str(os.getcwd())))
-        printer.print_message("# CMD: {0}".format(str(args)))
-        sys.stderr.flush()
-        sys.stdout.flush()
         config = json.loads(arguments.config)
         prepare_env(platform=arguments.platform, config=config, select_config=arguments.select_config)
     elif arguments.commands == "generate-ci-jobs":

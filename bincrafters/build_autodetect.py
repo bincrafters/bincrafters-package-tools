@@ -67,8 +67,6 @@ def run_autodetect():
     ###
     recipe_conanfile = get_recipe_path()
     printer.print_message("Recipe path: {}".format(str(recipe_conanfile)))
-    for e in os.listdir(os.path.dirname(recipe_conanfile)):
-        printer.print_message("> {}".format(str(e)))
 
     recipe_is_installer = is_installer()
     printer.print_message("Is the package an installer for executable(s)? {}"
