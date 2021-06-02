@@ -29,36 +29,36 @@ def __generate_gcc_matrix(archs, version, valid_gcc_archs):
     return gcc_matrix
 
 def __generate_gcc4_9_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "x86", "x86_64"])
+    valid_gcc_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_gcc_matrix(archs,"4.9",valid_gcc_archs)
     return matrix
 
 def __generate_gcc5_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
+    valid_gcc_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_gcc_matrix(archs,"5",valid_gcc_archs)
     return matrix
 
 def __generate_gcc6_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
+    valid_gcc_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_gcc_matrix(archs,"6",valid_gcc_archs)
     return matrix
 
 def __generate_gcc7_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
+    valid_gcc_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_gcc_matrix(archs,"7",valid_gcc_archs)
     return matrix
 
 def __generate_gcc8_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
+    valid_gcc_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_gcc_matrix(archs,"8",valid_gcc_archs)
     return matrix
 
 def __generate_gcc9_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "armv8", "x86", "x86_64"])
+    valid_gcc_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_gcc_matrix(archs,"9",valid_gcc_archs)
     return matrix
 
 def __generate_gcc10_matrix(archs):
-    valid_gcc_archs = set(["armv7", "armv7hf", "x86_64"])
+    valid_gcc_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_gcc_matrix(archs,"10",valid_gcc_archs)
     return matrix

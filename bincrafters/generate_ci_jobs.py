@@ -75,7 +75,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             matrix["config"].extend(generate_clang_matrices(archs, clang_versions))
 
             if run_macos:
-                matrix["config"].extend(generate_mac_matrices(archs, win_versions))
+                matrix["config"].extend(generate_mac_matrices(archs, mac_versions))
 
             if run_windows:
                 matrix["config"].extend(generate_win_matrices(archs, win_versions))

@@ -24,47 +24,47 @@ def generate_clang_matrices(archs, versions):
     return clang_matrix["config"]
 
 def __generate_clang3_9_matrix(archs):
-    valid_clang_archs = set(["x86", "x86_64"])
+    valid_clang_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_clang_matrix(archs,"3.9",valid_clang_archs)
     return matrix
 
 def __generate_clang4_matrix(archs):
-    valid_clang_archs = set(["x86", "x86_64"])
+    valid_clang_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_clang_matrix(archs,"4.0",valid_clang_archs)
     return matrix
 
 def __generate_clang5_matrix(archs):
-    valid_clang_archs = set(["x86", "x86_64"])
+    valid_clang_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_clang_matrix(archs,"5.0",valid_clang_archs)
     return matrix
 
 def __generate_clang6_matrix(archs):
-    valid_clang_archs = set(["x86", "x86_64"])
+    valid_clang_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_clang_matrix(archs,"6.0",valid_clang_archs)
     return matrix
 
 def __generate_clang7_matrix(archs):
-    valid_clang_archs = set(["x86", "x86_64"])
+    valid_clang_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_clang_matrix(archs,"7.0",valid_clang_archs)
     return matrix
 
 def __generate_clang8_matrix(archs):
-    valid_clang_archs = set(["x86", "x86_64"])
+    valid_clang_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_clang_matrix(archs,"8",valid_clang_archs)
     return matrix
 
 def __generate_clang9_matrix(archs):
-    valid_clang_archs = set(["x86", "x86_64"])
+    valid_clang_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_clang_matrix(archs,"9",valid_clang_archs)
     return matrix
 
 def __generate_clang10_matrix(archs):
-    valid_clang_archs = set(["x86", "x86_64"])
+    valid_clang_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_clang_matrix(archs,"10",valid_clang_archs)
     return matrix
 
 def __generate_clang11_matrix(archs):
-    valid_clang_archs = set(["x86", "x86_64"])
+    valid_clang_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
     matrix = __generate_clang_matrix(archs,"11",valid_clang_archs)
     return matrix
 
