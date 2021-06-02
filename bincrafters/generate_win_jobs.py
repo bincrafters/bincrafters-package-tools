@@ -10,7 +10,7 @@ def generate_win_matrices(archs, versions):
 
 
 def __generate_vs2017_matrix(archs):
-    valid_vs2017_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
+    valid_vs2017_archs = set(["x86", "x86_64", "armv7"])
     
     vs2017_matrix = {}
     vs2017_matrix["config"] = []
@@ -25,7 +25,7 @@ def __generate_vs2017_matrix(archs):
     return vs2017_matrix["config"]
 
 def __generate_vs2019_matrix(archs):
-    valid_vs2019_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
+    valid_vs2019_archs = set(["x86", "x86_64", "armv7", "armv8"])
     
     vs2019_matrix = {}
     vs2019_matrix["config"] = []

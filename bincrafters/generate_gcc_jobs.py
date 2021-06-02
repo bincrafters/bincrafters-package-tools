@@ -29,7 +29,7 @@ def __generate_gcc_matrix(archs, version, valid_gcc_archs):
     return gcc_matrix
 
 def __generate_gcc4_9_matrix(archs):
-    valid_gcc_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
+    valid_gcc_archs = set(["x86", "x86_64", "armv7", "armv7hf"])
     matrix = __generate_gcc_matrix(archs,"4.9",valid_gcc_archs)
     return matrix
 
@@ -59,6 +59,6 @@ def __generate_gcc9_matrix(archs):
     return matrix
 
 def __generate_gcc10_matrix(archs):
-    valid_gcc_archs = set(["x86", "x86_64", "armv7", "armv7hf", "armv8"])
+    valid_gcc_archs = set(["x86_64", "armv7", "armv7hf"])
     matrix = __generate_gcc_matrix(archs,"10",valid_gcc_archs)
     return matrix
