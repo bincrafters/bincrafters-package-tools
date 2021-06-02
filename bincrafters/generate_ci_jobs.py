@@ -71,13 +71,13 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             win_versions = split_colon_env("BPT_WIN_VERSIONS")
 
             matrix["config"] = []
-            matrix["config"].extend(generate_gcc_matrices(archs, gcc_versions))
-            matrix["config"].extend(generate_clang_matrices(archs, clang_versions))
-
-            if run_macos:
+            if gcc_versions:
+                matrix["config"].extend(generate_gcc_matrices(archs, gcc_versions))
+            if clang_versions:
+                matrix["config"].extend(generate_clang_matrices(archs, clang_versions))
+            if run_macos and mac_versions:
                 matrix["config"].extend(generate_mac_matrices(archs, mac_versions))
-
-            if run_windows:
+            if run_windows and win_versions:
                 matrix["config"].extend(generate_win_matrices(archs, win_versions))
 
             matrix_minimal["config"] = [
