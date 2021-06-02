@@ -109,7 +109,7 @@ def set_all_bpt_gcc_versions():
 
 @pytest.fixture()
 def set_all_bpt_clang_versions():
-    os.environ["BPT_CLANG_VERSIONS"] = "3.9,4.0,5.0,6.0,7.0,8,9,10,11"
+    os.environ["BPT_CLANG_VERSIONS"] = "3.9,4,5,6,7,8,9,10,11"
     yield
     del os.environ["BPT_CLANG_VERSIONS"]
 

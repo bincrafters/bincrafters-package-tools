@@ -4,13 +4,13 @@ def generate_clang_matrices(archs, versions):
     for v in versions:
         if v == "3.9":
             clang_matrix["config"].extend(__generate_clang3_9_matrix(archs))
-        if v == "4.0":
+        if v == "4":
             clang_matrix["config"].extend(__generate_clang4_matrix(archs))
-        if v == "5.0":
+        if v == "5":
             clang_matrix["config"].extend(__generate_clang5_matrix(archs))
-        if v == "6.0":
+        if v == "6":
             clang_matrix["config"].extend(__generate_clang6_matrix(archs))
-        if v == "7.0":
+        if v == "7":
             clang_matrix["config"].extend(__generate_clang7_matrix(archs))
         if v == "8":
             clang_matrix["config"].extend(__generate_clang8_matrix(archs))
