@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-from bincrafters.generate_clang_jobs import generate_clang_matrices
+from bincrafters.generate_mac_jobs import generate_mac_matrices
 import os
 import pytest
 
+from bincrafters.generate_win_jobs import generate_win_matrices
+from bincrafters.generate_clang_jobs import generate_clang_matrices
 from bincrafters.generate_gcc_jobs import generate_gcc_matrices
 from cpt.tools import split_colon_env
 
@@ -62,36 +64,36 @@ partial_gcc_matrix["config"].extend([
 complete_clang_matrix = {}
 complete_clang_matrix["config"] = []
 complete_clang_matrix["config"].extend([
-    {"name": "CLANG 3.9 x86", "compiler": "CLANG","version": '3.9', "os": "ubuntu-18.04", "arch": "x86"},
     {"name": "CLANG 3.9 x86_64", "compiler": "CLANG","version": '3.9', "os": "ubuntu-18.04", "arch": "x86_64"},
-    {"name": "CLANG 4.0 x86", "compiler": "CLANG","version": '4.0', "os": "ubuntu-18.04", "arch": "x86"},
     {"name": "CLANG 4.0 x86_64", "compiler": "CLANG","version": '4.0', "os": "ubuntu-18.04", "arch": "x86_64"},
-    {"name": "CLANG 5.0 x86", "compiler": "CLANG","version": '5.0', "os": "ubuntu-18.04", "arch": "x86"},
     {"name": "CLANG 5.0 x86_64", "compiler": "CLANG","version": '5.0', "os": "ubuntu-18.04", "arch": "x86_64"},
-    {"name": "CLANG 6.0 x86", "compiler": "CLANG","version": '6.0', "os": "ubuntu-18.04", "arch": "x86"},
     {"name": "CLANG 6.0 x86_64", "compiler": "CLANG","version": '6.0', "os": "ubuntu-18.04", "arch": "x86_64"},
     {"name": "CLANG 7.0 x86", "compiler": "CLANG","version": '7.0', "os": "ubuntu-18.04", "arch": "x86"},
     {"name": "CLANG 7.0 x86_64", "compiler": "CLANG","version": '7.0', "os": "ubuntu-18.04", "arch": "x86_64"},
-    {"name": "CLANG 8 x86", "compiler": "CLANG","version": '8', "os": "ubuntu-18.04", "arch": "x86"},
     {"name": "CLANG 8 x86_64", "compiler": "CLANG","version": '8', "os": "ubuntu-18.04", "arch": "x86_64"},
-    {"name": "CLANG 9 x86", "compiler": "CLANG","version": '9', "os": "ubuntu-18.04", "arch": "x86"},
     {"name": "CLANG 9 x86_64", "compiler": "CLANG","version": '9', "os": "ubuntu-18.04", "arch": "x86_64"},
-    {"name": "CLANG 10 x86", "compiler": "CLANG","version": '10', "os": "ubuntu-18.04", "arch": "x86"},
     {"name": "CLANG 10 x86_64", "compiler": "CLANG","version": '10', "os": "ubuntu-18.04", "arch": "x86_64"},
-    {"name": "CLANG 11 x86", "compiler": "CLANG","version": '11', "os": "ubuntu-18.04", "arch": "x86"},
     {"name": "CLANG 11 x86_64", "compiler": "CLANG","version": '11', "os": "ubuntu-18.04", "arch": "x86_64"},
 ])
 
 complete_mac_matrix = {}
 complete_mac_matrix["config"] = []
 complete_mac_matrix["config"].extend([
-    {"name": "CLANG 3.9 x86", "compiler": "CLANG","version": '3.9', "os": "ubuntu-18.04", "arch": "x86"},
+    {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.15"},
+    {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
+    {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "12.0", "os": "macOS-10.15"},
 ])
 
 complete_win_matrix = {}
 complete_win_matrix["config"] = []
 complete_win_matrix["config"].extend([
-    {"name": "CLANG 3.9 x86", "compiler": "CLANG","version": '3.9', "os": "ubuntu-18.04", "arch": "x86"},
+    {"name": "Windows VS 2017 x86", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "arch": "x86"}, 
+    {"name": "Windows VS 2017 x86_64", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "arch": "x86_64"}, 
+    {"name": "Windows VS 2017 armv7", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "arch": "armv7"}, 
+    {"name": "Windows VS 2019 x86", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": "x86"}, 
+    {"name": "Windows VS 2019 x86_64", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": "x86_64"}, 
+    {"name": "Windows VS 2019 armv7", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": "armv7"}, 
+    {"name": "Windows VS 2019 armv8", "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": "armv8"}, 
 ])
 
 
@@ -162,7 +164,7 @@ def test_generate_complete_gcc_matrix(set_all_bpt_conan_archs, set_all_bpt_gcc_v
     compiler_archs = split_colon_env("BPT_CONAN_ARCHS")
     compiler_versions = split_colon_env("BPT_GCC_VERSIONS")
     # Act
-    matrix["config"]  = matrix["config"]  = generate_gcc_matrices(compiler_archs, compiler_versions)
+    matrix["config"]  = generate_gcc_matrices(compiler_archs, compiler_versions)
     # Assert
     assert matrix["config"] == complete_gcc_matrix["config"]
 
@@ -173,7 +175,7 @@ def test_generate_partial_gcc_matrix(set_partial_bpt_conan_archs, set_partial_bp
     compiler_archs = split_colon_env("BPT_CONAN_ARCHS")
     compiler_versions = split_colon_env("BPT_GCC_VERSIONS")
     # Act
-    matrix["config"]  = generate_gcc_matrices(compiler_archs, compiler_versions)
+    matrix["config"] = generate_gcc_matrices(compiler_archs, compiler_versions)
     # Assert
     assert matrix["config"] == partial_gcc_matrix["config"]
 
@@ -184,9 +186,34 @@ def test_generate_complete_clang_matrix(set_all_bpt_conan_archs, set_all_bpt_cla
     compiler_archs = split_colon_env("BPT_CONAN_ARCHS")
     compiler_versions = split_colon_env("BPT_CLANG_VERSIONS")
     # Act
-    matrix["config"]  = matrix["config"]  = generate_clang_matrices(compiler_archs, compiler_versions)
-    # print(matrix["config"])
-    # print()
-    # print(complete_clang_matrix["config"])
+    matrix["config"] = generate_clang_matrices(compiler_archs, compiler_versions)
     # Assert
     assert matrix["config"] == complete_clang_matrix["config"]
+
+def test_generate_complete_win_matrix(set_all_bpt_conan_archs, set_all_bpt_win_versions,):
+    # Arrange
+    matrix =  {}
+    matrix["config"] = []
+    compiler_archs = split_colon_env("BPT_CONAN_ARCHS")
+    compiler_versions = split_colon_env("BPT_WIN_VERSIONS")
+    # Act
+    matrix["config"] = generate_win_matrices(compiler_archs, compiler_versions)
+    print(matrix["config"])
+    print()
+    print(complete_win_matrix["config"])
+    # Assert
+    assert matrix["config"] == complete_win_matrix["config"]
+
+def test_generate_complete_win_matrix(set_all_bpt_conan_archs, set_all_bpt_mac_versions,):
+    # Arrange
+    matrix =  {}
+    matrix["config"] = []
+    compiler_archs = split_colon_env("BPT_CONAN_ARCHS")
+    compiler_versions = split_colon_env("BPT_MAC_VERSIONS")
+    # Act
+    matrix["config"] = generate_mac_matrices(compiler_archs, compiler_versions)
+    print(matrix["config"])
+    print()
+    print(complete_mac_matrix["config"])
+    # Assert
+    assert matrix["config"] == complete_mac_matrix["config"]

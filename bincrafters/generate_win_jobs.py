@@ -19,8 +19,7 @@ def __generate_vs2017_matrix(archs):
 
     for arch in vs2017_archs:
         vs2017_matrix["config"].append(
-            {"name": "Windows VS 2017 "+ arch, "compiler": "VISUAL", 
-            "version": "15", "os": "vs2017-win2016", "arch": arch},
+            {"name": "Windows VS 2017 "+ arch, "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016", "arch": arch},
         )
     return vs2017_matrix["config"]
 
@@ -34,7 +33,6 @@ def __generate_vs2019_matrix(archs):
 
     for arch in vs2019_archs:
         vs2019_matrix["config"].append(
-            {"name": "Windows VS 2019 " + arch, "compiler": "VISUAL", 
-            "version": "16", "os": "windows-2019", "arch": arch},
+            {"name": "Windows VS 2019 " + arch, "compiler": "VISUAL", "version": "16", "os": "windows-2019", "arch": arch},
         )
     return vs2019_matrix["config"]

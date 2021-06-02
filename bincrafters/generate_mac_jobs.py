@@ -30,6 +30,7 @@ def __generate_clang_matrix(archs, version, valid_clang_archs):
     clang_matrix = []
     clang_archs = [x for x in archs if x in valid_clang_archs]
     for arch in clang_archs:
-        {"name": "macOS Apple-Clang "+ version+ " " + arch, "compiler": "APPLE_CLANG", 
-        "version": version, "os": "macOS-10.15", "arch": arch}
+        clang_matrix.append(
+            {"name": "macOS Apple-Clang "+ version+ " " + arch, "compiler": "APPLE_CLANG", "version": version, "os": "macOS-10.15", "arch": arch},
+        )
     return clang_matrix
