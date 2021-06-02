@@ -225,7 +225,7 @@ def generate_ci_jobs(platform: str, recipe_type: str = autodetect(), split_by_bu
             )
             for build_config in working_matrix["config"]:
                 new_config = build_config.copy()
-                new_config["cwd"] = path
+                new_config["cwd"] = path.replace(os.getcwd(), "")
                 new_config["name"] = "{} {}".format(version, new_config["name"])
                 new_config["recipe_version"] = version
                 final_matrix["config"].append(new_config)
