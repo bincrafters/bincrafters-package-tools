@@ -77,9 +77,9 @@ def run_autodetect():
         printer.print_message("Is the package header only? {}"
                               .format(str(recipe_is_unconditional_header_only)))
 
-        resipe_is_testable_header_only = is_testable_header_only()
+        recipe_is_testable_header_only = is_testable_header_only()
         printer.print_message("Is the package testable header only? {}"
-                              .format(str(resipe_is_testable_header_only)))
+                              .format(str(recipe_is_testable_header_only)))
 
         if not recipe_is_unconditional_header_only:
             recipe_is_conditional_header_only = is_conditional_header_only()
