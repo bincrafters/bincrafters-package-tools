@@ -1,8 +1,6 @@
 import os
 from bincrafters.build_shared import get_recipe_path, inspect_value_from_recipe
 
-_recipe_path = os.path.dirname(get_recipe_path())
-
 
 def _file_contains(file, word):
     """ Read file and search for word
@@ -40,11 +38,19 @@ def recipe_has_setting(setting_name):
 
 
 def is_custom_build_py_existing() -> (bool, str):
-    custom_build_path = os.path.join(_recipe_path, "build.py")
+    custom_build_path = os.path.join(os.path.dirname(get_recipe_path()), "build.py")
     if os.path.isfile(custom_build_path):
         return True, custom_build_path
 
     return False, None
+
+
+def has_test_package():
+    test_package_path = os.path.join(os.path.dirname(get_recipe_path()), "test_package")
+    if os.path.isdir(test_package_path):
+        return True
+
+    return False
 
 
 def is_pure_c():
@@ -65,6 +71,13 @@ def is_unconditional_header_only():
     return False
 
 
+def is_testable_header_only():
+    if is_unconditional_header_only() and has_test_package():
+        return True
+
+    return False
+
+
 def is_installer():
     if not is_unconditional_header_only() and not is_conditional_header_only():
         if (recipe_contains("self.env_info.PATH.append") or recipe_contains("self.env_info.PATH.extend")) \
@@ -78,7 +91,9 @@ def autodetect() -> str:
     if is_installer():
         return "installer"
     else:
-        if is_unconditional_header_only():
+        if is_testable_header_only():
+            return "testable_header_only"
+        elif is_unconditional_header_only():
             return "unconditional_header_only"
         else:
             if is_conditional_header_only():
