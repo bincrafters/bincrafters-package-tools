@@ -32,7 +32,7 @@ def get_value_from_recipe(search_string, recipe=None):
         recipe = get_recipe_path()
     with open(recipe, "r") as conanfile:
         contents = conanfile.read()
-        result = re.search(search_string, contents, re.MULTILINE)
+        result = re.search(search_string, contents)
     return result
 
 
@@ -65,9 +65,9 @@ def get_version_from_recipe(recipe=None):
     version = inspect_value_from_recipe(attribute="version", recipe_path=recipe)
     if version:
         return version
-    version_from_recipe = get_value_from_recipe(r'''^\s+version\s*=\s*["'](\S*)["']''', recipe=recipe)
-    if version_from_recipe:
-        return version_from_recipe.groups()[0]
+    match = get_value_from_recipe(r'''\s+version\s*=\s*["'](\S*)["']''', recipe=recipe)
+    if match:
+        return match.groups()[0]
     return None
 
 
