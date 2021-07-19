@@ -1,5 +1,5 @@
 import os
-from bincrafters.build_shared import get_recipe_path, inspect_value_from_recipe
+from bincrafters.build_shared import get_recipe_path, inspect_value_from_recipe, get_version
 
 
 def _file_contains(file, word):
@@ -116,7 +116,7 @@ def autodetect_directory_structure() -> str:
     """
     pwd = os.getcwd()
 
-    if os.path.exists(os.path.join(pwd, "conanfile.py")) and os.path.exists(os.path.join(pwd, "conandata.yml")):
+    if os.path.exists(os.path.join(pwd, "conanfile.py")) and os.path.exists(os.path.join(pwd, "conandata.yml")) and not get_version(os.path.join(pwd, "conanfile.py")):
         return DIR_STRUCTURE_STANDALONE_RECIPE_MANY_VERSIONS
 
     if os.path.exists(os.path.join(pwd, "conanfile.py")):
