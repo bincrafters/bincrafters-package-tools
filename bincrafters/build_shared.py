@@ -32,7 +32,7 @@ def get_value_from_recipe(search_string, recipe=None):
         recipe = get_recipe_path()
     with open(recipe, "r") as conanfile:
         contents = conanfile.read()
-        result = re.search(search_string, contents)
+        result = re.search(search_string, contents, re.MULTILINE)
     return result
 
 
@@ -63,7 +63,12 @@ def get_name_from_recipe(recipe=None):
 
 def get_version_from_recipe(recipe=None):
     version = inspect_value_from_recipe(attribute="version", recipe_path=recipe)
-    return version or get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
+    if version:
+        return version
+    version_from_recipe = get_value_from_recipe(r'''^\s+version\s*=\s*["'](\S*)["']''', recipe=recipe)
+    if version_from_recipe:
+        return version_from_recipe.groups()[0]
+    return None
 
 
 def is_shared(recipe=None):
