@@ -63,7 +63,12 @@ def get_name_from_recipe(recipe=None):
 
 def get_version_from_recipe(recipe=None):
     version = inspect_value_from_recipe(attribute="version", recipe_path=recipe)
-    return version or get_value_from_recipe(r'''version\s*=\s*["'](\S*)["']''', recipe=recipe).groups()[0]
+    if version:
+        return version
+    match = get_value_from_recipe(r'''\s+version\s*=\s*["'](\S*)["']''', recipe=recipe)
+    if match:
+        return match.groups()[0]
+    return None
 
 
 def is_shared(recipe=None):
