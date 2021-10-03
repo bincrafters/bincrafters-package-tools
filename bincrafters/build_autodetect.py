@@ -4,6 +4,7 @@ import tempfile
 import os
 
 from bincrafters.build_shared import printer, get_os
+from bincrafters import build_shared
 import bincrafters.build_template_default as build_template_default
 import bincrafters.build_template_header_only as build_template_header_only
 import bincrafters.build_template_installer as build_template_installer
@@ -13,6 +14,28 @@ from bincrafters.autodetect import *
 def _flush_output():
     sys.stderr.flush()
     sys.stdout.flush()
+
+
+def _get_default_builder(shared_option_name=None,
+                    pure_c=True,
+                    dll_with_static_runtime=False,
+                    build_policy=None,
+                    cwd=None,
+                    reference=None,
+                    **kwargs):
+    recipe = build_shared.get_recipe_path(cwd)
+
+    builder = build_shared.get_builder(build_policy, cwd=cwd, **kwargs)
+    if shared_option_name is None and build_shared.is_shared():
+        shared_option_name = "%s:shared" % build_shared.get_name_from_recipe(recipe=recipe)
+
+    builder.add_common_builds(
+        shared_option_name=shared_option_name,
+        pure_c=pure_c,
+        dll_with_static_runtime=dll_with_static_runtime,
+        reference=reference)
+
+    return builder
 
 
 def _get_builder():
@@ -49,12 +72,13 @@ def _get_builder():
 
     if recipe_is_installer:
         arch = os.getenv("ARCH", "x86_64")
-        builder = build_template_installer.get_builder(**kwargs)
+        builder = build_shared.get_builder(**kwargs)
         builder.add({"os": get_os(), "arch_build": arch, "arch": arch}, {}, {}, {})
     elif recipe_is_unconditional_header_only:
-        builder = build_template_header_only.get_builder(**kwargs)
+        builder = build_shared.get_builder(**kwargs)
+        builder.add()
     else:
-        builder = build_template_default.get_builder(pure_c=recipe_is_pure_c, **kwargs)
+        builder = _get_default_builder(pure_c=recipe_is_pure_c, **kwargs)
 
     return builder
 
