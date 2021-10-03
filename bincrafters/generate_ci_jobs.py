@@ -29,12 +29,21 @@ def _run_windows_jobs_on_gha():
     return True
 
 
+def _do_discard_duplicated_build_ids() -> bool:
+    return get_bool_from_env("BPT_MATRIX_DISCARD_DUPLICATE_BUILD_IDS", default="true")
+
+
 def _get_base_config(recipe_directory: str, platform: str, split_by_build_types: bool, build_set: str = "full", recipe_type: str = ""):
     if recipe_type == "":
-        cwd = os.getcwd()
-        os.chdir(recipe_directory)
-        recipe_type = autodetect()
-        os.chdir(cwd)
+        if _do_discard_duplicated_build_ids:
+            cwd = os.getcwd()
+            os.chdir(recipe_directory)
+            recipe_type = autodetect()
+            os.chdir(cwd)
+        else:
+            # Useful for installer_only / header_only recipes that still want the full build matrix
+            # Eventually replace with an actual dynamic matrix generation
+            recipe_type = "recipe_manual_full_matrix"
 
     matrix = {}
     matrix_minimal = {}
