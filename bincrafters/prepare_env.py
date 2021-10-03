@@ -55,8 +55,8 @@ def prepare_env(platform: str, config: json, select_config: str = None):
         if docker_image == "":
             compiler_lower = compiler.lower()
             version_without_dot = compiler_version.replace(".", "")
-            if (compiler == "GCC" and int(version_without_dot) >= 11) or \
-                    (compiler == "CLANG" and int(version_without_dot) >= 12):
+            if (compiler == "GCC" and float(compiler_version) >= 11) or \
+                    (compiler == "CLANG" and float(compiler_version) >= 12):
                 # Use "modern" CDT containers for newer compilers
                 docker_image = "conanio/{}{}-ubuntu16.04".format(compiler_lower, version_without_dot)
             else:
