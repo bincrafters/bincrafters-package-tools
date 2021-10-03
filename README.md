@@ -4,28 +4,28 @@
 
 # Bincrafters Package Tools
 
-## A modular toolset for [Conan package tools](https://github.com/conan-io/conan-package-tools)
+## A modular toolset for [Conan Package Tools](https://github.com/conan-io/conan-package-tools)
 
 This project contains files used by Conan Package Tools for all kinds of bincrafters builds.
 
 These scripts are used during build process to allow for rapid testing and prototyping at this time.
 
 
-#### INSTALL
+### INSTALL
 To install by pip is just one step
 
-##### Local
+### Local
 If you want to install by local copy
 
     pip install .
 
-##### Remote
+### Remote
 Or if you want to download our pip package
 
     pip install bincrafters_package_tools
 
 
-#### ENVIRONMENT
+### ENVIRONMENT VARIABLES
 All variables supported by Conan package tools, are treated by Bincrafters package tools as well.
 To solve the upload, some variables are customized by default:
 
@@ -38,9 +38,17 @@ To solve the upload, some variables are customized by default:
 **CONAN_STABLE_BRANCH_PATTERN**: stable/\*  
 **CONAN_ARCHS**: Only x86_64 per default. To build 32-bit and 64-bit use e.g. [x86_64, x86]
 
-**BINTRAY_REPOSITORY**: Bintray repository name. This variable replaces "public-conan" for **CONAN_UPLOAD**.
+___
 
-##### Testing and Development
+**BPT SPECIFIC ENVIRONMENT VARIBLES**:
+
+**BPT_MATRIX_SPLIT_BY_BUILD_TYPES**: Splits build jobs into `Release` and `Debug` build jobs.
+**BPT_MATRIX_DISCARD_DUPLICATE_BUILD_IDS**: `true`/`false`, default: `true`. This does NOT YET what it says. Right now, this only has an effect for installer_only and header_only recipes when set to `false`. In those cases, you get the full build matrix, instead of a shortened build matrix. In the future, the matrix generation actually compares build IDs and discards jobs based on the IDs.
+
+___
+
+
+#### Testing and Development
 To install extra packages required to test
 
     pip install .[test]
