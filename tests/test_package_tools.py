@@ -132,15 +132,6 @@ def test_build_template_installer(set_installer_only_recipe):
 def test_build_header_only(set_header_only_recipe):
     builder = build_autodetect._get_builder()
     for settings, options, env_vars, build_requires, reference in builder.items:
-        from bincrafters.build_shared import printer
-        import pprint
-        pprint.pprint("options from header_only:")
-        pprint.pprint(options)
-        printer.print_message(pprint.pformat(options))
-        printer.print_message("test test test")
-        import sys
-        sys.stderr.flush()
-        sys.stdout.flush()
         assert 0 == len(options)
     assert 1 == len(builder.items)
 
