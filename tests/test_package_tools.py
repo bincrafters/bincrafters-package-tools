@@ -81,7 +81,7 @@ def test_build_template_default():
             assert "x86_64" == settings['arch']
 
     if platform.system() == "Linux":
-        assert 4 == len(builder.items)
+        assert 8 == len(builder.items)
     elif platform.system() == "Windows":
         assert 6 == len(builder.items)
     elif platform.system() == "Darwin":
@@ -97,7 +97,7 @@ def test_build_template_default_minimal(set_minimal_build_environment):
         assert "x86_64" == settings['arch']
 
     if platform.system() == "Linux":
-        assert 2 == len(builder.items)
+        assert 4 == len(builder.items)
     elif platform.system() == "Windows":
         assert 3 == len(builder.items)
     elif platform.system() == "Darwin":
