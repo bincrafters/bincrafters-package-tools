@@ -15,6 +15,50 @@ def _flush_output():
     sys.stdout.flush()
 
 
+def _get_builder():
+    ###
+    # Output collected recipe information in the builds logs
+    ###
+    recipe_is_installer = is_installer()
+    printer.print_message("Is the package an installer for executable(s)? {}"
+                          .format(str(recipe_is_installer)))
+
+    if not recipe_is_installer:
+        recipe_is_unconditional_header_only = is_unconditional_header_only()
+        printer.print_message("Is the package header only? {}"
+                              .format(str(recipe_is_unconditional_header_only)))
+
+        if not recipe_is_unconditional_header_only:
+            recipe_is_conditional_header_only = is_conditional_header_only()
+            printer.print_message("Is the package conditionally header only ('header_only' option)? {}"
+                                  .format(str(recipe_is_conditional_header_only)))
+
+            recipe_is_pure_c = is_pure_c()
+            printer.print_message("Is the package C-only? {}".format(str(recipe_is_pure_c)))
+
+    _flush_output()
+
+    ###
+    # Create builder
+    ###
+    kwargs = {}
+
+    if autodetect_directory_structure() == DIR_STRUCTURE_ONE_RECIPE_MANY_VERSIONS \
+            or autodetect_directory_structure() == DIR_STRUCTURE_CCI:
+        kwargs["stable_branch_pattern"] = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "main")
+
+    if recipe_is_installer:
+        arch = os.getenv("ARCH", "x86_64")
+        builder = build_template_installer.get_builder(**kwargs)
+        builder.add({"os": get_os(), "arch_build": arch, "arch": arch}, {}, {}, {})
+    elif recipe_is_unconditional_header_only:
+        builder = build_template_header_only.get_builder(**kwargs)
+    else:
+        builder = build_template_default.get_builder(pure_c=recipe_is_pure_c, **kwargs)
+
+    return builder
+
+
 def run_autodetect():
     ###
     # Enabling Conan download cache
@@ -63,45 +107,8 @@ def run_autodetect():
         return
 
     ###
-    # Output collected recipe information in the builds logs
-    ###
-    recipe_is_installer = is_installer()
-    printer.print_message("Is the package an installer for executable(s)? {}"
-                          .format(str(recipe_is_installer)))
-
-    if not recipe_is_installer:
-        recipe_is_unconditional_header_only = is_unconditional_header_only()
-        printer.print_message("Is the package header only? {}"
-                              .format(str(recipe_is_unconditional_header_only)))
-
-        if not recipe_is_unconditional_header_only:
-            recipe_is_conditional_header_only = is_conditional_header_only()
-            printer.print_message("Is the package conditionally header only ('header_only' option)? {}"
-                                  .format(str(recipe_is_conditional_header_only)))
-
-            recipe_is_pure_c = is_pure_c()
-            printer.print_message("Is the package C-only? {}".format(str(recipe_is_pure_c)))
-
-    _flush_output()
-
-    ###
     # Start the build
     ###
-    kwargs = {}
-
-    if autodetect_directory_structure() == DIR_STRUCTURE_ONE_RECIPE_MANY_VERSIONS \
-            or autodetect_directory_structure() == DIR_STRUCTURE_CCI:
-        kwargs["stable_branch_pattern"] = os.getenv("CONAN_STABLE_BRANCH_PATTERN", "main")
-
-    if recipe_is_installer:
-        arch = os.getenv("ARCH", "x86_64")
-        builder = build_template_installer.get_builder(**kwargs)
-        builder.add({"os": get_os(), "arch_build": arch, "arch": arch}, {}, {}, {})
-        builder.run()
-    elif recipe_is_unconditional_header_only:
-        builder = build_template_header_only.get_builder(**kwargs)
-        builder.run()
-    else:
-        builder = build_template_default.get_builder(pure_c=recipe_is_pure_c, **kwargs)
-        builder.run()
+    builder = _get_builder()
+    builder.run()
 
