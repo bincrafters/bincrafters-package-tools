@@ -114,9 +114,11 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
     # Split build jobs by build_type (Debug, Release)
     # Duplicate each builds job, then add the buildType value
     if split_by_build_types is None:
-        # env var BPT_SPLIT_BY_BUILD_TYPES should be preferred over splitByBuildTypes (deprecated)
-        split_by_build_types = get_bool_from_env("BPT_SPLIT_BY_BUILD_TYPES",
-                                                 get_bool_from_env("splitByBuildTypes", False))
+        # env var BPT_MATRIX_SPLIT_BY_BUILD_TYPES should be preferred
+        # over BPT_SPLIT_BY_BUILD_TYPES and splitByBuildTypes (deprecated)
+        split_by_build_types = get_bool_from_env("BPT_MATRIX_SPLIT_BY_BUILD_TYPES",
+                                                 get_bool_from_env("BPT_SPLIT_BY_BUILD_TYPES",
+                                                                   get_bool_from_env("splitByBuildTypes", False)))
 
     if split_by_build_types:
         matrix_tmp = copy.deepcopy(matrix)
