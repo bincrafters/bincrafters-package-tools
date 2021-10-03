@@ -56,7 +56,6 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             ]
             matrix_minimal["config"] = matrix["config"].copy()
         else:
-            # TODO: Remove Clang 3.9 for >= 0.33.0 release
             matrix["config"] = [
                 {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-18.04"},
                 {"name": "GCC 5", "compiler": "GCC", "version": "5", "os": "ubuntu-18.04"},
@@ -65,7 +64,6 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 {"name": "GCC 8", "compiler": "GCC", "version": "8", "os": "ubuntu-18.04"},
                 {"name": "GCC 9", "compiler": "GCC", "version": "9", "os": "ubuntu-18.04"},
                 {"name": "GCC 10", "compiler": "GCC", "version": "10", "os": "ubuntu-18.04"},
-                {"name": "CLANG 3.9", "compiler": "CLANG", "version": "3.9", "os": "ubuntu-18.04"},
                 {"name": "CLANG 4.0", "compiler": "CLANG", "version": "4.0", "os": "ubuntu-18.04"},
                 {"name": "CLANG 5.0", "compiler": "CLANG", "version": "5.0", "os": "ubuntu-18.04"},
                 {"name": "CLANG 6.0", "compiler": "CLANG", "version": "6.0", "os": "ubuntu-18.04"},
