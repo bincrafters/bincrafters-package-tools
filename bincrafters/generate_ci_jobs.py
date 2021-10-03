@@ -64,6 +64,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 {"name": "GCC 8", "compiler": "GCC", "version": "8", "os": "ubuntu-18.04"},
                 {"name": "GCC 9", "compiler": "GCC", "version": "9", "os": "ubuntu-18.04"},
                 {"name": "GCC 10", "compiler": "GCC", "version": "10", "os": "ubuntu-18.04"},
+                {"name": "GCC 11", "compiler": "GCC", "version": "11", "os": "ubuntu-18.04"},
                 {"name": "CLANG 4.0", "compiler": "CLANG", "version": "4.0", "os": "ubuntu-18.04"},
                 {"name": "CLANG 5.0", "compiler": "CLANG", "version": "5.0", "os": "ubuntu-18.04"},
                 {"name": "CLANG 6.0", "compiler": "CLANG", "version": "6.0", "os": "ubuntu-18.04"},
@@ -72,6 +73,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 {"name": "CLANG 9", "compiler": "CLANG", "version": "9", "os": "ubuntu-18.04"},
                 {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04"},
                 {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04"},
+                {"name": "CLANG 12", "compiler": "CLANG", "version": "12", "os": "ubuntu-18.04"},
             ]
             if run_macos:
                 matrix["config"] += [
