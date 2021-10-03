@@ -5,9 +5,6 @@ import os
 
 from bincrafters.build_shared import printer, get_os
 from bincrafters import build_shared
-import bincrafters.build_template_default as build_template_default
-import bincrafters.build_template_header_only as build_template_header_only
-import bincrafters.build_template_installer as build_template_installer
 from bincrafters.autodetect import *
 
 
