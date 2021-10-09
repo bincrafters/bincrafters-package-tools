@@ -183,11 +183,11 @@ def get_conan_upload(username):
 
 
 def get_conan_upload_param(username, kwargs):
-    if "upload" not in kwargs:
-        if get_conan_upload(username):
-            kwargs["upload"] = get_conan_upload(username)
-    elif str(kwargs["upload"]).lower() in ["false", "no", "off", "0"]:
+    if not get_conan_upload(username):
         del kwargs["upload"]
+        return kwargs
+    if "upload" not in kwargs and get_conan_upload(username):
+        kwargs["upload"] = get_conan_upload(username)
     return kwargs
 
 
