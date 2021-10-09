@@ -167,12 +167,15 @@ def get_conan_vars(recipe=None, kwargs={}):
 
 
 def get_user_repository(username, repository_name):
-    return "https://api.bintray.com/conan/{0}/{1}".format(username.lower(), repository_name)
+    return "https://{0}.jfrog.io/artifactory/api/conan/{1}".format(username.lower(), repository_name)
 
 
 def get_conan_upload(username):
     upload = os.getenv("CONAN_UPLOAD")
     if upload:
+        if upload.lower() in ["false", "no", "off", "0"]:
+            return ""
+
         return upload.split('@') if '@' in upload else upload
 
     repository_name = os.getenv("BINTRAY_REPOSITORY", BINCRAFTERS_REPO_NAME)
