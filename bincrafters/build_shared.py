@@ -171,7 +171,7 @@ def get_user_repository(username, repository_name):
 
 
 def get_conan_upload(username):
-    if os.getenv("BPT_NO_UPLOAD", "") in ["true", "yes", "on", "1"]:
+    if os.getenv("BPT_NO_UPLOAD", "").lower() in ["true", "yes", "on", "1"]:
         return False
 
     upload = os.getenv("CONAN_UPLOAD")
