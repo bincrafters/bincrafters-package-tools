@@ -213,7 +213,7 @@ def test_default_remote_address(set_upload_address):
     assert "remotefoo" == remote.name
     assert "https://api.bintray.com/conan/foo/bar" == remote.url
     remote = builder.remotes_manager._remotes[1]
-    assert "upload_repo" == remote.name
+    assert "bincrafters" == remote.name
     assert "https://bincrafters.jfrog.io/artifactory/api/conan/public-conan" == remote.url
 
 
@@ -221,5 +221,5 @@ def test_no_upload(set_upload_address_false):
     builder = build_autodetect._get_builder()
     assert 1 == len(builder.remotes_manager._remotes)
     remote = builder.remotes_manager._remotes[0]
-    assert "upload_repo" == remote.name
+    assert "bincrafters" == remote.name
     assert "https://bincrafters.jfrog.io/artifactory/api/conan/public-conan" == remote.url
