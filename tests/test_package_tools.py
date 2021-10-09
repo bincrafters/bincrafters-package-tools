@@ -54,9 +54,9 @@ def set_upload_address():
 
 @pytest.fixture()
 def set_upload_address_false():
-    os.environ["CONAN_UPLOAD"] = "False"
+    os.environ["BPT_NO_UPLOAD"] = "True"
     yield
-    del os.environ["CONAN_UPLOAD"]
+    del os.environ["BPT_NO_UPLOAD"]
 
 
 @pytest.fixture()
