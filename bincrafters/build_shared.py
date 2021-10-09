@@ -171,11 +171,11 @@ def get_user_repository(username, repository_name):
 
 
 def get_conan_upload(username):
+    if os.getenv("BPT_NO_UPLOAD", "") in ["true", "yes", "on", "1"]:
+        return False
+
     upload = os.getenv("CONAN_UPLOAD")
     if upload:
-        if upload.lower() in ["false", "no", "off", "0"]:
-            return False
-
         return upload.split('@') if '@' in upload else upload
 
     repository_name = os.getenv("BINTRAY_REPOSITORY", BINCRAFTERS_REPO_NAME)
