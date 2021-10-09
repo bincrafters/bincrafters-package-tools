@@ -21,7 +21,7 @@ jobs:
         pip install -e .[test]
         python setup.py sdist
         cd tests
-        pytest -v -s --cov=bincrafters
+        pytest -vvv -s --cov=bincrafters
     - name: "Coverage"
       run: |
         cd tests
