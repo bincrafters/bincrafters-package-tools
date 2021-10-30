@@ -10,6 +10,14 @@ from bincrafters.check_compatibility import *
 import bincrafters
 
 
+def _is_gha_existing():
+    if utils_file_contains(os.path.join(".github", "workflows", "conan.yml"), "bincrafters-package-tools") \
+            and utils_file_contains(os.path.join(".github", "workflows", "conan.yml"), "bincrafters_package_tools"):
+        return True
+
+    return False
+
+
 def _run_macos_jobs_on_gha():
     if utils_file_contains("azure-pipelines.yml", "name: bincrafters/templates") \
             and utils_file_contains("azure-pipelines.yml", "template: .ci/azure.yml@templates"):
@@ -109,18 +117,22 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                     {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
                 ]
     elif platform == "azp":
-        matrix["config"] = [
-            {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.15"},
-            {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-            {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "12.0", "os": "macOS-10.15"},
-            {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
-            {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
-            {"name": "MSVC 19.3 Preview - VS 2022", "compiler": "MSVC", "version": "19.3", "os": "windows-2022"},
-        ]
-        matrix_minimal["config"] = [
-            {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
-            {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
-        ]
+        if _is_gha_existing() and recipe_type in ["installer", "unconditional_header_only", "recipe_manual_full_matrix"]:
+            matrix["config"] = []
+            matrix_minimal["config"] = []
+        else:
+            matrix["config"] = [
+                {"name": "macOS Apple-Clang 10", "compiler": "APPLE_CLANG", "version": "10.0", "os": "macOS-10.15"},
+                {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
+                {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "12.0", "os": "macOS-10.15"},
+                {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
+                {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
+                {"name": "MSVC 19.3 Preview - VS 2022", "compiler": "MSVC", "version": "19.3", "os": "windows-2022"},
+            ]
+            matrix_minimal["config"] = [
+                {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
+                {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
+            ]
 
     # Split build jobs by build_type (Debug, Release)
     # Duplicate each builds job, then add the buildType value
