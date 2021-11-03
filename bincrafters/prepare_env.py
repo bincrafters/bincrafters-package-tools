@@ -17,7 +17,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
         print("{} = {}".format(var_name, value))
         os.environ[var_name] = value
         if platform == "gha":
-            if compiler == "VISUAL":
+            if compiler in ["VISUAL", "MSVC"]:
                 os.system('echo {}={}>> {}'.format(var_name, value, os.getenv("GITHUB_ENV")))
             else:
                 subprocess.run(
@@ -26,7 +26,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
                 )
 
         if platform == "azp":
-            if compiler == "VISUAL":
+            if compiler in ["VISUAL", "MSVC"]:
                 subprocess.run(
                     'echo ##vso[task.setvariable variable={}]{}'.format(var_name, value),
                     shell=True
@@ -86,7 +86,7 @@ def prepare_env(platform: str, config: json, select_config: str = None):
                 shell=True
             )
 
-        if compiler == "VISUAL":
+        if compiler in ["VISUAL", "MSVC"]:
             with open(os.path.join(os.path.dirname(__file__), "prepare_env_azp_windows.ps1"), "r") as file:
                 content = file.read()
                 file.close()
