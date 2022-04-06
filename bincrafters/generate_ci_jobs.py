@@ -102,7 +102,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 matrix["config"] += [
                     {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
                     {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
-                    {"name": "Windows VS 2022 (Testing)", "compiler": "VISUAL", "version": "17", "os": "windows-2022"},
+                    {"name": "Windows VS 2022 - Testing", "compiler": "VISUAL", "version": "17", "os": "windows-2022"},
                 ]
             matrix_minimal["config"] = [
                 {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
@@ -127,7 +127,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 {"name": "macOS Apple-Clang 12", "compiler": "APPLE_CLANG", "version": "12.0", "os": "macOS-10.15"},
                 {"name": "Windows VS 2017", "compiler": "VISUAL", "version": "15", "os": "vs2017-win2016"},
                 {"name": "Windows VS 2019", "compiler": "VISUAL", "version": "16", "os": "windows-2019"},
-                {"name": "Windows VS 2022 (Testing)", "compiler": "VISUAL", "version": "17", "os": "windows-2022"},
+                {"name": "Windows VS 2022 - Testing", "compiler": "VISUAL", "version": "17", "os": "windows-2022"},
             ]
             matrix_minimal["config"] = [
                 {"name": "macOS Apple-Clang 11", "compiler": "APPLE_CLANG", "version": "11.0", "os": "macOS-10.15"},
