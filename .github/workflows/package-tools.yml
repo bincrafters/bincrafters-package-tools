@@ -6,7 +6,6 @@ jobs:
   bincrafters-package-tools-test:
     name: Test Tools on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
-    if: github.event_name == 'push'
     strategy:
       fail-fast: false
       matrix:
