@@ -77,6 +77,9 @@ def prepare_env(platform: str, config: json, select_config: str = None):
                 "10.0": "/Applications/Xcode_10.3.app",
                 "11.0": "/Applications/Xcode_11.5.app",
                 "12.0": "/Applications/Xcode_12.4.app",
+                "13.0": "/Applications/Xcode_13.2.1.app",
+                "13.1": "/Applications/Xcode_13.4.1.app",
+                "14.0": "/Applications/Xcode_14.0.1.app",
             }
             if compiler_version in xcode_mapping:
                 subprocess.run(
