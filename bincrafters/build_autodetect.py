@@ -92,25 +92,33 @@ def run_autodetect():
     # In some cases Python may ignore the mode of makedirs, do it again explicitly with chmod
     os.chmod(tmpdir, mode=0o777)
 
-    os.system('conan config set storage.download_cache="{}"'.format(tmpdir))
+    # Setting values for global.conf - Recipes (behaviour) configs
+    os.environ["CONAN_SYSREQUIRES_MODE"] = "enabled"
+
+    conan_global_conf = os.environ.get("CONAN_GLOBAL_CONF", '')
+    if conan_global_conf:
+        conan_global_conf += ","
+    conan_global_conf += (
+        "tools.system.package_manager:mode=install,"
+        "tools.system.package_manager:sudo=True")
+    os.environ["CONAN_GLOBAL_CONF"] = conan_global_conf
+
+    # Setting values for conan.conf - Client behaviour
+    os.system(f'conan config set storage.download_cache="{tmpdir}"')
     os.system('conan config set general.revisions_enabled=1')
 
     conan_docker_entry_script = os.environ.get("CONAN_DOCKER_ENTRY_SCRIPT", '')
     if conan_docker_entry_script:
         conan_docker_entry_script += "; "
     conan_docker_entry_script += (
-        "conan config set storage.download_cache='{}'; "
-        "conan config set general.revisions_enabled=1".format(tmpdir))
+        f"conan config set storage.download_cache='{tmpdir}'; "
+        "conan config set general.revisions_enabled=1")
     os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] = conan_docker_entry_script
 
+    # Docker Run Options
     conan_docker_run_options = os.environ.get('CONAN_DOCKER_RUN_OPTIONS', '')
-    conan_docker_run_options += " -v '{}':'/tmp/conan'".format(tmpdir)
+    conan_docker_run_options += f" -v '{tmpdir}':'/tmp/conan'"
     os.environ['CONAN_DOCKER_RUN_OPTIONS'] = conan_docker_run_options
-
-    ###
-    # Enabling installing system_requirements
-    ###
-    os.environ["CONAN_SYSREQUIRES_MODE"] = "enabled"
 
     ###
     # Detect and execute custom build.py file if existing

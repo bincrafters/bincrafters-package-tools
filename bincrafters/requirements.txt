@@ -1,2 +1,2 @@
-conan_package_tools>=0.37.0
+conan_package_tools>=0.39.0
 # conan-package-tools @ git+https://github.com/conan-io/conan-package-tools@e2e09707a3c5179607bd247724d95fc9dc202e2b
