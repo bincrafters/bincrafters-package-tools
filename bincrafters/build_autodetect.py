@@ -94,12 +94,15 @@ def run_autodetect():
 
     os.system('conan config set storage.download_cache="{}"'.format(tmpdir))
     os.system('conan config set general.revisions_enabled=1')
+
     conan_docker_entry_script = os.environ.get("CONAN_DOCKER_ENTRY_SCRIPT", '')
     if conan_docker_entry_script:
         conan_docker_entry_script += "; "
     conan_docker_entry_script += (
         "conan config set storage.download_cache='{}'; "
         "conan config set general.revisions_enabled=1".format(tmpdir))
+    os.environ["CONAN_DOCKER_ENTRY_SCRIPT"] = conan_docker_entry_script
+
     conan_docker_run_options = os.environ.get('CONAN_DOCKER_RUN_OPTIONS', '')
     conan_docker_run_options += " -v '{}':'/tmp/conan'".format(tmpdir)
     os.environ['CONAN_DOCKER_RUN_OPTIONS'] = conan_docker_run_options
@@ -136,4 +139,3 @@ def run_autodetect():
     ###
     builder = _get_builder()
     builder.run()
-
