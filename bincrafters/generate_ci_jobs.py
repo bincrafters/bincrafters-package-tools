@@ -74,7 +74,6 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
             matrix_minimal["config"] = matrix["config"].copy()
         else:
             matrix["config"] = [
-                {"name": "GCC 4.9", "compiler": "GCC", "version": "4.9", "os": "ubuntu-18.04"},
                 {"name": "GCC 5", "compiler": "GCC", "version": "5", "os": "ubuntu-18.04"},
                 {"name": "GCC 6", "compiler": "GCC", "version": "6", "os": "ubuntu-18.04"},
                 {"name": "GCC 7", "compiler": "GCC", "version": "7", "os": "ubuntu-18.04"},
