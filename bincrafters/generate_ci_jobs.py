@@ -84,6 +84,7 @@ def _get_base_config(recipe_directory: str, platform: str, split_by_build_types:
                 {"name": "CLANG 10", "compiler": "CLANG", "version": "10", "os": "ubuntu-18.04"},
                 {"name": "CLANG 11", "compiler": "CLANG", "version": "11", "os": "ubuntu-18.04"},
                 {"name": "CLANG 12", "compiler": "CLANG", "version": "12", "os": "ubuntu-18.04"},
+                {"name": "CLANG 13", "compiler": "CLANG", "version": "13", "os": "ubuntu-18.04"},
             ]
             if run_macos:
                 matrix["config"] += [
