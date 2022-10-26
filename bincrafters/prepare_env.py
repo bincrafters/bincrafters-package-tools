@@ -57,12 +57,9 @@ def prepare_env(platform: str, config: json, select_config: str = None):
             version_without_dot = compiler_version.replace(".", "")
             image_suffix = ""
             # Use "modern" CDT containers for newer compilers
-            if (compiler == "GCC" and float(compiler_version) >= 12) or \
-                    (compiler == "CLANG" and float(compiler_version) >= 14):
+            if (compiler == "GCC" and float(compiler_version) >= 11) or \
+                    (compiler == "CLANG" and float(compiler_version) >= 10):
                 image_suffix = "-ubuntu18.04"
-            elif (compiler == "GCC" and float(compiler_version) >= 11) or \
-                    (compiler == "CLANG" and float(compiler_version) >= 12):
-                image_suffix = "-ubuntu16.04"
 
             docker_image = "conanio/{}{}{}".format(compiler_lower, version_without_dot, image_suffix)
         _set_env_variable("CONAN_DOCKER_IMAGE", docker_image)
